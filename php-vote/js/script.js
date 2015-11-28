@@ -80,8 +80,7 @@ function doSearch() {
             }
             $("#search > ul").html(content);            
         }
-    });    
-    
+    });
 }
 
 function getHigh() {

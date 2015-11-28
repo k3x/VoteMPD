@@ -11,6 +11,8 @@ $db_user="root";
 $db_pass="";
 $db_database="mpdvote";
 $GLOBALS["path"]="/media/raid1tb/musik"; // without trailing "/"
+$GLOBALS["mpdport"]=6600;
+$GLOBALS["mpdip"]="localhost";
 
 if(phpversion()=="5.3.3-7+squeeze19")
 $GLOBALS["db"] = new PDO('mysql:host='.$db_server.';dbname='.$db_database.';', $db_user, $db_pass,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));

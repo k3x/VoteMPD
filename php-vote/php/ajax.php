@@ -44,6 +44,9 @@ switch($_GET["action"]) {
             doOutput($r,"getnextsong");
         }
         break;
+    case("mpdstatus"):
+        getMpdCurrentSong();
+        break;
     default: doError("No valid action specified");
 
 }
