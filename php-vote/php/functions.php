@@ -8,6 +8,17 @@ function doError($e) {
     die();
 }
 
+//todo
+function getFilepathForFileid($id) {
+    return "";
+}
+
+//todo only if not already voted
+function doVote($ip,$id) {
+    $stmt = $GLOBALS["db"]->prepare("INSERT INTO votes (fileid,ip,date) VALUES (:fid,:ip,NOW())");
+    return ($stmt->execute(array(":fid" => $id,":ip"=>$ip)));
+}
+
 //todo nur zählen, wenn vote nicht vor einem Eintrag in playlog ist.
 function doShowhighscore() {
     $stmt = $GLOBALS["db"]->prepare("SELECT files.*,COUNT(*) as anzahl FROM votes INNER JOIN files on files.id=votes.fileid GROUP BY votes.fileid ORDER BY anzahl DESC");
@@ -30,6 +41,7 @@ function getNextsong() {
     return null;
 }
 
+//add boolean if user voted for song already (after last entry in playlog)
 function doSearch($keyword) {
     $stmt = $GLOBALS["db"]->prepare("SELECT * FROM files WHERE filename LIKE :d OR artist LIKE :d OR title LIKE :d OR album LIKE :d");
     $tmp = array();
@@ -41,6 +53,7 @@ function doSearch($keyword) {
     } doError("Search db query failed");
 }
 
+//only after last playlog
 function doGetmyvotes() {
     $stmt = $GLOBALS["db"]->prepare("SELECT votes.date,files.* FROM votes INNER JOIN files on files.id=votes.fileid WHERE votes.ip=:ip ORDER BY date DESC");
     $tmp = array();

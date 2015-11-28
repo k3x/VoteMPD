@@ -23,6 +23,14 @@ switch($_GET["action"]) {
         if($r===false) doError("Error while searching");
         else doOutput($r,"search");
         break;
+    case("vote"):
+        if(!isset($_GET["id"])) {
+            doError("No id specified");
+        }
+        $r = doVote($_SERVER['REMOTE_ADDR'],$_GET["id"]);
+        if($r===false) doError("Error while voting");
+        else doOutput($r,"vote");
+        break;
     case("getmyvotes"):
         $r = doGetmyvotes();
         if($r===false) doError("Error while getting your votes");

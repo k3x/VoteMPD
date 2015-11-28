@@ -1,3 +1,15 @@
 div#head {
 	background-color: blue;
 }
+
+div#auswahl > div > ol {
+	padding: 0px;
+	margin:0px;
+	padding-left: 2.2em;
+}
+
+div#auswahl > div > ul {
+	padding: 0px;
+	margin:0px;
+	padding-left: 1em;
+}

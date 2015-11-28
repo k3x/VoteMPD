@@ -1,20 +1,37 @@
 var ajaxpath = window.location.href+"php/ajax.php";
-console.log(ajaxpath);
 
 $(function() {
-    $( "#auswahl" ).accordion({active: 2,heightStyle: "content",collapsible: true});
+    $( "#auswahl" ).accordion({active: 1,heightStyle: "content",collapsible: true});
     getCurrent();
     getNext();
     getHigh();
     getMy();
 });
 
+function doVote(id) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var antwort = JSON.parse(xhttp.responseText);
+            var content = "";
+            if(antwort.status!="success" || antwort.action!="vote") {
+                content="Es trat ein Fehler auf!";
+            } else {
+                content="Erfolg!";
+            }
+            alert(content);
+        }
+    }
+    var str = ajaxpath+"?action=vote&id="+id;
+    xhttp.open("GET", str, true);
+    xhttp.send();
+}
+
 function getMy() {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
             var antwort = JSON.parse(xhttp.responseText);
-            console.log(antwort.content);
             var content = "";
             if(antwort.status!="success" || antwort.action!="getmyvotes") {
                 content="Es trat ein Fehler auf!";
@@ -26,10 +43,8 @@ function getMy() {
                     
                     for (index = 0; index < antwort.content.length; index++) {
                         entry = antwort.content[index];
-                        console.log(entry);
                         content+="<li>"+entry.artist+": "+entry.title+" ("+entry.length+"s "+entry.size+"byte "+entry.date+")</li>";
                     }
-                    console.log(content);
                     content+="</ol>";
                 }
             }
@@ -41,14 +56,13 @@ function getMy() {
     xhttp.send();
 }
 
+//todo show votebutton only if boolean is false
 function doSearch() {
     var text = $("#search-text").val();
 
     $.post(ajaxpath+"?action=search", {keyword: text}, function(result,status){
         if(status=="success") {
-            console.log(result);
             var antwort = JSON.parse(result);
-            console.log(antwort.content);
             var content = "";
             
             
@@ -57,16 +71,11 @@ function doSearch() {
             } else {
                 if(antwort.content.length==0) {
                     content="Keine Elemente!";
-                } else {
-                    content+="<ol>";
-                    
+                } else {                    
                     for (index = 0; index < antwort.content.length; index++) {
                         entry = antwort.content[index];
-                        console.log(entry);
-                        content+="<li>"+entry.artist+": "+entry.title+" ("+entry.length+"s "+entry.size+"Byte)</li>";
+                        content+="<li>"+entry.artist+": "+entry.title+" ("+entry.length+"s "+entry.size+"Byte) <button onclick=\"javascript:doVote("+entry.id+");\">Abstimmen</button></li>";
                     }
-                    console.log(content);
-                    content+="</ol>";
                 }
             }
             $("#search > ul").html(content);            
@@ -80,7 +89,6 @@ function getHigh() {
     xhttp.onreadystatechange = function() {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
             var antwort = JSON.parse(xhttp.responseText);
-            console.log(antwort.content);
             var content = "";
             if(antwort.status!="success" || antwort.action!="showhighscore") {
                 content="Es trat ein Fehler auf!";
@@ -92,10 +100,8 @@ function getHigh() {
                     
                     for (index = 0; index < antwort.content.length; index++) {
                         entry = antwort.content[index];
-                        console.log(entry);
                         content+="<li>"+entry.artist+": "+entry.title+" ("+entry.length+"s "+entry.size+"Byte "+entry.anzahl+" Stimmen)</li>";
                     }
-                    console.log(content);
                     content+="</ol>";
                 }
             }
