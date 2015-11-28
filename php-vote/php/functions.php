@@ -29,7 +29,18 @@ function doSearch($keyword) {
             $tmp[] = $row;
         }
         return $tmp;
-    } doError("Highscore db query failed");
+    } doError("Search db query failed");
+}
+
+function doGetmyvotes() {
+    $stmt = $GLOBALS["db"]->prepare("SELECT * FROM votes WHERE ip=:ip");
+    $tmp = array();
+    if($stmt->execute(array(":ip" => $_SERVER['REMOTE_ADDR']))) {
+        while ($row = $stmt->fetchObject()) {
+            $tmp[] = $row;
+        }
+        return $tmp;
+    } doError("Getmyvotes db query failed");
 }
 
 function doOutput($content,$action) {

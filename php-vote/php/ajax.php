@@ -7,7 +7,7 @@ if(!isset($_GET["action"])) {
     doError("No action specified");
 }
 
-
+//$_SERVER['REMOTE_ADDR'] = 127.0.0.1
 
 switch($_GET["action"]) {
     case("showhighscore"): 
@@ -20,8 +20,13 @@ switch($_GET["action"]) {
             doError("No keyword specified");
         }
         $r = doSearch($_GET["keyword"]);
-        if($r===false) doError("Error while getting highscore");
+        if($r===false) doError("Error while searching");
         else doOutput($r,"search");
+        break;
+    case("getmyvotes"):
+        $r = doGetmyvotes();
+        if($r===false) doError("Error while getting your votes");
+        else doOutput($r,"getmyvotes");
         break;
     default: doError("No valid action specified");
 
