@@ -15,6 +15,32 @@ function doError($e) {
 //todo
 function getMpdCurrentSong() {
     $mpd = new MPD();
+    $r = $mpd->cmd("currentsong");
+    if(false===strpos($r,"file: ")) {
+        return null;
+    } else {
+        $tmp = explode("\n",$r);
+        $path = null;
+        foreach($tmp as $t) {
+            $tmpar = explode(": ",$t);
+            if(count($tmpar)===2 && $tmpar[0]=="file") {
+                $path = $tmpar[1];
+            }
+        }
+        if($path === null) return null;
+        
+        //todo with db entry
+        return $path;
+        
+    }
+
+
+
+
+
+
+
+    $mpd = new MPD();
     //telnet localhost 6600
     //http://www.musicpd.org/doc/protocol/command_reference.html
     
