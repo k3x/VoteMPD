@@ -9,9 +9,8 @@ function doError($e) {
 }
 
 //todo nur zählen, wenn vote nicht vor einem Eintrag in playlog ist.
-//todo mit fileinfos
 function doShowhighscore() {
-    $stmt = $GLOBALS["db"]->prepare("SELECT fileid,COUNT(*) as anzahl FROM votes GROUP BY fileid");
+    $stmt = $GLOBALS["db"]->prepare("SELECT files.*,COUNT(*) as anzahl FROM votes INNER JOIN files on files.id=votes.fileid GROUP BY votes.fileid ORDER BY anzahl DESC");
     $tmp = array();
     if($stmt->execute()) {
         while ($row = $stmt->fetchObject()) {
@@ -19,6 +18,16 @@ function doShowhighscore() {
         }
         return $tmp;
     } doError("Highscore db query failed");
+}
+
+function getNextsong() {
+    $stmt = $GLOBALS["db"]->prepare("SELECT files.*,COUNT(*) as anzahl FROM votes INNER JOIN files on files.id=votes.fileid GROUP BY votes.fileid ORDER BY anzahl DESC LIMIT 1");
+    if($stmt->execute()) {
+        if ($row = $stmt->fetchObject()) {
+            return $row;
+        }
+    } 
+    return null;
 }
 
 function doSearch($keyword) {
@@ -33,7 +42,7 @@ function doSearch($keyword) {
 }
 
 function doGetmyvotes() {
-    $stmt = $GLOBALS["db"]->prepare("SELECT * FROM votes WHERE ip=:ip");
+    $stmt = $GLOBALS["db"]->prepare("SELECT votes.date,files.* FROM votes INNER JOIN files on files.id=votes.fileid WHERE votes.ip=:ip ORDER BY date DESC");
     $tmp = array();
     if($stmt->execute(array(":ip" => $_SERVER['REMOTE_ADDR']))) {
         while ($row = $stmt->fetchObject()) {

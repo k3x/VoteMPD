@@ -15,11 +15,11 @@ switch($_GET["action"]) {
         if($r===false) doError("Error while getting highscore");
         else doOutput($r,"showhighscore");
         break;
-    case("search"): //TODO keyword post, mit ajax
-        if(!isset($_GET["keyword"])) {
+    case("search"):
+        if(!isset($_POST["keyword"])) {
             doError("No keyword specified");
         }
-        $r = doSearch($_GET["keyword"]);
+        $r = doSearch($_POST["keyword"]);
         if($r===false) doError("Error while searching");
         else doOutput($r,"search");
         break;
@@ -28,9 +28,21 @@ switch($_GET["action"]) {
         if($r===false) doError("Error while getting your votes");
         else doOutput($r,"getmyvotes");
         break;
+    case("getnextsong"):
+        $r = getNextsong();
+        if($r===null) {
+            doError("Getnext failed");
+        } else {
+            doOutput($r,"getnextsong");
+        }
+        break;
     default: doError("No valid action specified");
 
 }
 
 
 ?>
+
+
+
+
