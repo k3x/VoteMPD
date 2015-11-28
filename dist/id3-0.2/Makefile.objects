@@ -1,8 +1,0 @@
-id3.lo: /home/felix/workspace_mpdvote/mpdvote/php-scan/id3-0.2/id3.c
-	$(LIBTOOL) --mode=compile $(CC)  -I. -I/home/felix/workspace_mpdvote/mpdvote/php-scan/id3-0.2 $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /home/felix/workspace_mpdvote/mpdvote/php-scan/id3-0.2/id3.c -o id3.lo 
-$(phplibdir)/id3.la: ./id3.la
-	$(LIBTOOL) --mode=install cp ./id3.la $(phplibdir)
-
-./id3.la: $(shared_objects_id3) $(ID3_SHARED_DEPENDENCIES)
-	$(LIBTOOL) --mode=link $(CC) $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS) $(LDFLAGS) -o $@ -export-dynamic -avoid-version -prefer-pic -module -rpath $(phplibdir) $(EXTRA_LDFLAGS) $(shared_objects_id3) $(ID3_SHARED_LIBADD)
-
