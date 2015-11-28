@@ -1,0 +1,4 @@
+This extension currently only supports
+ID3v1 and ID3v1.1 tags. It's possible that there
+will be some minor changes, once ID3v2 is
+supported.

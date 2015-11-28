@@ -1,0 +1,3 @@
+$(function() {
+    $( "#auswahl" ).accordion();
+});

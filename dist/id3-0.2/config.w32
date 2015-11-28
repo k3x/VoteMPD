@@ -1,0 +1,8 @@
+// $Id: config.w32,v 1.2 2004/06/22 04:47:23 sebastian Exp $
+// vim:ft=javascript
+
+ARG_ENABLE("id3", "id3 support", "no");
+
+if (PHP_ID3 != "no") {
+	EXTENSION("id3", "id3.c");
+}
