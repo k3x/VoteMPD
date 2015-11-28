@@ -1,6 +1,9 @@
 # MPDVote
+
 Author: Felix Sterzelmaier
+
 Version 0.1
+
 Date: 28. November 2015
 
 MPDVote allows your party guests to fill the queue of your MusicPlayerDaemon.
