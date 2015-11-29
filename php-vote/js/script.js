@@ -8,6 +8,34 @@ $(function() {
     getMy();
 });
 
+function getCurrent() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var antwort = JSON.parse(xhttp.responseText);
+            var content = "";
+            if(antwort.status!="success" || antwort.action!="mpdcurrent") {
+                content="Es trat ein Fehler auf!";
+            } else {
+                if(antwort.content==null) {
+                    content="leer";
+                } else {
+                    content=antwort.content.artist+": "+antwort.content.title+" "+antwort.content.length+"s";
+                }
+            }
+            $("#head").html(content);
+        }
+    }
+    var str = ajaxpath+"?action=mpdcurrent";
+    xhttp.open("GET", str, true);
+    xhttp.send();
+}
+
+//todo
+function getNext() {
+    
+}
+
 function doVote(id) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -110,14 +138,4 @@ function getHigh() {
     var str = ajaxpath+"?action=showhighscore";
     xhttp.open("GET", str, true);
     xhttp.send();
-}
-
-//todo
-function getCurrent() {
-    
-}
-
-//todo
-function getNext() {
-    
 }

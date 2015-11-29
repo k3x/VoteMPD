@@ -34,9 +34,12 @@ run "php start.php"
 * Count only votes for song after the song was played last (same behavior like delete all songvotes on songplay, but we have history)
 * Only alow voting if user has not already votet since last time the song was played
 * Implement as Androidapp, so you only need a Tablet/2nd Smartphone instead of Notebook/RaspberryPi
+* Fileinfos with folder pictures
+* Play on vote when queue is empty
+* Default queue when no user is voting
 
 ## License
 
-## Used Librarys/Icons/Codesnippets
+## Used Librarys/Icons/Codesnippets/Licenses (todo)
 * phpMp3 http://sourceforge.net/projects/phpmp3
 * getID3 http://getid3.sourceforge.net   
