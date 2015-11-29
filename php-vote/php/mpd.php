@@ -71,6 +71,9 @@ Id: 92
     
     //currentsong
     //stats
+    
+    
+require("../../settings.php");
 
 class MPD {
     var $link;

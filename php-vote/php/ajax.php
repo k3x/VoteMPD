@@ -10,7 +10,7 @@ if(!isset($_GET["action"])) {
 //$_SERVER['REMOTE_ADDR'] = 127.0.0.1
 
 switch($_GET["action"]) {
-    case("showhighscore"): 
+    case("showhighscore"):
         $r = doShowhighscore();
         if($r===false) doError("Error while getting highscore");
         else doOutput($r,"showhighscore");
@@ -37,7 +37,7 @@ switch($_GET["action"]) {
         else doOutput($r,"getmyvotes");
         break;
     case("getnextsong"):
-        $r = getNextsong();
+        $r = getNextsongInHighscore();
         if($r===null) {
             doError("Getnext failed");
         } else {

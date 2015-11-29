@@ -17,10 +17,14 @@ function getCurrent() {
             if(antwort.status!="success" || antwort.action!="mpdcurrent") {
                 content="Es trat ein Fehler auf!";
             } else {
-                if(antwort.content==null) {
-                    content="leer";
+                if(antwort.content.state=="stop") {
+                    content="stop";
                 } else {
-                    content=antwort.content.artist+": "+antwort.content.title+" "+antwort.content.length+"s";
+                    if(antwort.content.fileinfos==null) {
+                        content="Error";
+                    } else {
+                        content="("+antwort.content.state+")"+antwort.content.fileinfos.artist+": "+antwort.content.fileinfos.title+" "+antwort.content.fileinfos.length+"s";
+                    }
                 }
             }
             $("#head").html(content);
@@ -31,9 +35,27 @@ function getCurrent() {
     xhttp.send();
 }
 
-//todo
 function getNext() {
-    
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var antwort = JSON.parse(xhttp.responseText);
+            var content = "";
+            if(antwort.status!="success" || antwort.action!="getnextsong") {
+                content="Es trat ein Fehler auf!";
+            } else {
+                if(antwort.content==null) {
+                    content="No next Song!";
+                } else {
+                    content=antwort.content.artist+": "+antwort.content.title+" "+antwort.content.length+"s";
+                }
+            }
+            $("#next").html(content);
+        }
+    }
+    var str = ajaxpath+"?action=getnextsong";
+    xhttp.open("GET", str, true);
+    xhttp.send();
 }
 
 function doVote(id) {
