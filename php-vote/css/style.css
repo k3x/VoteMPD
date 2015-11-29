@@ -1,6 +1,11 @@
 div#head {
-	background-color: blue;
+	
 }
+
+div#next {
+
+}
+
 
 div#auswahl > div > ol {
 	padding: 0px;
@@ -13,3 +18,14 @@ div#auswahl > div > ul {
 	margin:0px;
 	padding-left: 1em;
 }
+
+div#banner {
+	background-image: url(../gfx/logo_64.png);
+	background-position: 5px center;
+	background-repeat: no-repeat;
+	padding-left: 74px;
+	height: 64px;
+	line-height: 64px;
+	font-size: 30px;
+}
+

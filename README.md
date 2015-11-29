@@ -13,7 +13,7 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 ## Features
 * Scan Filesystem and fill id3 information into database
 * Allow users to vote for songs via a mobile friendly webpage
-* MPD queue is filled with highest votet songs
+* MPD queue is filled with highest voted songs
 
 ## Install
 sudo apt-get install mp3info php5 mpd

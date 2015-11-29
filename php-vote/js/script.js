@@ -8,6 +8,27 @@ $(function() {
     getMy();
 });
 
+function stateToChar(state) {
+    // &#9726; &#9646;&#9646; &#9654;
+    // http://stackoverflow.com/questions/22885702/html-for-the-pause-symbol-in-a-video-control
+    if(state=="stop") return "◾";
+    if(state=="play") return "▶";
+    if(state=="pause") return "▮▮";
+    return state;
+}
+
+function formatLength(length) {
+    var length = parseInt(length)
+    var h = Math.floor(length/3600)
+    var m = Math.floor((length/60)) % 3600
+    var s = length % 60
+    if(h==0) {
+        return m+":"+s
+    } else {
+        return h+":"+m+":"+s
+    }
+}
+
 function getCurrent() {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -18,12 +39,12 @@ function getCurrent() {
                 content="Es trat ein Fehler auf!";
             } else {
                 if(antwort.content.state=="stop") {
-                    content="stop";
+                    content=stateToChar("stop");
                 } else {
                     if(antwort.content.fileinfos==null) {
                         content="Error";
                     } else {
-                        content="("+antwort.content.state+")"+antwort.content.fileinfos.artist+": "+antwort.content.fileinfos.title+" "+antwort.content.fileinfos.length+"s";
+                        content=stateToChar(antwort.content.state)+" "+antwort.content.fileinfos.artist+": "+antwort.content.fileinfos.title+" "+formatLength(antwort.content.fileinfos.length);
                     }
                 }
             }
@@ -47,7 +68,7 @@ function getNext() {
                 if(antwort.content==null) {
                     content="No next Song!";
                 } else {
-                    content=antwort.content.artist+": "+antwort.content.title+" "+antwort.content.length+"s";
+                    content=antwort.content.artist+": "+antwort.content.title+" "+formatLength(antwort.content.length);
                 }
             }
             $("#next").html(content);
