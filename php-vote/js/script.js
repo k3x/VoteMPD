@@ -8,15 +8,6 @@ $(function() {
     getMy();
 });
 
-function stateToChar(state) {
-    // &#9726; &#9646;&#9646; &#9654;
-    // http://stackoverflow.com/questions/22885702/html-for-the-pause-symbol-in-a-video-control
-    if(state=="stop") return "◾";
-    if(state=="play") return "▶";
-    if(state=="pause") return "▮▮";
-    return state;
-}
-
 //from http://stackoverflow.com/questions/15900485/correct-way-to-convert-size-in-bytes-to-kb-mb-gb-in-javascript
 function formatBytes(bytes) {
    if(bytes == 0) return '0 Byte';
@@ -57,8 +48,7 @@ function getCurrent() {
                     if(antwort.content.fileinfos==null) {
                         content="Error";
                     } else {
-                        content=    '<div id="state">'+stateToChar(antwort.content.state)+'</div>'+
-                                    antwort.content.fileinfos.artist+" - "+
+                        content=    antwort.content.fileinfos.artist+" - "+
                                     antwort.content.fileinfos.title;
                         percent = 100*antwort.content.time/antwort.content.fileinfos.length;
                         picture = antwort.content.fileinfos.picture;
@@ -124,6 +114,7 @@ function doVote(id) {
     xhttp.send();
 }
 
+//todo date format
 function getMy() {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -153,7 +144,7 @@ function getMy() {
     xhttp.send();
 }
 
-//todo show votebutton only if boolean is false
+//todo img src if already voted. No onclick in this case
 function doSearch() {
     var text = $("#search-text").val();
 
@@ -171,7 +162,7 @@ function doSearch() {
                 } else {                    
                     for (index = 0; index < antwort.content.length; index++) {
                         entry = antwort.content[index];
-                        content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+") <button onclick=\"javascript:doVote("+entry.id+");\">Abstimmen</button></li>";
+                        content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+') <img src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+entry.id+');"></li>';
                     }
                 }
             }

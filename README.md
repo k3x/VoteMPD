@@ -34,7 +34,7 @@ run "php start.php"
 * Implement as Androidapp, so you only need a Tablet/2nd Smartphone instead of Notebook/RaspberryPi
 * Play on vote when queue is empty
 * Default queue when no user is voting
-* Design of "◾""▶""▮▮" (maybe pictures?)
+* Maybe do not scan filesystem. Instead Get Music Database from MPD. Advantage: no need to run on the same server
 
 ## License
 

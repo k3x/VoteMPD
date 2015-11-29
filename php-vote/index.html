@@ -32,6 +32,13 @@
         <h3>Suchen</h3>
         <div id="search">
             <input type="text" id="search-text" name="search-text" placeholder="Eingabe..."><button onclick="javascript:doSearch();">Suchen</button>
+            <script>
+                $("#search-text").keyup(function(event){
+                    if(event.keyCode == 13){
+                        doSearch();
+                    }
+                });
+            </script>
             <ul>
             
             </ul>

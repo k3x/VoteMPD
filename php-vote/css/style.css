@@ -13,16 +13,6 @@ div#innerhead {
 	overflow: hidden;
 }
 
-div#head > div#innerhead > div#state {
-	font-size: 40px;
-	float: left;
-	padding: 5px;
-	margin: 0px;
-	line-height: 45px;
-	height: 100%;
-	width: 50px;
-}
-
 div#next {
 
 }
@@ -31,6 +21,14 @@ body {
 
 }
 
+div#search > ul > li > img{
+	height: 22px;
+	vertical-align: middle;
+}
+
+div#search > ul > li {
+	line-height: 22px;
+}
 
 div#auswahl > div > ol {
 	padding: 0px;
