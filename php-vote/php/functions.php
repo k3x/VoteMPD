@@ -75,11 +75,9 @@ function getMpdValue($function,$item) {
 
 //todo
 function getMpdNextSong() {
-
+    
 }
 
-//todo with current elapsedtime. in js show time%
-//todo with state
 function getMpdCurrentSong() {
     $path = getMpdValue("currentsong","file");
     if($path===false) $fileinfos = false;
@@ -91,21 +89,28 @@ function getMpdCurrentSong() {
     return array("state"=>$state,"time"=>$time,"fileinfos"=>$fileinfos);
 }
 
-//todo with picture; ohne "musik/" (in php-scan)
+//todo ohne "musik/" (in php-scan)
 function getFileinfosforfilepath($path) {
     $folders = explode("/",dirname("musik/".$path));
     $curDir = -1;
     foreach($folders as $f) {
-        $stmt = $GLOBALS["db"]->prepare("SELECT id FROM folders WHERE parentid=:p AND foldername=:f");
+        $stmt = $GLOBALS["db"]->prepare("SELECT id,picture FROM folders WHERE parentid=:p AND foldername=:f");
         if($stmt->execute(array(":p" => $curDir,":f" => $f))) {
             $row = $stmt->fetchObject();
             $curDir=$row->id;
         } else doError("getFileinfosforfilepath db query failed");
     }
     
+    $pic=false;
+    if($curDir!=-1 && isset($row->picture)) {
+        //$pic = base64_encode($row->picture);
+        $pic = true;
+    }
+    
     $stmt = $GLOBALS["db"]->prepare("SELECT * FROM files WHERE folderid=:folderid AND filename=:filename");
     if($stmt->execute(array(":folderid" => $curDir,":filename" => basename("musik/".$path)))) {
         $row = $stmt->fetchObject();
+        $row->picture = $pic;
         return $row;
     } else doError("getFileinfosforfilepath db query failed2");
     return false;

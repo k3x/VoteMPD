@@ -29,14 +29,12 @@ run "php start.php"
 ## Todos
 * Implement php daemon: Connect to mpd server and insert first highscore item to mpd queue 5 seconds before current song ends.
 * Browse songs by folder,artist,album,interpret
-* Favicon + css
-* Design current/next song
 * Count only votes for song after the song was played last (same behavior like delete all songvotes on songplay, but we have history)
 * Only allow voting if user has not already votet since last time the song was played
 * Implement as Androidapp, so you only need a Tablet/2nd Smartphone instead of Notebook/RaspberryPi
-* Fileinfos with folder pictures
 * Play on vote when queue is empty
 * Default queue when no user is voting
+* Design of "◾""▶""▮▮" (maybe pictures?)
 
 ## License
 

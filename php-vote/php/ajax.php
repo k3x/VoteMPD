@@ -52,6 +52,15 @@ switch($_GET["action"]) {
             doOutput($r,"mpdcurrent");
         }
         break;
+    case("getfolderpic"):
+        if(!isset($_GET["id"])) {
+            doError("No id specified");
+        }
+        $folder = getFolder($_GET["id"]);
+        header('Content-type:image/png');
+        echo $folder->picture;
+    
+        break;
     default: doError("No valid action specified");
 
 }

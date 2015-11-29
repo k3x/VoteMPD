@@ -1,8 +1,33 @@
 div#head {
-	
+	height: 60px;
+	padding: 0px;
+	margin: 0px;
+	overflow: hidden;
+	border: 1px solid black;
+}
+
+div#innerhead {
+	height: 60px;
+	padding: 0px;
+	margin: 0px;
+	overflow: hidden;
+}
+
+div#head > div#innerhead > div#state {
+	font-size: 40px;
+	float: left;
+	padding: 5px;
+	margin: 0px;
+	line-height: 45px;
+	height: 100%;
+	width: 50px;
 }
 
 div#next {
+
+}
+
+body {
 
 }
 
