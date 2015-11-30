@@ -22,21 +22,17 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * run gmpc, connect to mpd, do Server -> Update MPD Database
 * Install mysql server and configure "settings.php". Also enter the same "path" like you configured for mpd.
 * run "php start.php"
-
+* Let your Apache "/" point to the folder "php-vote" (the folder with css,gfx,js,php,index.html)
+* in console run php daemon.php
 
 ## Todos
-* Implement php daemon: Connect to mpd server and insert first highscore item to mpd queue 5 seconds before current song ends.
 * Browse songs by folder,artist,album,interpret
-* Count only votes for song after the song was played last (same behavior like delete all songvotes on songplay, but we have history)
-* Only allow voting if user has not already votet since last time the song was played
 * Implement as Androidapp, so you only need a Tablet/2nd Smartphone instead of Notebook/RaspberryPi
-* Play on vote when queue is empty
 * Default queue when no user is voting
 * Maybe do not scan filesystem. Instead Get Music Database from MPD. Advantage: no need to run on the same server
 * Upload File
-* SCAN Dollarzeichen im Namen zB /media/raid1tb/musik/1_a_Unsortiert/TEST/
 * SCAN case insensetive jpg
-* Table Votes new field "already played"
+* SCAN files/totalfiles, %, files per sec, remaining time
 
 ## License
 

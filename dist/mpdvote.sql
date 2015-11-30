@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 28. Nov 2015 um 03:23
+-- Erstellungszeit: 30. Nov 2015 um 16:59
 -- Server Version: 5.5.46-0ubuntu0.14.04.2
 -- PHP-Version: 5.5.9-1ubuntu4.14
 
@@ -77,6 +77,7 @@ CREATE TABLE IF NOT EXISTS `votes` (
   `fileid` int(11) NOT NULL,
   `ip` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
   `date` datetime NOT NULL,
+  `played` tinyint(4) NOT NULL DEFAULT '0' COMMENT '1 wenn bereits abgespielt',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 

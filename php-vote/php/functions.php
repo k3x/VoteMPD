@@ -113,9 +113,8 @@ function getMpdCurrentSong() {
     return array("state"=>$state,"time"=>getMpdCurrentTime(),"fileinfos"=>$fileinfos);
 }
 
-//todo ohne "musik/" (in php-scan)
 function getFileinfosforfilepath($path) {
-    $folders = explode("/",dirname("musik/".$path));
+    $folders = explode("/",dirname($path));
     $curDir = -1;
     foreach($folders as $f) {
         $stmt = $GLOBALS["db"]->prepare("SELECT id,picture FROM folders WHERE parentid=:p AND foldername=:f");

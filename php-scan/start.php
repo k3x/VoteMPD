@@ -2,7 +2,51 @@
 require("../settings.php");
 require_once('getid3/getid3.php');
 $getID3 = new getID3;
-doOneFolder(-1,$GLOBALS["path"]);
+doRoot($GLOBALS["path"]);
+
+function printProgress() {
+    if(time()>=$GLOBALS["next10sec"]) {
+        $GLOBALS["next10sec"] = time() + (int)10;
+        $diff = $GLOBALS["files"] - $GLOBALS["lastfiles"];
+        $GLOBALS["filespersec"] = $diff/10;
+        $GLOBALS["lastfiles"] = $GLOBALS["files"];
+    }
+    if($GLOBALS["files"]%10!=0) return;
+    
+    echo    $GLOBALS["files"]."/".$GLOBALS["totalfiles"]." ".
+            number_format(100*$GLOBALS["files"]/$GLOBALS["totalfiles"],2)."% ";
+            
+    if($GLOBALS["filespersec"]!=0) {
+        echo    $GLOBALS["filespersec"]."fps ".
+                number_format(((($GLOBALS["totalfiles"]-$GLOBALS["files"])/$GLOBALS["filespersec"])/60),2)."min remaining\n";
+    } else {
+        echo "\n";
+    }
+}
+
+function doRoot($p) {
+    $GLOBALS["files"]=0;
+    $GLOBALS["totalfiles"]=0;
+    $GLOBALS["filespersec"]=0;
+    $GLOBALS["next10sec"]=0;
+    $GLOBALS["lastfiles"]=0;
+    $GLOBALS["next10sec"] = time() + (int)10;
+    
+    echo "Do Root: ".$p."\n";
+    
+    $GLOBALS["totalfiles"]=intval(shell_exec('find "'.$p.'" -iname "*.mp3" | wc -l'));
+    
+    $sPath = $p.'/*.mp3';
+    foreach (glob($sPath) AS $mp3)
+    {
+        insertFileInDb(-1,$mp3);
+    }
+    
+    foreach(glob($p.'/*' , GLOB_ONLYDIR) AS $dir) {
+        doOneFolder(-1,$dir);
+    }
+}
+
 
 function doOneFolder($parentid,$p) {
     echo "Do Folder: ".$p."\n";
@@ -30,7 +74,7 @@ function insertFolderInDb($parentid,$folderpath) {
         $pic = file_get_contents($folderpath."/AlbumArtSmall.jpg");
     } else if(file_exists($folderpath."/Folder.jpg")) {
         $pic = file_get_contents($folderpath."/Folder.jpg");
-    } else
+    }
     
     $stmt = $GLOBALS["db"]->prepare("INSERT INTO folders (parentid,foldername,picture) VALUES(:pid, :fname, :pic)");
     $foldername = basename($folderpath);
@@ -40,13 +84,20 @@ function insertFolderInDb($parentid,$folderpath) {
     return intval($GLOBALS["db"]->lastInsertID());
 }
 
+function myStrEscape($str) {
+    $str = str_replace('\\','\\\\',$str);
+    $str = str_replace("$","\\$",$str);
+    $str = str_replace('"','\\"',$str);
+    return $str;
+}
+
 //returns fileid
 function insertFileInDb($foldernum,$p) {
     global $getID3;
-    $size = filesize($p);
-    $year =     shell_exec('mp3info -p "%y" "'.$p.'"');
-    $length =   shell_exec('mp3info -p "%S" "'.$p.'"');
+    $size = filesize($p);    
+    $length =   shell_exec('mp3info -p "%S" "'.myStrEscape($p).'"');
     $ThisFileInfo = $getID3->analyze($p);
+    $year =     isset($ThisFileInfo['tags']['id3v2']['year'][0]) ? $ThisFileInfo['tags']['id3v2']['year'][0] : "";
     $artist =   isset($ThisFileInfo['tags']['id3v2']['artist'][0]) ? $ThisFileInfo['tags']['id3v2']['artist'][0] : "";
     $title =    isset($ThisFileInfo['tags']['id3v2']['title'][0] ) ? $ThisFileInfo['tags']['id3v2']['title'][0]  : "";
     $album =    isset($ThisFileInfo['tags']['id3v2']['album'][0] ) ? $ThisFileInfo['tags']['id3v2']['album'][0]  : "";
@@ -70,6 +121,9 @@ function insertFileInDb($foldernum,$p) {
         print_r($stmt->errorInfo());
         die("insertFileInDb. Error");
     }
+    $GLOBALS["files"]++;
+    printProgress();
+    
     return intval($GLOBALS["db"]->lastInsertID());
 }
 
