@@ -11,13 +11,13 @@ function doError($e) {
     die();
 }
 
-//todo push based implementation possible?
 //todo on state!=play: play first highscore item, if empty from defined playlist
 //todo on no next song in playlist: add first highscore item(that is not currently playing && not next song in playlist), if empty from defined playlist
-function daemonCall() {
-    $state = getMpdValue("status","state");
-    $file = getMpdValue("currentsong","file");
+//todo add Tasker Job 5seconds before song ends to set next song
+function daemonCallInit() {
+    getMpdCurrentSong(); //state
     getNextsongInHighscore();
+    getMpdNextSong();
 }
 
 function getFilepathForFileid($id) {
@@ -85,7 +85,6 @@ function getMpdCurrentSong() {
     $state = getMpdValue("status","state");
     $time = getMpdValue("status","time");
     if($time!==false) $time = explode(":",getMpdValue("status","time"))[0];
-    
     return array("state"=>$state,"time"=>$time,"fileinfos"=>$fileinfos);
 }
 
@@ -103,7 +102,6 @@ function getFileinfosforfilepath($path) {
     
     $pic=false;
     if($curDir!=-1 && isset($row->picture)) {
-        //$pic = base64_encode($row->picture);
         $pic = true;
     }
     
@@ -136,6 +134,7 @@ function doShowhighscore() {
 }
 
 //todo nur zählen, wenn vote nicht vor einem Eintrag in playlog ist.
+//todo doShowhighscore()[0]
 function getNextsongInHighscore() {
     $stmt = $GLOBALS["db"]->prepare("SELECT files.*,COUNT(*) as anzahl FROM votes INNER JOIN files on files.id=votes.fileid GROUP BY votes.fileid ORDER BY anzahl DESC LIMIT 1");
     if($stmt->execute()) {
@@ -145,7 +144,6 @@ function getNextsongInHighscore() {
     } else return null;
 }
 
-//add boolean if user voted for song already (after last entry in playlog)
 function doSearch($keyword) {
     $stmt = $GLOBALS["db"]->prepare("SELECT * FROM files WHERE filename LIKE :d OR artist LIKE :d OR title LIKE :d OR album LIKE :d");
     $tmp = array();
@@ -153,11 +151,41 @@ function doSearch($keyword) {
         while ($row = $stmt->fetchObject()) {
             $tmp[] = $row;
         }
+        
+        //todo implement boolean $tmp[$i]->alreadyVoted in mysql query
+        for($i=0;$i<count($tmp);$i++) {
+            $stmt = $GLOBALS["db"]->prepare("SELECT date FROM votes WHERE fileid =:fid AND ip=:ip ORDER BY date DESC LIMIT 1");
+            $dateLastVote=null;
+            if($stmt->execute(array(":fid" => $tmp[$i]->id,":ip" => $_SERVER['REMOTE_ADDR']))) {
+                if ($row = $stmt->fetchObject()) {
+                    $dateLastVote = $row->date;
+                }
+            }
+            
+            $stmt = $GLOBALS["db"]->prepare("SELECT date FROM playlog WHERE fileid =:fid ORDER BY date DESC LIMIT 1");
+            $dateLastPlay=null;
+            if($stmt->execute(array(":fid" => $tmp[$i]->id))) {
+                if ($row = $stmt->fetchObject()) {
+                    $dateLastPlay = $row->date;
+                }
+            }
+            
+            if($dateLastVote===null && $dateLastPlay===null) {
+                $tmp[$i]->alreadyVoted = false;
+            } elseif($dateLastVote===null && $dateLastPlay!==null) {
+                $tmp[$i]->alreadyVoted = false;
+            } elseif($dateLastVote!==null && $dateLastPlay===null) {
+                $tmp[$i]->alreadyVoted = true;
+            } elseif($dateLastVote!==null && $dateLastPlay!==null) {
+                $tmp[$i]->alreadyVoted = ($dateLastVote>$dateLastPlay);
+            }
+        }
+        
         return $tmp;
     } else doError("Search db query failed");
 }
 
-//only after last playlog
+//todo only after last playlog
 function doGetmyvotes() {
     $stmt = $GLOBALS["db"]->prepare("SELECT votes.date,files.* FROM votes INNER JOIN files on files.id=votes.fileid WHERE votes.ip=:ip ORDER BY date DESC");
     $tmp = array();

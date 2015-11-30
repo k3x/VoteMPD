@@ -16,14 +16,14 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * MPD queue is filled with highest voted songs
 
 ## Install
-sudo apt-get install mp3info php5 mpd
-php shell exec has to be eneabled
-configure /etc/mpd.conf
-sudo service mpd restart
-sudo apt-get install gmpc
-run gmpc, connect to mpd, do Server -> Update MPD Database
-Install mysql server and configure "settings.php". Also enter the same "path" like you configured for mpd.
-run "php start.php"
+* sudo apt-get install mp3info php5 mpd
+* php shell exec has to be eneabled
+* configure /etc/mpd.conf
+* sudo service mpd restart
+* sudo apt-get install gmpc
+* run gmpc, connect to mpd, do Server -> Update MPD Database
+* Install mysql server and configure "settings.php". Also enter the same "path" like you configured for mpd.
+* run "php start.php"
 
 
 ## Todos
@@ -35,6 +35,7 @@ run "php start.php"
 * Play on vote when queue is empty
 * Default queue when no user is voting
 * Maybe do not scan filesystem. Instead Get Music Database from MPD. Advantage: no need to run on the same server
+* Upload File
 
 ## License
 

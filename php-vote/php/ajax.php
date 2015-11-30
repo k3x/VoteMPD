@@ -59,12 +59,9 @@ switch($_GET["action"]) {
         $folder = getFolder($_GET["id"]);
         header('Content-type:image/png');
         echo $folder->picture;
-    
         break;
     default: doError("No valid action specified");
-
 }
-
 
 ?>
 

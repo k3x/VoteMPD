@@ -6,7 +6,20 @@ $(function() {
     getNext();
     getHigh();
     getMy();
+    
+    setInterval(function(){ intervalSlow(); }, 30000);
+    setInterval(function(){ intervalFast(); }, 5000);
 });
+
+function intervalSlow() {
+    getHigh();
+    getMy();
+}
+
+function intervalFast() {
+    getCurrent();
+    getNext();
+}
 
 //from http://stackoverflow.com/questions/15900485/correct-way-to-convert-size-in-bytes-to-kb-mb-gb-in-javascript
 function formatBytes(bytes) {
@@ -31,6 +44,10 @@ function formatLength(length) {
     }
 }
 
+function formatDate(date) {
+    return date.substring(11,16)+" Uhr";
+}
+
 function getCurrent() {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -42,9 +59,7 @@ function getCurrent() {
             if(antwort.status!="success" || antwort.action!="mpdcurrent") {
                 content="Es trat ein Fehler auf!";
             } else {
-                if(antwort.content.state=="stop") {
-                    content='<div id="state">'+stateToChar("stop")+'</div>';
-                } else {
+                if(antwort.content.state!="stop") {
                     if(antwort.content.fileinfos==null) {
                         content="Error";
                     } else {
@@ -102,11 +117,11 @@ function doVote(id) {
             var antwort = JSON.parse(xhttp.responseText);
             var content = "";
             if(antwort.status!="success" || antwort.action!="vote") {
-                content="Es trat ein Fehler auf!";
+                alert("Es trat ein Fehler auf!");
             } else {
-                content="Erfolg!";
+                doSearch();
+                getMy();
             }
-            alert(content);
         }
     }
     var str = ajaxpath+"?action=vote&id="+id;
@@ -114,7 +129,6 @@ function doVote(id) {
     xhttp.send();
 }
 
-//todo date format
 function getMy() {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -131,7 +145,7 @@ function getMy() {
                     
                     for (index = 0; index < antwort.content.length; index++) {
                         entry = antwort.content[index];
-                        content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+entry.date+")</li>";
+                        content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+formatDate(entry.date)+")</li>";
                     }
                     content+="</ol>";
                 }
@@ -144,7 +158,6 @@ function getMy() {
     xhttp.send();
 }
 
-//todo img src if already voted. No onclick in this case
 function doSearch() {
     var text = $("#search-text").val();
 
@@ -152,7 +165,6 @@ function doSearch() {
         if(status=="success") {
             var antwort = JSON.parse(result);
             var content = "";
-            
             
             if(antwort.status!="success" || antwort.action!="search") {
                 content="Es trat ein Fehler auf!";
@@ -162,7 +174,13 @@ function doSearch() {
                 } else {                    
                     for (index = 0; index < antwort.content.length; index++) {
                         entry = antwort.content[index];
-                        content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+') <img src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+entry.id+');"></li>';
+                        content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+') ';
+                        if(entry.alreadyVoted) {
+                            content+='<img src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                        } else {
+                            content+='<img src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+entry.id+');"></li>';
+                        }
+                        
                     }
                 }
             }

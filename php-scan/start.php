@@ -22,12 +22,18 @@ function doOneFolder($parentid,$p) {
     }
 }
 
+
 //returns folderid
+//todo case insensetive jpg
 function insertFolderInDb($parentid,$folderpath) {
     $pic = null;
     if(file_exists($folderpath."/cover.jpg")) {
         $pic = file_get_contents($folderpath."/cover.jpg");
-    }
+    } else if(file_exists($folderpath."/AlbumArtSmall.jpg")) {
+        $pic = file_get_contents($folderpath."/AlbumArtSmall.jpg");
+    } else if(file_exists($folderpath."/Folder.jpg")) {
+        $pic = file_get_contents($folderpath."/Folder.jpg");
+    } else
     
     $stmt = $GLOBALS["db"]->prepare("INSERT INTO folders (parentid,foldername,picture) VALUES(:pid, :fname, :pic)");
     $foldername = basename($folderpath);
