@@ -11,13 +11,39 @@ function doError($e) {
     die();
 }
 
-//todo on state!=play: play first highscore item, if empty from defined playlist
-//todo on no next song in playlist: add first highscore item(that is not currently playing && not next song in playlist), if empty from defined playlist
-//todo add Tasker Job 5seconds before song ends to set next song
 function daemonCallInit() {
-    getMpdCurrentSong(); //state
-    getNextsongInHighscore();
-    getMpdNextSong();
+    $mpd = new MPD();
+    $mpd->cmd("stop");
+    $mpd->cmd("clear");
+    addOneFileToMpdQueue(true);
+}
+
+function addOneFileToMpdQueue($first=false) {
+    $mpd = new MPD();
+    $hn = getNextsongInHighscore();
+    
+    if($hn!==null) { //todo get song from static playlist
+        $path = getFilepathForFileid($hn->id);
+        $mpd->cmd('add "'.$path.'"');
+        $state = getMpdValue("status","state");
+        if($state != "play") {
+            $mpd->cmd("play");
+        }
+        if($first) {
+            $timeToAction = intval($hn->length)-4;
+        } else {
+            $timeTotal = getMpdValue("currentsong","Time");
+            $timeCurrent = getMpdCurrentTime();
+            $timeToAction = intval($hn->length)+(intval($timeTotal)-intval($timeCurrent))-4;
+        }
+        Tasker::add($timeToAction,'addOneFileToMpdQueue',array());
+        
+        $stmt = $GLOBALS["db"]->prepare("UPDATE votes set played=1 WHERE fileid=:fileid");
+        if(!$stmt->execute(array(":fileid" => $hn->id))) {
+            //todo logerror
+            echo "error";
+        }
+    }
 }
 
 function getFilepathForFileid($id) {
@@ -54,7 +80,6 @@ function getFile($id) {
     } else doError("getFile db query failed");
 }
 
-//calls function and returns first item value or null
 function getMpdValue($function,$item) {
     $mpd = new MPD();
     $r = $mpd->cmd($function);
@@ -73,9 +98,11 @@ function getMpdValue($function,$item) {
     }
 }
 
-//todo
-function getMpdNextSong() {
-    
+function getMpdCurrentTime() {
+    $time = false;
+    $time = getMpdValue("status","time");
+    if($time!==false) $time = explode(":",getMpdValue("status","time"))[0];
+    return $time;
 }
 
 function getMpdCurrentSong() {
@@ -83,9 +110,7 @@ function getMpdCurrentSong() {
     if($path===false) $fileinfos = false;
     else $fileinfos = getFileinfosforfilepath($path);
     $state = getMpdValue("status","state");
-    $time = getMpdValue("status","time");
-    if($time!==false) $time = explode(":",getMpdValue("status","time"))[0];
-    return array("state"=>$state,"time"=>$time,"fileinfos"=>$fileinfos);
+    return array("state"=>$state,"time"=>getMpdCurrentTime(),"fileinfos"=>$fileinfos);
 }
 
 //todo ohne "musik/" (in php-scan)
@@ -114,16 +139,27 @@ function getFileinfosforfilepath($path) {
     return false;
 }
 
-//todo only if not already voted
 function doVote($ip,$id) {
-    $stmt = $GLOBALS["db"]->prepare("INSERT INTO votes (fileid,ip,date) VALUES (:fid,:ip,NOW())");
-    return ($stmt->execute(array(":fid" => $id,":ip"=>$ip)));
+    $stmt = $GLOBALS["db"]->prepare("SELECT votes.date,files.* FROM votes INNER JOIN files on files.id=votes.fileid WHERE votes.ip=:ip AND votes.played=0 AND votes.fileid=:fileid");
+    $tmp = array();
+    $exists = false;
+    if($stmt->execute(array(":ip" => $ip,":fileid" => $id))) {
+        if ($row = $stmt->fetchObject()) {
+            $exists = true;
+        }
+    } else doError("Getmyvotes db query failed");
+    
+    if($exists) {
+        return false;
+    } else {
+        $stmt = $GLOBALS["db"]->prepare("INSERT INTO votes (fileid,ip,date) VALUES (:fid,:ip,NOW())");
+        return ($stmt->execute(array(":fid" => $id,":ip"=>$ip)));
+    }
 }
 
-//todo nur zählen, wenn vote nicht vor einem Eintrag in playlog ist.
-//order +by oldest vote ^
+//todo order +by oldest vote ^
 function doShowhighscore() {
-    $stmt = $GLOBALS["db"]->prepare("SELECT files.*,COUNT(*) as anzahl FROM votes INNER JOIN files on files.id=votes.fileid GROUP BY votes.fileid ORDER BY anzahl DESC");
+    $stmt = $GLOBALS["db"]->prepare("SELECT files.*,COUNT(*) as anzahl FROM votes INNER JOIN files on files.id=votes.fileid WHERE votes.played=0 GROUP BY votes.fileid ORDER BY anzahl DESC, votes.fileid");
     $tmp = array();
     if($stmt->execute()) {
         while ($row = $stmt->fetchObject()) {
@@ -133,15 +169,12 @@ function doShowhighscore() {
     } else doError("Highscore db query failed");
 }
 
-//todo nur zählen, wenn vote nicht vor einem Eintrag in playlog ist.
-//todo doShowhighscore()[0]
+
+
 function getNextsongInHighscore() {
-    $stmt = $GLOBALS["db"]->prepare("SELECT files.*,COUNT(*) as anzahl FROM votes INNER JOIN files on files.id=votes.fileid GROUP BY votes.fileid ORDER BY anzahl DESC LIMIT 1");
-    if($stmt->execute()) {
-        if ($row = $stmt->fetchObject()) {
-            return $row;
-        }
-    } else return null;
+    $tmp = doShowhighscore();
+    if($tmp===false || $tmp===null || count($tmp)==0) return null;
+    return $tmp[0];
 }
 
 function doSearch($keyword) {
@@ -185,9 +218,8 @@ function doSearch($keyword) {
     } else doError("Search db query failed");
 }
 
-//todo only after last playlog
 function doGetmyvotes() {
-    $stmt = $GLOBALS["db"]->prepare("SELECT votes.date,files.* FROM votes INNER JOIN files on files.id=votes.fileid WHERE votes.ip=:ip ORDER BY date DESC");
+    $stmt = $GLOBALS["db"]->prepare("SELECT votes.date,files.* FROM votes INNER JOIN files on files.id=votes.fileid WHERE votes.ip=:ip AND votes.played=0 ORDER BY date DESC");
     $tmp = array();
     if($stmt->execute(array(":ip" => $_SERVER['REMOTE_ADDR']))) {
         while ($row = $stmt->fetchObject()) {

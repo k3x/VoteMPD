@@ -18,7 +18,6 @@ class Tasker {
                 unset(self::$jobs[$key]);
             }
         }
-        echo "WORK DONE\n";
     }
 }
 ?>

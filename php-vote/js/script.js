@@ -1,4 +1,5 @@
 var ajaxpath = window.location.href+"php/ajax.php";
+var lastcurrentid = null;
 
 $(function() {
     $( "#auswahl" ).accordion({active: 1,heightStyle: "content",collapsible: true});
@@ -8,17 +9,17 @@ $(function() {
     getMy();
     
     setInterval(function(){ intervalSlow(); }, 30000);
-    setInterval(function(){ intervalFast(); }, 5000);
+    setInterval(function(){ intervalFast(); }, 2000);
 });
 
 function intervalSlow() {
+    getNext();
     getHigh();
     getMy();
 }
 
 function intervalFast() {
     getCurrent();
-    getNext();
 }
 
 //from http://stackoverflow.com/questions/15900485/correct-way-to-convert-size-in-bytes-to-kb-mb-gb-in-javascript
@@ -58,15 +59,21 @@ function getCurrent() {
             var picture = null;
             if(antwort.status!="success" || antwort.action!="mpdcurrent") {
                 content="Es trat ein Fehler auf!";
+                lastcurrentid = null;
             } else {
                 if(antwort.content.state!="stop") {
                     if(antwort.content.fileinfos==null) {
                         content="Error";
+                        lastcurrentid = null;
                     } else {
                         content=    antwort.content.fileinfos.artist+" - "+
                                     antwort.content.fileinfos.title;
                         percent = 100*antwort.content.time/antwort.content.fileinfos.length;
                         picture = antwort.content.fileinfos.picture;
+                        if(lastcurrentid!=antwort.content.fileinfos.id) {
+                            intervalSlow();
+                        }
+                        lastcurrentid = antwort.content.fileinfos.id;
                     }
                 }
             }
@@ -121,6 +128,7 @@ function doVote(id) {
             } else {
                 doSearch();
                 getMy();
+                getHigh();
             }
         }
     }

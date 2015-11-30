@@ -4,8 +4,6 @@ require_once('getid3/getid3.php');
 $getID3 = new getID3;
 doOneFolder(-1,$GLOBALS["path"]);
 
-//todo Dollarzeichen im Namen zB /media/raid1tb/musik/1_a_Unsortiert/TEST/
-
 function doOneFolder($parentid,$p) {
     echo "Do Folder: ".$p."\n";
 
@@ -24,7 +22,6 @@ function doOneFolder($parentid,$p) {
 
 
 //returns folderid
-//todo case insensetive jpg
 function insertFolderInDb($parentid,$folderpath) {
     $pic = null;
     if(file_exists($folderpath."/cover.jpg")) {

@@ -1,10 +1,8 @@
 # MPDVote
 
-Author: Felix Sterzelmaier
-
-Version 0.1
-
-Date: 28. November 2015
+* Author: Felix Sterzelmaier
+* Version 0.1
+* Date: 28. November 2015
 
 MPDVote allows your party guests to fill the queue of your MusicPlayerDaemon.
 Just run this Script on a server and make it availiable over wifi. See also: http://getfestify.com
@@ -36,6 +34,9 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * Default queue when no user is voting
 * Maybe do not scan filesystem. Instead Get Music Database from MPD. Advantage: no need to run on the same server
 * Upload File
+* SCAN Dollarzeichen im Namen zB /media/raid1tb/musik/1_a_Unsortiert/TEST/
+* SCAN case insensetive jpg
+* Table Votes new field "already played"
 
 ## License
 
