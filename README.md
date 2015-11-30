@@ -1,12 +1,11 @@
-# MPDVote
+# VoteMPD
 
 * Author: Felix Sterzelmaier
-* Version 0.1
-* Date: 28. November 2015
+* Version 0.2
+* Date: 30. November 2015
 
-MPDVote allows your party guests to fill the queue of your MusicPlayerDaemon.
+VoteMPD allows your party guests to fill the queue of your MusicPlayerDaemon.
 Just run this Script on a server and make it availiable over wifi. See also: http://getfestify.com
-
 
 ## Features
 * Scan Filesystem and fill id3 information into database
@@ -32,7 +31,11 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * Maybe do not scan filesystem. Instead Get Music Database from MPD. Advantage: no need to run on the same server
 * Upload File
 * SCAN case insensetive jpg
-* SCAN files/totalfiles, %, files per sec, remaining time
+* do daemon process forking
+* doShowhighscore(): order +by oldest vote ^
+* dosearch(): implement boolean $tmp[$i]->alreadyVoted in mysql query
+* addOneFileToMPDQueue(): get song from static playlist if($hn===null)
+* script.js getCurrent() seltener aufrufen und Fortschrittsbalken in js interpolieren
 
 ## License
 

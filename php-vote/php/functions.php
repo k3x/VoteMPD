@@ -22,7 +22,7 @@ function addOneFileToMpdQueue($first=false) {
     $mpd = new MPD();
     $hn = getNextsongInHighscore();
     
-    if($hn!==null) { //todo get song from static playlist
+    if($hn!==null) {
         $path = getFilepathForFileid($hn->id);
         $mpd->cmd('add "'.$path.'"');
         $state = getMpdValue("status","state");
@@ -40,7 +40,6 @@ function addOneFileToMpdQueue($first=false) {
         
         $stmt = $GLOBALS["db"]->prepare("UPDATE votes set played=1 WHERE fileid=:fileid");
         if(!$stmt->execute(array(":fileid" => $hn->id))) {
-            //todo logerror
             echo "error";
         }
     }
@@ -54,7 +53,7 @@ function getFilepathForFileid($id) {
     while($currentfolder!=-1) {
         $folder = getFolder($currentfolder);
         $currentfolder = $folder -> parentid;
-        if($currentfolder!=-1) $folders[] = $folder -> foldername;
+        $folders[] = $folder -> foldername;
     }
     $path = "";
     if(count($folders)>0) {
@@ -156,7 +155,6 @@ function doVote($ip,$id) {
     }
 }
 
-//todo order +by oldest vote ^
 function doShowhighscore() {
     $stmt = $GLOBALS["db"]->prepare("SELECT files.*,COUNT(*) as anzahl FROM votes INNER JOIN files on files.id=votes.fileid WHERE votes.played=0 GROUP BY votes.fileid ORDER BY anzahl DESC, votes.fileid");
     $tmp = array();
@@ -184,7 +182,6 @@ function doSearch($keyword) {
             $tmp[] = $row;
         }
         
-        //todo implement boolean $tmp[$i]->alreadyVoted in mysql query
         for($i=0;$i<count($tmp);$i++) {
             $stmt = $GLOBALS["db"]->prepare("SELECT date FROM votes WHERE fileid =:fid AND ip=:ip ORDER BY date DESC LIMIT 1");
             $dateLastVote=null;

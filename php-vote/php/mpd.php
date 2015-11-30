@@ -41,7 +41,7 @@ class MPD {
         fclose($this->link);
     }
     
-    function cmd($cmd) {
+    function cmd($cmd) { 
         $this->open();
         $q = "";
         if (is_array($cmd)) {
@@ -55,7 +55,7 @@ class MPD {
         while (!feof($this->link)) {
             $buf = fgets($this->link,8192);
             
-            if (substr($buf,0,2) == "OK") {
+            if (substr($buf,0,2) == "OK" || substr($buf,0,3) == "ACK") {
                  break;
             } else {
                 $result .= $buf;
