@@ -24,18 +24,20 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * Let your Apache "/" point to the folder "php-vote" (the folder with css,gfx,js,php,index.html)
 * in console run php daemon.php
 
+* DATABASE IMPORT BLANC
+* AUTOSTART DAEMON
+
 ## Todos
-* Browse songs by folder,artist,album,interpret
+* Browse songs by folder,artist,album,interpret,playlist
 * Implement as Androidapp, so you only need a Tablet/2nd Smartphone instead of Notebook/RaspberryPi
-* Default queue when no user is voting
 * Maybe do not scan filesystem. Instead Get Music Database from MPD. Advantage: no need to run on the same server
 * Upload File
 * SCAN case insensetive jpg
 * do daemon process forking
 * doShowhighscore(): order +by oldest vote ^
-* dosearch(): implement boolean $tmp[$i]->alreadyVoted in mysql query
-* addOneFileToMPDQueue(): get song from static playlist if($hn===null)
-* script.js getCurrent() seltener aufrufen und Fortschrittsbalken in js interpolieren
+* addOneFileToMPDQueue(): get song from static playlist if($hn===null) / Default queue when no user is voting
+* volume on hotkeys
+* laptop mpd volume
 
 ## License
 
