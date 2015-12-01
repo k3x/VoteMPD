@@ -38,6 +38,7 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * addOneFileToMPDQueue(): get song from static playlist if($hn===null) / Default queue when no user is voting
 * volume on hotkeys
 * laptop mpd volume
+* js progressbar interpolate
 
 ## License
 
