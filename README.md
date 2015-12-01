@@ -13,32 +13,58 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * MPD queue is filled with highest voted songs
 
 ## Install
-* sudo apt-get install php5 php5-cli php5-json php5-mysql apache2 mysql-server mpd mp3info
+
+### Base
+* sudo apt-get install php5 php5-cli php5-json php5-mysql apache2 mysql-server mpd alsa-base
 * php shell exec has to be eneabled
-* configure /etc/mpd.conf
+* configure /etc/mpd.conf (music library and audio autput)
 * sudo service mpd restart
 * sudo apt-get install gmpc
 * run gmpc, connect to mpd, do Server -> Update MPD Database
-* Install mysql server and configure "settings.php". Also enter the same "path" like you configured for mpd.
-* run "php start.php"
+* Install mysql server, create new database and configure "settings.php". Enter your mpd connection infos and also enter the same "path" like you configured for mpd.
+* import dist/mpdvote.sql in the created mysql database.
+* run "php start.php" in php-scan/
 * Let your Apache "/" point to the folder "php-vote" (the folder with css,gfx,js,php,index.html)
 * in console run php daemon.php
 
-* DATABASE IMPORT BLANC
-* AUTOSTART DAEMON
+### Further information / find errors
+* if you configured mpd to use alsa and you can not hear music check "alsamixer". Also check that no channel is muted.
+* ncmpc is a commandline mpd client
+
+### Autostart
+* if you want to the daemon to start on every reboot maybe the systemd script dist/votempd.service will help you.
+* sudo nano /etc/systemd/system/votempd.service
+* sudo systemctl daemon-reload
+* sudo systemctl start votempd.service
+* systemctl status votempd.service
+
+### create WIFI Hotspot (Accesspoint/AP/Master Mode)
+* sudo apt-get install hostapd
+* sudo nano /etc/hostapd/hostapd.conf     (see dist/etc-hostapd-hostapd.conf)
+* sudo nano /etc/default/hostapd    =>    DAEMON_CONF="/etc/hostapd/hostapd.conf"
+
+### network, DNS and DHCP
+* configure your wifi connection to a static ip. (see dist(etc-network-interfaces)
+* sudo apt-get install dnsmasq
+* sudo nano /etc/dnsmasq.conf   (dhcp-range,listen-address,interface,address) (see dist/dnsmasq.conf)
+* sudo service dnsmasq restart
 
 ## Todos
+### 1. Priority
 * Browse songs by folder,artist,album,interpret,playlist
+* doShowhighscore(): order +by oldest vote ^
+* laptop mpd volume
+
+### 2. Priority
+* addOneFileToMPDQueue(): get song from static playlist if($hn===null) / Default queue when no user is voting
+* SCAN case insensetive jpg
+* volume on hotkeys
+* js progressbar interpolate
+
+### 3. Priority
 * Implement as Androidapp, so you only need a Tablet/2nd Smartphone instead of Notebook/RaspberryPi
 * Maybe do not scan filesystem. Instead Get Music Database from MPD. Advantage: no need to run on the same server
 * Upload File
-* SCAN case insensetive jpg
-* do daemon process forking
-* doShowhighscore(): order +by oldest vote ^
-* addOneFileToMPDQueue(): get song from static playlist if($hn===null) / Default queue when no user is voting
-* volume on hotkeys
-* laptop mpd volume
-* js progressbar interpolate
 
 ## License
 
