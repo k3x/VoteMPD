@@ -42,6 +42,8 @@ function addOneFileToMpdQueue($first=false) {
         if(!$stmt->execute(array(":fileid" => $hn->id))) {
             echo "error";
         }
+    } else {
+        Tasker::add(5,'daemonCallInit',array());
     }
 }
 

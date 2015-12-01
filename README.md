@@ -13,7 +13,7 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * MPD queue is filled with highest voted songs
 
 ## Install
-* sudo apt-get install mp3info php5 mpd
+* sudo apt-get install php5 php5-cli php5-json php5-mysql apache2 mysql-server mpd mp3info
 * php shell exec has to be eneabled
 * configure /etc/mpd.conf
 * sudo service mpd restart
