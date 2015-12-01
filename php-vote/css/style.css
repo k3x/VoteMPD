@@ -1,3 +1,15 @@
+/* HEAD */
+
+div#banner {
+	background-image: url(../gfx/logo_64.png);
+	background-position: 5px center;
+	background-repeat: no-repeat;
+	padding-left: 74px;
+	height: 64px;
+	line-height: 64px;
+	font-size: 30px;
+}
+
 div#head {
 	height: 60px;
 	padding: 0px;
@@ -13,35 +25,7 @@ div#innerhead {
 	overflow: hidden;
 }
 
-div#next {
-
-}
-
-body {
-
-}
-
-div#browse-folders li.folder {
-	cursor: pointer;
-}
-
-div#browse-folders li.folder {
-	color: #a50;
-}
-
-div#browse-folders li.file {
-	color: blue;
-}
-
-div#search > ul > li > img, div#browse-folders img.votecircle {
-	height: 22px;
-	vertical-align: middle;
-}
-
-div#search > ul > li {
-	line-height: 22px;
-}
-
+/* accordion */
 div#auswahl > div > ol {
 	padding: 0px;
 	margin:0px;
@@ -54,13 +38,40 @@ div#auswahl > div > ul {
 	padding-left: 1em;
 }
 
-div#banner {
-	background-image: url(../gfx/logo_64.png);
-	background-position: 5px center;
-	background-repeat: no-repeat;
-	padding-left: 74px;
-	height: 64px;
-	line-height: 64px;
-	font-size: 30px;
+/* votecircle */
+div#search > ul > li > img, div#browse-folders img.votecircle, div#browse-artists img.votecircle, div#browse-albums img.votecircle {
+	height: 22px;
+	vertical-align: middle;
+	cursor: pointer;
 }
+
+
+/* browse-x */
+div#browse-folders li.file {
+	color: blue;
+}
+
+div#browse-folders li.goup, div#browse-artists li.goup, div#browse-albums li.goup {
+	color: red;
+	cursor: pointer;
+}
+
+div#browse-folders span.current, div#browse-artists span.current, div#browse-albums span.current {
+	color: green;
+	cursor: pointer;
+}
+
+div#browse-folders li.folder, div#browse-artists li.artist, div#browse-albums li.album {
+	cursor: pointer;
+	color: #a50;
+}
+
+/* search */
+div#search > ul > li {
+	line-height: 22px;
+}
+
+
+
+
 

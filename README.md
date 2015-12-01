@@ -51,8 +51,9 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 
 ## Todos
 ### 1. Priority
-* Browse songs by artist,album,title,playlist (playlist has to be scanned first)
-* Browse by Folder: mark on vote, marked on already voted
+* Scan plalists
+* Browse songs by playlist
+* do not load so much ajax. only on demand.
 * doShowhighscore(): order +by oldest vote ^
 * laptop mpd volume
 * spinner.gif on ajax load

@@ -47,6 +47,114 @@ function addOneFileToMpdQueue($first=false) {
     }
 }
 
+function getBrowseAlbum($name) {
+    if($name=="ROOT") {
+        $artists = array();
+        $stmt = $GLOBALS["db"]->prepare("SELECT album FROM files WHERE album!='' AND album!=' ' GROUP BY album");
+        if($stmt->execute(array(":name" => $name))) {
+            while ($row = $stmt->fetchObject()) {
+                $subFiles[] = $row;
+            }
+    
+        } else doError("getBrowseAlbum (getAlbum) db query failed");
+        return ["name"=>$name,"albums"=>$subFiles];
+    }
+
+    $subFiles = array();
+    
+    $stmt = $GLOBALS["db"]->prepare("SELECT id,filename,artist,title,length,size FROM files WHERE album=:name");
+    if($stmt->execute(array(":name" => $name))) {
+        while ($row = $stmt->fetchObject()) {
+            $subFiles[] = $row;
+        }
+        
+        for($i=0;$i<count($subFiles);$i++) {
+            $stmt = $GLOBALS["db"]->prepare("SELECT date FROM votes WHERE fileid =:fid AND ip=:ip ORDER BY date DESC LIMIT 1");
+            $dateLastVote=null;
+            if($stmt->execute(array(":fid" => $subFiles[$i]->id,":ip" => $_SERVER['REMOTE_ADDR']))) {
+                if ($row = $stmt->fetchObject()) {
+                    $dateLastVote = $row->date;
+                }
+            }
+            
+            $stmt = $GLOBALS["db"]->prepare("SELECT date FROM playlog WHERE fileid =:fid ORDER BY date DESC LIMIT 1");
+            $dateLastPlay=null;
+            if($stmt->execute(array(":fid" => $subFiles[$i]->id))) {
+                if ($row = $stmt->fetchObject()) {
+                    $dateLastPlay = $row->date;
+                }
+            }
+            
+            if($dateLastVote===null && $dateLastPlay===null) {
+                $subFiles[$i]->alreadyVoted = false;
+            } elseif($dateLastVote===null && $dateLastPlay!==null) {
+                $subFiles[$i]->alreadyVoted = false;
+            } elseif($dateLastVote!==null && $dateLastPlay===null) {
+                $subFiles[$i]->alreadyVoted = true;
+            } elseif($dateLastVote!==null && $dateLastPlay!==null) {
+                $subFiles[$i]->alreadyVoted = ($dateLastVote>$dateLastPlay);
+            }
+        }
+        
+    } else doError("getBrowseAlbum (getSubFiles) db query failed");
+    return ["name"=>$name,"files"=>$subFiles];
+}
+
+
+function getBrowseArtist($name) {
+    
+    if($name=="ROOT") {
+        $artists = array();
+        $stmt = $GLOBALS["db"]->prepare("SELECT artist FROM files WHERE artist!='' AND artist!=' ' GROUP BY artist");
+        if($stmt->execute(array(":name" => $name))) {
+            while ($row = $stmt->fetchObject()) {
+                $subFiles[] = $row;
+            }
+    
+        } else doError("getBrowseArtist (getArtists) db query failed");
+        return ["name"=>$name,"artists"=>$subFiles];
+    }
+
+    $subFiles = array();
+    
+    $stmt = $GLOBALS["db"]->prepare("SELECT id,filename,artist,title,length,size FROM files WHERE artist=:name");
+    if($stmt->execute(array(":name" => $name))) {
+        while ($row = $stmt->fetchObject()) {
+            $subFiles[] = $row;
+        }
+        
+        for($i=0;$i<count($subFiles);$i++) {
+            $stmt = $GLOBALS["db"]->prepare("SELECT date FROM votes WHERE fileid =:fid AND ip=:ip ORDER BY date DESC LIMIT 1");
+            $dateLastVote=null;
+            if($stmt->execute(array(":fid" => $subFiles[$i]->id,":ip" => $_SERVER['REMOTE_ADDR']))) {
+                if ($row = $stmt->fetchObject()) {
+                    $dateLastVote = $row->date;
+                }
+            }
+            
+            $stmt = $GLOBALS["db"]->prepare("SELECT date FROM playlog WHERE fileid =:fid ORDER BY date DESC LIMIT 1");
+            $dateLastPlay=null;
+            if($stmt->execute(array(":fid" => $subFiles[$i]->id))) {
+                if ($row = $stmt->fetchObject()) {
+                    $dateLastPlay = $row->date;
+                }
+            }
+            
+            if($dateLastVote===null && $dateLastPlay===null) {
+                $subFiles[$i]->alreadyVoted = false;
+            } elseif($dateLastVote===null && $dateLastPlay!==null) {
+                $subFiles[$i]->alreadyVoted = false;
+            } elseif($dateLastVote!==null && $dateLastPlay===null) {
+                $subFiles[$i]->alreadyVoted = true;
+            } elseif($dateLastVote!==null && $dateLastPlay!==null) {
+                $subFiles[$i]->alreadyVoted = ($dateLastVote>$dateLastPlay);
+            }
+        }
+        
+    } else doError("getBrowseArtist (getSubFiles) db query failed");
+    return ["name"=>$name,"files"=>$subFiles];
+}
+
 function getBrowseFolder($id) {
     if($id==-1) {
         $thisFolder = "ROOT";
@@ -70,6 +178,35 @@ function getBrowseFolder($id) {
         while ($row = $stmt->fetchObject()) {
             $subFiles[] = $row;
         }
+        
+        for($i=0;$i<count($subFiles);$i++) {
+            $stmt = $GLOBALS["db"]->prepare("SELECT date FROM votes WHERE fileid =:fid AND ip=:ip ORDER BY date DESC LIMIT 1");
+            $dateLastVote=null;
+            if($stmt->execute(array(":fid" => $subFiles[$i]->id,":ip" => $_SERVER['REMOTE_ADDR']))) {
+                if ($row = $stmt->fetchObject()) {
+                    $dateLastVote = $row->date;
+                }
+            }
+            
+            $stmt = $GLOBALS["db"]->prepare("SELECT date FROM playlog WHERE fileid =:fid ORDER BY date DESC LIMIT 1");
+            $dateLastPlay=null;
+            if($stmt->execute(array(":fid" => $subFiles[$i]->id))) {
+                if ($row = $stmt->fetchObject()) {
+                    $dateLastPlay = $row->date;
+                }
+            }
+            
+            if($dateLastVote===null && $dateLastPlay===null) {
+                $subFiles[$i]->alreadyVoted = false;
+            } elseif($dateLastVote===null && $dateLastPlay!==null) {
+                $subFiles[$i]->alreadyVoted = false;
+            } elseif($dateLastVote!==null && $dateLastPlay===null) {
+                $subFiles[$i]->alreadyVoted = true;
+            } elseif($dateLastVote!==null && $dateLastPlay!==null) {
+                $subFiles[$i]->alreadyVoted = ($dateLastVote>$dateLastPlay);
+            }
+        }
+        
     } else doError("getBrowseFolder (getSubFiles) db query failed");
     return ["path"=>getFolderpathForFolderid($id),"this"=>$thisFolder,"folders"=>$subFolders,"files"=>$subFiles];
 }

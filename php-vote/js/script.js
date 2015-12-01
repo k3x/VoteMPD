@@ -2,6 +2,9 @@ var ajaxpath = window.location.href+"php/ajax.php";
 var lastcurrent = null;
 var tempposition = null;
 var intervalfast = 500;
+var currentFolder = -1;
+var currentArtist = "ROOT";
+var currentAlbum = "ROOT";
 
 $(function() {
     $( "#auswahl" ).accordion({active: null,heightStyle: "content",collapsible: true});
@@ -17,9 +20,8 @@ $(function() {
     setInterval(function(){ intervalFast(); }, intervalfast);
     
     getFolders();
-    //getArtists();
-    //getAlbums();
-    //getTitles();
+    getArtists();
+    getAlbums();
     //getPlaylists();
 });
 
@@ -41,8 +43,93 @@ function intervalFast() {
     $("#innerhead").css("background","linear-gradient(90deg, rgba(164,164,164,0.7) "+percent+"%, rgba(256,256,256,0.8) "+percent+"%)");
 }
 
+function getAlbums(albumid) {
+    albumid = typeof albumid !== 'undefined' ? albumid : "ROOT";
+    currentAlbum = albumid;
+    $.post(ajaxpath+"?action=browse-albums", {name: albumid}, function(result,status){
+        if(status=="success") {
+            
+            var antwort = JSON.parse(result);
+            var content = "";
+            if(antwort.status!="success" || antwort.action!="browse-albums") {
+                content="Es trat ein Fehler auf!";
+            } else {
+        
+                if(antwort.content.name!="ROOT") content += '<span class="current">'+antwort.content.name+"</span>";
+                content += "<ul>";
+                
+                if(antwort.content.name!="ROOT") {
+                    content += '<li class="goup" onclick="javascript:getAlbums(\'ROOT\');">(root)</li>';
+                }
+                
+                if(antwort.content.name=="ROOT") {
+                    for(var i=0;i<antwort.content.albums.length;i++) {
+                        content += '<li class="album" onclick="javascript:getAlbums(\''+antwort.content.albums[i].album+'\');">'+antwort.content.albums[i].album+"</li>";
+                    }
+                } else {
+                    for(var i=0;i<antwort.content.files.length;i++) {
+                        content += '<li class="file">'+antwort.content.files[i].filename;
+                        
+                        if(antwort.content.files[i].alreadyVoted) {
+                            content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                        } else {
+                            content+=' <img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+antwort.content.files[i].id+');"></li>';
+                        }
+                        content+="</li>";
+                    }
+                }
+                content += "</ul>";
+            }
+            $("#browse-albums").html(content);         
+        }
+    });
+}
+
+function getArtists(artistid) {
+    artistid = typeof artistid !== 'undefined' ? artistid : "ROOT";
+    currentArtist = artistid;
+    $.post(ajaxpath+"?action=browse-artists", {name: artistid}, function(result,status){
+        if(status=="success") {
+            
+            var antwort = JSON.parse(result);
+            var content = "";
+            if(antwort.status!="success" || antwort.action!="browse-artists") {
+                content="Es trat ein Fehler auf!";
+            } else {
+        
+                if(antwort.content.name!="ROOT") content += '<span class="current">'+antwort.content.name+"</span>";
+                content += "<ul>";
+                
+                if(antwort.content.name!="ROOT") {
+                    content += '<li class="goup" onclick="javascript:getArtists(\'ROOT\');">(root)</li>';
+                }
+                
+                if(antwort.content.name=="ROOT") {
+                    for(var i=0;i<antwort.content.artists.length;i++) {
+                        content += '<li class="artist" onclick="javascript:getArtists(\''+antwort.content.artists[i].artist+'\');">'+antwort.content.artists[i].artist+"</li>";
+                    }
+                } else {
+                    for(var i=0;i<antwort.content.files.length;i++) {
+                        content += '<li class="file">'+antwort.content.files[i].filename;
+                        
+                        if(antwort.content.files[i].alreadyVoted) {
+                            content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                        } else {
+                            content+=' <img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+antwort.content.files[i].id+');"></li>';
+                        }
+                        content+="</li>";
+                    }
+                }
+                content += "</ul>";
+            }
+            $("#browse-artists").html(content);         
+        }
+    });
+}
+
 function getFolders(folderid) {
     folderid = typeof folderid !== 'undefined' ? folderid : -1;
+    currentFolder = folderid;
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -51,12 +138,12 @@ function getFolders(folderid) {
             if(antwort.status!="success" || antwort.action!="browse-folders") {
                 content="Es trat ein Fehler auf!";
             } else {
-                content += '<span style="color:green;">'+antwort.content.path+"</span>";
+                content += '<span class="current">'+antwort.content.path+"</span>";
                 content += "<ul>";
                 
                 if(antwort.content.this!="ROOT") {
-                    content += '<li class="folder" style="color:red;" onclick="javascript:getFolders(-1);">(root)</li>';
-                    content += '<li class="folder" style="color:red;" onclick="javascript:getFolders('+antwort.content.this.parentid+');">(..)</li>';
+                    content += '<li class="goup" onclick="javascript:getFolders(-1);">(root)</li>';
+                    content += '<li class="goup" onclick="javascript:getFolders('+antwort.content.this.parentid+');">(..)</li>';
                 }
                 
                 for(var i=0;i<antwort.content.folders.length;i++) {
@@ -65,13 +152,11 @@ function getFolders(folderid) {
                 for(var i=0;i<antwort.content.files.length;i++) {
                     content += '<li class="file">'+antwort.content.files[i].filename;
                     
-                    //if(entry.alreadyVoted) {
-                    //    content+='<img src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
-                    //} else {
-                        content+='<img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+antwort.content.files[i].id+');"></li>';
-                    //}
-                        
-                        
+                    if(antwort.content.files[i].alreadyVoted) {
+                        content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                    } else {
+                        content+=' <img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+antwort.content.files[i].id+');"></li>';
+                    }
                     content+="</li>";
                 }
                 
@@ -194,6 +279,9 @@ function doVote(id) {
                 getNext();
                 getHigh();
                 getMy();
+                getFolders(currentFolder);
+                getArtists(currentArtist);
+                getAlbums(currentAlbum);
             }
         }
     }

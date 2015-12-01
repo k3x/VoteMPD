@@ -67,6 +67,20 @@ switch($_GET["action"]) {
         $r = getBrowseFolder(intval($_GET["id"]));
         doOutput($r,"browse-folders");
         break;
+    case("browse-artists"):
+        if(!isset($_POST["name"])) {
+            doError("No post-name specified");
+        }
+        $r = getBrowseArtist($_POST["name"]);
+        doOutput($r,"browse-artists");
+        break;
+    case("browse-albums"):
+        if(!isset($_POST["name"])) {
+            doError("No post-name specified");
+        }
+        $r = getBrowseAlbum($_POST["name"]);
+        doOutput($r,"browse-albums");
+        break;
     default: doError("No valid action specified");
 }
 
