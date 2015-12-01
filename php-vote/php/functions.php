@@ -47,6 +47,50 @@ function addOneFileToMpdQueue($first=false) {
     }
 }
 
+function getBrowseFolder($id) {
+    if($id==-1) {
+        $thisFolder = "ROOT";
+    } else {
+        $thisFolder = getFolder($id);
+        if($thisFolder===false) doError("getBrowseFolder Folder not found");
+    }
+
+    $subFolders = array();
+    $subFiles = array();
+
+    $stmt = $GLOBALS["db"]->prepare("SELECT id,foldername FROM folders WHERE parentid=:id");
+    if($stmt->execute(array(":id" => $id))) {
+        while ($row = $stmt->fetchObject()) {
+            $subFolders[] = $row;
+        }
+    } else doError("getBrowseFolder (getSubFolders) db query failed");    
+    
+    $stmt = $GLOBALS["db"]->prepare("SELECT id,filename,artist,title,length,size FROM files WHERE folderid=:id");
+    if($stmt->execute(array(":id" => $id))) {
+        while ($row = $stmt->fetchObject()) {
+            $subFiles[] = $row;
+        }
+    } else doError("getBrowseFolder (getSubFiles) db query failed");
+    return ["path"=>getFolderpathForFolderid($id),"this"=>$thisFolder,"folders"=>$subFolders,"files"=>$subFiles];
+}
+
+function getFolderpathForFolderid($id) {
+    $currentfolder = $id;
+    $folders = array();
+    
+    while($currentfolder!=-1) {
+        $folder = getFolder($currentfolder);
+        $currentfolder = $folder -> parentid;
+        $folders[] = $folder -> foldername;
+    }
+    $path = "";
+    if(count($folders)>0) {
+        $folders = array_reverse($folders);
+        $path = implode("/",$folders)."/";
+    }
+    return "/".$path;
+}
+
 function getFilepathForFileid($id) {
     $file = getFile($id);
     $currentfolder = $file -> folderid;
@@ -66,6 +110,14 @@ function getFilepathForFileid($id) {
 }
 
 function getFolder($id) {
+    $stmt = $GLOBALS["db"]->prepare("SELECT id,parentid,foldername FROM folders WHERE id=:id");
+    if($stmt->execute(array(":id" => $id))) {
+        $row = $stmt->fetchObject();
+        return $row;
+    } else doError("getFolder db query failed");
+}
+
+function getFolderPic($id) {
     $stmt = $GLOBALS["db"]->prepare("SELECT * FROM folders WHERE id=:id");
     if($stmt->execute(array(":id" => $id))) {
         $row = $stmt->fetchObject();

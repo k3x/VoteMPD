@@ -51,9 +51,11 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 
 ## Todos
 ### 1. Priority
-* Browse songs by folder,artist,album,interpret,playlist (playlist has to be scanned first)
+* Browse songs by artist,album,title,playlist (playlist has to be scanned first)
+* Browse by Folder: mark on vote, marked on already voted
 * doShowhighscore(): order +by oldest vote ^
 * laptop mpd volume
+* spinner.gif on ajax load
 
 ### 2. Priority
 * addOneFileToMPDQueue(): get song from static playlist if($hn===null) / Default queue when no user is voting

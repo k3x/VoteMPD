@@ -4,7 +4,9 @@ var tempposition = null;
 var intervalfast = 500;
 
 $(function() {
-    $( "#auswahl" ).accordion({active: 1,heightStyle: "content",collapsible: true});
+    $( "#auswahl" ).accordion({active: null,heightStyle: "content",collapsible: true});
+    $("#search-text").val("");
+    
     getCurrent();
     getNext();
     getHigh();
@@ -13,6 +15,12 @@ $(function() {
     setInterval(function(){ intervalSlow(); }, 15000);
     setInterval(function(){ intervalMid(); }, 2000);
     setInterval(function(){ intervalFast(); }, intervalfast);
+    
+    getFolders();
+    //getArtists();
+    //getAlbums();
+    //getTitles();
+    //getPlaylists();
 });
 
 function intervalSlow() {
@@ -29,7 +37,52 @@ function intervalFast() {
     if(tempposition==null || lastcurrent==null || lastcurrent.state!="play") return;
     tempposition += intervalfast/1000;
     var percent = 100*tempposition/lastcurrent.fileinfos.length
+    if(percent>100) percent=100;
     $("#innerhead").css("background","linear-gradient(90deg, rgba(164,164,164,0.7) "+percent+"%, rgba(256,256,256,0.8) "+percent+"%)");
+}
+
+function getFolders(folderid) {
+    folderid = typeof folderid !== 'undefined' ? folderid : -1;
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var antwort = JSON.parse(xhttp.responseText);
+            var content = "";
+            if(antwort.status!="success" || antwort.action!="browse-folders") {
+                content="Es trat ein Fehler auf!";
+            } else {
+                content += '<span style="color:green;">'+antwort.content.path+"</span>";
+                content += "<ul>";
+                
+                if(antwort.content.this!="ROOT") {
+                    content += '<li class="folder" style="color:red;" onclick="javascript:getFolders(-1);">(root)</li>';
+                    content += '<li class="folder" style="color:red;" onclick="javascript:getFolders('+antwort.content.this.parentid+');">(..)</li>';
+                }
+                
+                for(var i=0;i<antwort.content.folders.length;i++) {
+                    content += '<li class="folder" onclick="javascript:getFolders('+antwort.content.folders[i].id+');">'+antwort.content.folders[i].foldername+"</li>";
+                }
+                for(var i=0;i<antwort.content.files.length;i++) {
+                    content += '<li class="file">'+antwort.content.files[i].filename;
+                    
+                    //if(entry.alreadyVoted) {
+                    //    content+='<img src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                    //} else {
+                        content+='<img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+antwort.content.files[i].id+');"></li>';
+                    //}
+                        
+                        
+                    content+="</li>";
+                }
+                
+                content += "</ul>";
+            }
+            $("#browse-folders").html(content);
+        }
+    }
+    var str = ajaxpath+"?action=browse-folders&id="+folderid;
+    xhttp.open("GET", str, true);
+    xhttp.send();
 }
 
 //from http://stackoverflow.com/questions/15900485/correct-way-to-convert-size-in-bytes-to-kb-mb-gb-in-javascript
@@ -204,7 +257,6 @@ function doSearch() {
                         } else {
                             content+='<img src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+entry.id+');"></li>';
                         }
-                        
                     }
                 }
             }

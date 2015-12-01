@@ -21,7 +21,19 @@ body {
 
 }
 
-div#search > ul > li > img{
+div#browse-folders li.folder {
+	cursor: pointer;
+}
+
+div#browse-folders li.folder {
+	color: #a50;
+}
+
+div#browse-folders li.file {
+	color: blue;
+}
+
+div#search > ul > li > img, div#browse-folders img.votecircle {
 	height: 22px;
 	vertical-align: middle;
 }

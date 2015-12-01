@@ -56,9 +56,16 @@ switch($_GET["action"]) {
         if(!isset($_GET["id"])) {
             doError("No id specified");
         }
-        $folder = getFolder($_GET["id"]);
+        $folder = getFolderPic($_GET["id"]);
         header('Content-type:image/png');
         echo $folder->picture;
+        break;
+    case("browse-folders"):
+        if(!isset($_GET["id"])) {
+            doError("No id specified");
+        }
+        $r = getBrowseFolder(intval($_GET["id"]));
+        doOutput($r,"browse-folders");
         break;
     default: doError("No valid action specified");
 }
