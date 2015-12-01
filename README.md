@@ -28,7 +28,7 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * AUTOSTART DAEMON
 
 ## Todos
-* Browse songs by folder,artist,album,interpret
+* Browse songs by folder,artist,album,interpret,playlist
 * Implement as Androidapp, so you only need a Tablet/2nd Smartphone instead of Notebook/RaspberryPi
 * Maybe do not scan filesystem. Instead Get Music Database from MPD. Advantage: no need to run on the same server
 * Upload File
@@ -37,8 +37,8 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * doShowhighscore(): order +by oldest vote ^
 * addOneFileToMPDQueue(): get song from static playlist if($hn===null) / Default queue when no user is voting
 * volume on hotkeys
-* scanner faster
 * laptop mpd volume
+* js progressbar interpolate
 
 ## License
 
