@@ -1,0 +1,16 @@
+[Unit]
+Description=MyApp
+Requires=mysql.service
+Requires=mpd.service
+Requires=apache2.service
+After=mysql.service
+After=mpd.service
+After=apache2.service
+
+[Service]
+TimeoutStartSec=0
+WorkingDirectory=/home/felix/mpdvote/php-vote/php/
+ExecStart=/usr/bin/php /home/felix/mpdvote/php-vote/php/daemon.php
+
+[Install]
+WantedBy=multi-user.target
