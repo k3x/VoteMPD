@@ -51,7 +51,7 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 
 ## Todos
 ### 1. Priority
-* Browse songs by folder,artist,album,interpret,playlist
+* Browse songs by folder,artist,album,interpret,playlist (playlist has to be scanned first)
 * doShowhighscore(): order +by oldest vote ^
 * laptop mpd volume
 
@@ -59,15 +59,17 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * addOneFileToMPDQueue(): get song from static playlist if($hn===null) / Default queue when no user is voting
 * SCAN case insensetive jpg
 * volume on hotkeys
-* js progressbar interpolate
 
 ### 3. Priority
 * Implement as Androidapp, so you only need a Tablet/2nd Smartphone instead of Notebook/RaspberryPi
 * Maybe do not scan filesystem. Instead Get Music Database from MPD. Advantage: no need to run on the same server
 * Upload File
+* save playlog to playlist (new plalist on 10h pause)
 
 ## License
 
-## Used Librarys/Icons/Codesnippets/Licenses (todo)
+### VoteMPD
+
+### Used Librarys/Icons/Codesnippets
 * phpMp3 http://sourceforge.net/projects/phpmp3
 * getID3 http://getid3.sourceforge.net   

@@ -1,5 +1,7 @@
 var ajaxpath = window.location.href+"php/ajax.php";
-var lastcurrentid = null;
+var lastcurrent = null;
+var tempposition = null;
+var intervalfast = 500;
 
 $(function() {
     $( "#auswahl" ).accordion({active: 1,heightStyle: "content",collapsible: true});
@@ -8,8 +10,9 @@ $(function() {
     getHigh();
     getMy();
     
-    setInterval(function(){ intervalSlow(); }, 30000);
-    setInterval(function(){ intervalFast(); }, 2000);
+    setInterval(function(){ intervalSlow(); }, 15000);
+    setInterval(function(){ intervalMid(); }, 2000);
+    setInterval(function(){ intervalFast(); }, intervalfast);
 });
 
 function intervalSlow() {
@@ -18,8 +21,15 @@ function intervalSlow() {
     getMy();
 }
 
-function intervalFast() {
+function intervalMid() {
     getCurrent();
+}
+
+function intervalFast() {
+    if(tempposition==null || lastcurrent==null || lastcurrent.state!="play") return;
+    tempposition += intervalfast/1000;
+    var percent = 100*tempposition/lastcurrent.fileinfos.length
+    $("#innerhead").css("background","linear-gradient(90deg, rgba(164,164,164,0.7) "+percent+"%, rgba(256,256,256,0.8) "+percent+"%)");
 }
 
 //from http://stackoverflow.com/questions/15900485/correct-way-to-convert-size-in-bytes-to-kb-mb-gb-in-javascript
@@ -59,21 +69,22 @@ function getCurrent() {
             var picture = null;
             if(antwort.status!="success" || antwort.action!="mpdcurrent") {
                 content="Es trat ein Fehler auf!";
-                lastcurrentid = null;
+                lastcurrent = null;
             } else {
                 if(antwort.content.state!="stop") {
                     if(antwort.content.fileinfos==null) {
                         content="Error";
-                        lastcurrentid = null;
+                        lastcurrent = null;
                     } else {
                         content=    antwort.content.fileinfos.artist+" - "+
                                     antwort.content.fileinfos.title;
                         percent = 100*antwort.content.time/antwort.content.fileinfos.length;
                         picture = antwort.content.fileinfos.picture;
-                        if(lastcurrentid!=antwort.content.fileinfos.id) {
+                        if(lastcurrent==null || lastcurrent.fileinfos.id!=antwort.content.fileinfos.id) {
                             intervalSlow();
                         }
-                        lastcurrentid = antwort.content.fileinfos.id;
+                        lastcurrent = antwort.content;
+                        tempposition = parseFloat(parseInt(antwort.content.time));
                     }
                 }
             }
@@ -127,8 +138,9 @@ function doVote(id) {
                 alert("Es trat ein Fehler auf!");
             } else {
                 doSearch();
-                getMy();
+                getNext();
                 getHigh();
+                getMy();
             }
         }
     }
@@ -168,6 +180,10 @@ function getMy() {
 
 function doSearch() {
     var text = $("#search-text").val();
+    if(text.length<3) {
+        $("#search > ul").html("Bitte mindestens 3 Zeichen eingeben!");  
+        return;
+    }
 
     $.post(ajaxpath+"?action=search", {keyword: text}, function(result,status){
         if(status=="success") {
@@ -179,7 +195,7 @@ function doSearch() {
             } else {
                 if(antwort.content.length==0) {
                     content="Keine Elemente!";
-                } else {                    
+                } else {
                     for (index = 0; index < antwort.content.length; index++) {
                         entry = antwort.content[index];
                         content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+') ';
