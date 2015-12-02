@@ -11,6 +11,7 @@ $db_user="root";
 $db_pass="";
 $db_database="mpdvote";
 $GLOBALS["path"]="/media/raid1tb/musik"; // without trailing "/"
+$GLOBALS["pathplaylists"]="/media/raid1tb/musik/1_e_playlists_mpd"; // without trailing "/"
 $GLOBALS["mpdport"]=6600;
 $GLOBALS["mpdip"]="localhost";
 

@@ -104,7 +104,7 @@ function insertFolderInDb($parentid,$folderpath) {
     $stmt = $GLOBALS["db"]->prepare("INSERT INTO folders (parentid,foldername,picture) VALUES(:pid, :fname, :pic)");
     $foldername = basename($folderpath);
     if(!$stmt->execute(array(':pid' => intval($parentid), ':fname' => $foldername, ':pic' => $pic))) {
-        die("insertFolderInDb. Error");
+        die("insertFolderInDb: Error");
     }
     return intval($GLOBALS["db"]->lastInsertID());
 }
@@ -150,7 +150,7 @@ function insertFileInDb($foldernum,$p) {
     ))) {
         print_r($stmt->queryString."\n");
         print_r($stmt->errorInfo());
-        die("insertFileInDb. Error");
+        die("insertFileInDb: Error");
     }
     $GLOBALS["Tdb"]+=(microtime(true)-$Tstart);
     

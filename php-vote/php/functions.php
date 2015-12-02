@@ -320,7 +320,7 @@ function getFileinfosforfilepath($path) {
     }
     
     $stmt = $GLOBALS["db"]->prepare("SELECT * FROM files WHERE folderid=:folderid AND filename=:filename");
-    if($stmt->execute(array(":folderid" => $curDir,":filename" => basename("musik/".$path)))) {
+    if($stmt->execute(array(":folderid" => $curDir,":filename" => basename($path)))) {
         $row = $stmt->fetchObject();
         $row->picture = $pic;
         return $row;

@@ -51,17 +51,17 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 
 ## Todos
 ### 1. Priority
-* Scan plalists
 * Browse songs by playlist
-* do not load so much ajax. only on demand.
 * doShowhighscore(): order +by oldest vote ^
 * laptop mpd volume
-* spinner.gif on ajax load
 
 ### 2. Priority
 * addOneFileToMPDQueue(): get song from static playlist if($hn===null) / Default queue when no user is voting
-* SCAN case insensetive jpg
+* SCAN case insensetive jpg,m3u,mp3 (glob('my/dir/*.[cC][sS][vV]') ?)
 * volume on hotkeys
+* do not load so much ajax. only on demand.
+* spinner.gif on ajax load
+* Ordnerstruktur anpassen, sodass alle aufgerufenen dateien in / sind. playlistscan soll functions.php nutzen
 
 ### 3. Priority
 * Implement as Androidapp, so you only need a Tablet/2nd Smartphone instead of Notebook/RaspberryPi

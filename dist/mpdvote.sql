@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 30. Nov 2015 um 16:59
+-- Erstellungszeit: 02. Dez 2015 um 01:46
 -- Server Version: 5.5.46-0ubuntu0.14.04.2
 -- PHP-Version: 5.5.9-1ubuntu4.14
 
@@ -56,6 +56,18 @@ CREATE TABLE IF NOT EXISTS `folders` (
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `playlistitems`
+--
+
+CREATE TABLE IF NOT EXISTS `playlistitems` (
+  `playlistname` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
+  `fileid` int(11) NOT NULL,
+  `filepath` varchar(1024) COLLATE utf8_unicode_ci NOT NULL COMMENT 'only set if no fileid found'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `playlog`
 --
 
@@ -79,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `votes` (
   `date` datetime NOT NULL,
   `played` tinyint(4) NOT NULL DEFAULT '0' COMMENT '1 wenn bereits abgespielt',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=43 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
