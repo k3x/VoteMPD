@@ -1,7 +1,7 @@
 # VoteMPD
 
 * Author: Felix Sterzelmaier
-* Version 0.3
+* Version 0.4
 * Date: 02. December 2015
 
 VoteMPD allows your party guests to fill the queue of your MusicPlayerDaemon.
