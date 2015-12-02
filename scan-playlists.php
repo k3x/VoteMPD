@@ -1,10 +1,8 @@
 <?php
 
-
-require("../settings.php");
+require("includes/settings.php");
+require("includes/functions.php");
 doRoot($GLOBALS["pathplaylists"]);
-
-
 
 function doRoot($p) {
     $sPath = $p.'/*.m3u';
@@ -46,27 +44,5 @@ function doPlaylist($p) {
         }
     }
 }
-
-
-function getFileinfosforfilepath($path) {
-    $folders = explode("/",dirname($path));
-    $curDir = -1;
-    foreach($folders as $f) {
-        $stmt = $GLOBALS["db"]->prepare("SELECT id FROM folders WHERE parentid=:p AND foldername=:f");
-        if($stmt->execute(array(":p" => $curDir,":f" => $f))) {
-            if($row = $stmt->fetchObject()) {
-                $curDir=$row->id;
-            } else return false;
-        } else return false;
-    }
-    
-    $stmt = $GLOBALS["db"]->prepare("SELECT * FROM files WHERE folderid=:folderid AND filename=:filename");
-    if($stmt->execute(array(":folderid" => $curDir,":filename" => basename($path)))) {
-        $row = $stmt->fetchObject();
-        return $row;
-    } else return false;
-    return false;
-}
-
 
 ?>

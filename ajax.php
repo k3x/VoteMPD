@@ -1,13 +1,11 @@
 <?php
 
-require("../../settings.php");
-require("functions.php");
+require("includes/settings.php");
+require("includes/functions.php");
 
 if(!isset($_GET["action"])) {
     doError("No action specified");
 }
-
-//$_SERVER['REMOTE_ADDR'] = 127.0.0.1
 
 switch($_GET["action"]) {
     case("showhighscore"):
@@ -80,6 +78,21 @@ switch($_GET["action"]) {
         }
         $r = getBrowseAlbum($_POST["name"]);
         doOutput($r,"browse-albums");
+        break;
+    case("browse-playlists"):
+        if(!isset($_POST["name"])) {
+            doError("No post-name specified");
+        }
+        $r = getBrowsePlaylist($_POST["name"]);
+        doOutput($r,"browse-playlists");
+        break;
+    case("browse-often-playlists"):
+        $r = getBrowseOftenPlaylist();
+        doOutput($r,"browse-often-playlists");
+        break;
+    case("browse-often-votes"):
+        $r = getBrowseOftenVote();
+        doOutput($r,"browse-often-votes");
         break;
     default: doError("No valid action specified");
 }

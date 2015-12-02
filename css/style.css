@@ -39,7 +39,13 @@ div#auswahl > div > ul {
 }
 
 /* votecircle */
-div#search > ul > li > img, div#browse-folders img.votecircle, div#browse-artists img.votecircle, div#browse-albums img.votecircle {
+div#search > ul > li > img, 
+div#browse-folders img.votecircle, 
+div#browse-artists img.votecircle, 
+div#browse-albums img.votecircle, 
+div#browse-playlists img.votecircle, 
+div#browse-often-playlists img.votecircle, 
+div#browse-often-votes img.votecircle {
 	height: 22px;
 	vertical-align: middle;
 	cursor: pointer;
@@ -51,17 +57,16 @@ div#browse-folders li.file {
 	color: blue;
 }
 
-div#browse-folders li.goup, div#browse-artists li.goup, div#browse-albums li.goup {
+div#browse-folders li.goup, div#browse-artists li.goup, div#browse-albums li.goup, div#browse-playlists li.goup {
 	color: red;
 	cursor: pointer;
 }
 
-div#browse-folders span.current, div#browse-artists span.current, div#browse-albums span.current {
+div#browse-folders span.current, div#browse-artists span.current, div#browse-albums span.current, div#browse-playlists span.current {
 	color: green;
-	cursor: pointer;
 }
 
-div#browse-folders li.folder, div#browse-artists li.artist, div#browse-albums li.album {
+div#browse-folders li.folder, div#browse-artists li.artist, div#browse-albums li.album, div#browse-playlists li.playlist {
 	cursor: pointer;
 	color: #a50;
 }

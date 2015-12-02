@@ -1,10 +1,11 @@
-var ajaxpath = window.location.href+"php/ajax.php";
+var ajaxpath = window.location.href+"ajax.php";
 var lastcurrent = null;
 var tempposition = null;
 var intervalfast = 500;
 var currentFolder = -1;
 var currentArtist = "ROOT";
 var currentAlbum = "ROOT";
+var currentPlaylist = "ROOT";
 
 $(function() {
     $( "#auswahl" ).accordion({active: null,heightStyle: "content",collapsible: true});
@@ -22,7 +23,9 @@ $(function() {
     getFolders();
     getArtists();
     getAlbums();
-    //getPlaylists();
+    getPlaylists();
+    getOftenPlaylists();
+    getOftenVotes();
 });
 
 function intervalSlow() {
@@ -41,6 +44,110 @@ function intervalFast() {
     var percent = 100*tempposition/lastcurrent.fileinfos.length
     if(percent>100) percent=100;
     $("#innerhead").css("background","linear-gradient(90deg, rgba(164,164,164,0.7) "+percent+"%, rgba(256,256,256,0.8) "+percent+"%)");
+}
+
+function getOftenVotes() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var antwort = JSON.parse(xhttp.responseText);
+            var content = "";
+            if(antwort.status!="success" || antwort.action!="browse-often-votes") {
+                content="Es trat ein Fehler auf!";
+            } else {
+                content += "<ol>";
+                for(var i=0;i<antwort.content.files.length;i++) {
+                    content += '<li class="file">'+antwort.content.files[i].count+": "+antwort.content.files[i].filename;
+                    
+                    if(antwort.content.files[i].alreadyVoted) {
+                        content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                    } else {
+                        content+=' <img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+antwort.content.files[i].id+');"></li>';
+                    }
+                    content+="</li>";
+                }
+                
+                content += "</ol>";
+            }
+            $("#browse-often-votes").html(content);
+        }
+    }
+    var str = ajaxpath+"?action=browse-often-votes";
+    xhttp.open("GET", str, true);
+    xhttp.send();
+}
+
+function getOftenPlaylists() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var antwort = JSON.parse(xhttp.responseText);
+            var content = "";
+            if(antwort.status!="success" || antwort.action!="browse-often-playlists") {
+                content="Es trat ein Fehler auf!";
+            } else {
+                content += "<ol>";
+                for(var i=0;i<antwort.content.files.length;i++) {
+                    content += '<li class="file">'+antwort.content.files[i].count+": "+antwort.content.files[i].filename;
+                    
+                    if(antwort.content.files[i].alreadyVoted) {
+                        content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                    } else {
+                        content+=' <img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+antwort.content.files[i].id+');"></li>';
+                    }
+                    content+="</li>";
+                }
+                
+                content += "</ol>";
+            }
+            $("#browse-often-playlists").html(content);
+        }
+    }
+    var str = ajaxpath+"?action=browse-often-playlists";
+    xhttp.open("GET", str, true);
+    xhttp.send();
+}
+
+function getPlaylists(name) {
+    name = typeof name !== 'undefined' ? name : "ROOT";
+    currentPlaylist = name;
+    $.post(ajaxpath+"?action=browse-playlists", {name: name}, function(result,status){
+        if(status=="success") {
+            
+            var antwort = JSON.parse(result);
+            var content = "";
+            if(antwort.status!="success" || antwort.action!="browse-playlists") {
+                content="Es trat ein Fehler auf!";
+            } else {
+        
+                if(antwort.content.name!="ROOT") content += '<span class="current">'+antwort.content.name+"</span>";
+                content += "<ul>";
+                
+                if(antwort.content.name!="ROOT") {
+                    content += '<li class="goup" onclick="javascript:getPlaylists(\'ROOT\');">(root)</li>';
+                }
+                
+                if(antwort.content.name=="ROOT") {
+                    for(var i=0;i<antwort.content.playlists.length;i++) {
+                        content += '<li class="playlist" onclick="javascript:getPlaylists(\''+antwort.content.playlists[i].playlistname+'\');">'+antwort.content.playlists[i].playlistname+"</li>";
+                    }
+                } else {
+                    for(var i=0;i<antwort.content.files.length;i++) {
+                        content += '<li class="file">'+antwort.content.files[i].filename;
+                        
+                        if(antwort.content.files[i].alreadyVoted) {
+                            content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                        } else {
+                            content+=' <img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+antwort.content.files[i].id+');"></li>';
+                        }
+                        content+="</li>";
+                    }
+                }
+                content += "</ul>";
+            }
+            $("#browse-playlists").html(content);         
+        }
+    });
 }
 
 function getAlbums(albumid) {
@@ -282,6 +389,9 @@ function doVote(id) {
                 getFolders(currentFolder);
                 getArtists(currentArtist);
                 getAlbums(currentAlbum);
+                getPlaylists(currentPlaylist);
+                getOftenPlaylists();
+                getOftenVotes();
             }
         }
     }

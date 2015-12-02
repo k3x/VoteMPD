@@ -21,10 +21,10 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * sudo service mpd restart
 * sudo apt-get install gmpc
 * run gmpc, connect to mpd, do Server -> Update MPD Database
-* Install mysql server, create new database and configure "settings.php". Enter your mpd connection infos and also enter the same "path" like you configured for mpd.
+* Install mysql server, create new database and configure "includes/settings.php". Enter your mpd connection infos and also enter the same "path" like you configured for mpd.
 * import dist/votempd.sql in the created mysql database.
-* run "php start.php" in php-scan/
-* Let your Apache "/" point to the folder "php-vote" (the folder with css,gfx,js,php,index.html)
+* run "php scan-files.php" and run "php scan-playlists.php"
+* Let your Apache "/" point to the root folder (the folder with index.html)
 * in console run php daemon.php
 
 ### Further information / find errors
@@ -51,8 +51,6 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 
 ## Todos
 ### 1. Priority
-* Browse songs by playlist
-* doShowhighscore(): order +by oldest vote ^
 * laptop mpd volume
 
 ### 2. Priority
@@ -61,8 +59,6 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * volume on hotkeys
 * do not load so much ajax. only on demand.
 * spinner.gif on ajax load
-* Ordnerstruktur anpassen, sodass alle aufgerufenen dateien in / sind. playlistscan soll functions.php nutzen
-* rename to "VoteMPD"
 * every code/comment should be english
 * Comment
 

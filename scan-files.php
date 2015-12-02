@@ -1,6 +1,7 @@
 <?php
-require("../settings.php");
-require_once('getid3/getid3.php');
+require("includes/settings.php");
+require("includes/functions.php");
+require_once('libs/getid3/getid3.php');
 $getID3 = new getID3;
 doRoot($GLOBALS["path"]);
 

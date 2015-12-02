@@ -1,6 +1,6 @@
 <?php
-require("functions.php");
-require("tasker.php");
+require("includes/functions.php");
+require("includes/tasker.php");
 
 daemonCallInit();
 

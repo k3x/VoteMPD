@@ -1,7 +1,7 @@
 <?php
 
 require("mpd.php");
-require("../../settings.php");
+require("settings.php");
 
 function doError($e) {
     $a = array();
@@ -46,6 +46,142 @@ function addOneFileToMpdQueue($first=false) {
         Tasker::add(5,'daemonCallInit',array());
     }
 }
+
+function getBrowseOftenVote() {
+    $subFiles = array();
+    
+    $stmt = $GLOBALS["db"]->prepare("SELECT files.id,filename,artist,title,length,size, COUNT(*) as count from votes INNER JOIN files on(files.id=votes.fileid) GROUP BY files.id ORDER BY count DESC");
+    if($stmt->execute()) {
+        while ($row = $stmt->fetchObject()) {
+            $subFiles[] = $row;
+        }
+        
+        for($i=0;$i<count($subFiles);$i++) {
+            $stmt = $GLOBALS["db"]->prepare("SELECT date FROM votes WHERE fileid =:fid AND ip=:ip ORDER BY date DESC LIMIT 1");
+            $dateLastVote=null;
+            if($stmt->execute(array(":fid" => $subFiles[$i]->id,":ip" => $_SERVER['REMOTE_ADDR']))) {
+                if ($row = $stmt->fetchObject()) {
+                    $dateLastVote = $row->date;
+                }
+            }
+            
+            $stmt = $GLOBALS["db"]->prepare("SELECT date FROM playlog WHERE fileid =:fid ORDER BY date DESC LIMIT 1");
+            $dateLastPlay=null;
+            if($stmt->execute(array(":fid" => $subFiles[$i]->id))) {
+                if ($row = $stmt->fetchObject()) {
+                    $dateLastPlay = $row->date;
+                }
+            }
+            
+            if($dateLastVote===null && $dateLastPlay===null) {
+                $subFiles[$i]->alreadyVoted = false;
+            } elseif($dateLastVote===null && $dateLastPlay!==null) {
+                $subFiles[$i]->alreadyVoted = false;
+            } elseif($dateLastVote!==null && $dateLastPlay===null) {
+                $subFiles[$i]->alreadyVoted = true;
+            } elseif($dateLastVote!==null && $dateLastPlay!==null) {
+                $subFiles[$i]->alreadyVoted = ($dateLastVote>$dateLastPlay);
+            }
+        }
+        
+    } else doError("getBrowseOftenPlaylist (getSubFiles) db query failed");
+    return ["files"=>$subFiles];
+}
+
+function getBrowseOftenPlaylist() {
+    $subFiles = array();
+    
+    $stmt = $GLOBALS["db"]->prepare("SELECT id,filename,artist,title,length,size, COUNT(*) as count from playlistitems INNER JOIN files on(files.id=playlistitems.fileid) WHERE fileid IS NOT NULL GROUP BY id ORDER BY count DESC");
+    if($stmt->execute()) {
+        while ($row = $stmt->fetchObject()) {
+            $subFiles[] = $row;
+        }
+        
+        for($i=0;$i<count($subFiles);$i++) {
+            $stmt = $GLOBALS["db"]->prepare("SELECT date FROM votes WHERE fileid =:fid AND ip=:ip ORDER BY date DESC LIMIT 1");
+            $dateLastVote=null;
+            if($stmt->execute(array(":fid" => $subFiles[$i]->id,":ip" => $_SERVER['REMOTE_ADDR']))) {
+                if ($row = $stmt->fetchObject()) {
+                    $dateLastVote = $row->date;
+                }
+            }
+            
+            $stmt = $GLOBALS["db"]->prepare("SELECT date FROM playlog WHERE fileid =:fid ORDER BY date DESC LIMIT 1");
+            $dateLastPlay=null;
+            if($stmt->execute(array(":fid" => $subFiles[$i]->id))) {
+                if ($row = $stmt->fetchObject()) {
+                    $dateLastPlay = $row->date;
+                }
+            }
+            
+            if($dateLastVote===null && $dateLastPlay===null) {
+                $subFiles[$i]->alreadyVoted = false;
+            } elseif($dateLastVote===null && $dateLastPlay!==null) {
+                $subFiles[$i]->alreadyVoted = false;
+            } elseif($dateLastVote!==null && $dateLastPlay===null) {
+                $subFiles[$i]->alreadyVoted = true;
+            } elseif($dateLastVote!==null && $dateLastPlay!==null) {
+                $subFiles[$i]->alreadyVoted = ($dateLastVote>$dateLastPlay);
+            }
+        }
+        
+    } else doError("getBrowseOftenPlaylist (getSubFiles) db query failed");
+    return ["files"=>$subFiles];
+}
+
+function getBrowsePlaylist($name) {
+    if($name=="ROOT") {
+        $playlists = array();
+        $stmt = $GLOBALS["db"]->prepare("SELECT playlistname FROM playlistitems WHERE playlistname!='' AND playlistname!=' ' GROUP BY playlistname");
+        if($stmt->execute(array(":name" => $name))) {
+            while ($row = $stmt->fetchObject()) {
+                $subFiles[] = $row;
+            }
+    
+        } else doError("getBrowsePlaylist (getPlaylist) db query failed");
+        return ["name"=>$name,"playlists"=>$subFiles];
+    }
+
+    $subFiles = array();
+    
+    $stmt = $GLOBALS["db"]->prepare("SELECT id,filename,artist,title,length,size from playlistitems INNER JOIN files on(files.id=playlistitems.fileid) WHERE fileid IS NOT NULL AND playlistname=:name");
+    if($stmt->execute(array(":name" => $name))) {
+        while ($row = $stmt->fetchObject()) {
+            $subFiles[] = $row;
+        }
+        
+        for($i=0;$i<count($subFiles);$i++) {
+            $stmt = $GLOBALS["db"]->prepare("SELECT date FROM votes WHERE fileid =:fid AND ip=:ip ORDER BY date DESC LIMIT 1");
+            $dateLastVote=null;
+            if($stmt->execute(array(":fid" => $subFiles[$i]->id,":ip" => $_SERVER['REMOTE_ADDR']))) {
+                if ($row = $stmt->fetchObject()) {
+                    $dateLastVote = $row->date;
+                }
+            }
+            
+            $stmt = $GLOBALS["db"]->prepare("SELECT date FROM playlog WHERE fileid =:fid ORDER BY date DESC LIMIT 1");
+            $dateLastPlay=null;
+            if($stmt->execute(array(":fid" => $subFiles[$i]->id))) {
+                if ($row = $stmt->fetchObject()) {
+                    $dateLastPlay = $row->date;
+                }
+            }
+            
+            if($dateLastVote===null && $dateLastPlay===null) {
+                $subFiles[$i]->alreadyVoted = false;
+            } elseif($dateLastVote===null && $dateLastPlay!==null) {
+                $subFiles[$i]->alreadyVoted = false;
+            } elseif($dateLastVote!==null && $dateLastPlay===null) {
+                $subFiles[$i]->alreadyVoted = true;
+            } elseif($dateLastVote!==null && $dateLastPlay!==null) {
+                $subFiles[$i]->alreadyVoted = ($dateLastVote>$dateLastPlay);
+            }
+        }
+        
+    } else doError("getBrowsePlaylist (getSubFiles) db query failed");
+    return ["name"=>$name,"files"=>$subFiles];
+}
+
 
 function getBrowseAlbum($name) {
     if($name=="ROOT") {
@@ -347,7 +483,21 @@ function doVote($ip,$id) {
 }
 
 function doShowhighscore() {
-    $stmt = $GLOBALS["db"]->prepare("SELECT files.*,COUNT(*) as anzahl FROM votes INNER JOIN files on files.id=votes.fileid WHERE votes.played=0 GROUP BY votes.fileid ORDER BY anzahl DESC, votes.fileid");
+    $stmt = $GLOBALS["db"]->prepare("
+    
+        SELECT 
+            files.*,votes.date,COUNT(*) as anzahl 
+        FROM 
+            (SELECT * FROM votes ORDER BY date ASC) as votes
+        INNER JOIN 
+            files on files.id=votes.fileid 
+        WHERE 
+            votes.played=0
+        GROUP BY
+            votes.fileid
+        ORDER BY
+            anzahl DESC,
+			date ASC");
     $tmp = array();
     if($stmt->execute()) {
         while ($row = $stmt->fetchObject()) {
@@ -356,8 +506,6 @@ function doShowhighscore() {
         return $tmp;
     } else doError("Highscore db query failed");
 }
-
-
 
 function getNextsongInHighscore() {
     $tmp = doShowhighscore();

@@ -21,7 +21,7 @@ $mpd->cmd("add \"B/Böhse Onkelz/Mexico.mp3\""); //fügt song in playlist ein
 $mpd->cmd("playlistinfo");
 */
 
-require("../../settings.php");
+require("settings.php");
 
 class MPD {
     var $link;
