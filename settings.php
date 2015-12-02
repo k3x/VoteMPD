@@ -2,14 +2,14 @@
 
 ini_set("error_reporting", E_ALL);
 ini_set("log_errors", 1);
-ini_set("error_log", "logs/mpdvote.txt");
+ini_set("error_log", "logs/votempd.txt");
 
 
 $db_server="localhost";
 $db_port="3306";
 $db_user="root";
 $db_pass="";
-$db_database="mpdvote";
+$db_database="votempd";
 $GLOBALS["path"]="/media/raid1tb/musik"; // without trailing "/"
 $GLOBALS["pathplaylists"]="/media/raid1tb/musik/1_e_playlists_mpd"; // without trailing "/"
 $GLOBALS["mpdport"]=6600;

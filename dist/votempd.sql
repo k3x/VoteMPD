@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 02. Dez 2015 um 01:46
+-- Erstellungszeit: 02. Dez 2015 um 02:20
 -- Server Version: 5.5.46-0ubuntu0.14.04.2
 -- PHP-Version: 5.5.9-1ubuntu4.14
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Datenbank: `mpdvote`
+-- Datenbank: `votempd`
 --
 
 -- --------------------------------------------------------
@@ -61,8 +61,8 @@ CREATE TABLE IF NOT EXISTS `folders` (
 
 CREATE TABLE IF NOT EXISTS `playlistitems` (
   `playlistname` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
-  `fileid` int(11) NOT NULL,
-  `filepath` varchar(1024) COLLATE utf8_unicode_ci NOT NULL COMMENT 'only set if no fileid found'
+  `fileid` int(11) DEFAULT NULL,
+  `filepath` varchar(1024) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'only set if no fileid found'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------

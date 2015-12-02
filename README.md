@@ -1,8 +1,8 @@
 # VoteMPD
 
 * Author: Felix Sterzelmaier
-* Version 0.2
-* Date: 30. November 2015
+* Version 0.3
+* Date: 02. December 2015
 
 VoteMPD allows your party guests to fill the queue of your MusicPlayerDaemon.
 Just run this Script on a server and make it availiable over wifi. See also: http://getfestify.com
@@ -22,7 +22,7 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * sudo apt-get install gmpc
 * run gmpc, connect to mpd, do Server -> Update MPD Database
 * Install mysql server, create new database and configure "settings.php". Enter your mpd connection infos and also enter the same "path" like you configured for mpd.
-* import dist/mpdvote.sql in the created mysql database.
+* import dist/votempd.sql in the created mysql database.
 * run "php start.php" in php-scan/
 * Let your Apache "/" point to the folder "php-vote" (the folder with css,gfx,js,php,index.html)
 * in console run php daemon.php
@@ -62,12 +62,18 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * do not load so much ajax. only on demand.
 * spinner.gif on ajax load
 * Ordnerstruktur anpassen, sodass alle aufgerufenen dateien in / sind. playlistscan soll functions.php nutzen
+* rename to "VoteMPD"
+* every code/comment should be english
+* Comment
 
 ### 3. Priority
 * Implement as Androidapp, so you only need a Tablet/2nd Smartphone instead of Notebook/RaspberryPi
 * Maybe do not scan filesystem. Instead Get Music Database from MPD. Advantage: no need to run on the same server
 * Upload File
 * save playlog to playlist (new plalist on 10h pause)
+* Multilanguage
+* Explain m3u format (Linebreaks,charset,relative path to)
+* License
 
 ## License
 
