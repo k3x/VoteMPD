@@ -58,18 +58,29 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 ## Todos
 ### 1. Priority
 * laptop mpd volume
-* volume on hotkeys
+* laptop volume on hotkeys
+
+### Upload File
+* uploadform
+* move to folder inside library
+* add into mpd database
+* add into votempd database
+
+### save playlog
+* save playlog to playlist
+* new table options when last playlist was saved
+* if last save is 10h in past and in the last 10h was no vote => save new playlist
+
+### static playlist
+* addOneFileToMPDQueue(): if($hn===null)
+* Default queue when no user is voting
+* define playlistname in settings.php
+* add playlistitem with lowest playcount (in playlog)
 
 ### 2. Priority
-* ...id -> ...name where it is by name and not ny id
-
-### 3. Priority
 * Implement as Androidapp, so you only need a Tablet/2nd Smartphone instead of Notebook/RaspberryPi
 * Maybe do not scan filesystem. Instead Get Music Database from MPD. Advantage: no need to run on the same server
-* Upload File
-* save playlog to playlist (new plalist on 10h pause)
 * Multilanguage
-* addOneFileToMPDQueue(): get song from static playlist if($hn===null) / Default queue when no user is voting
 
 ### Used Librarys/Icons/Codesnippets
 * phpMp3 (for MPD communication) http://sourceforge.net/projects/phpmp3

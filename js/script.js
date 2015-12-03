@@ -342,11 +342,11 @@ function getFolders(folderid) {
 }
 
 //get artists
-function getArtists(artistid) {
+function getArtists(artistname) {
     $("#browse-artists").html(loading);
-    artistid = typeof artistid !== 'undefined' ? artistid : "ROOT";
-    currentArtist = artistid;
-    $.post(ajaxpath+"?action=browse-artists", {name: artistid}, function(result,status){
+    artistname = typeof artistname !== 'undefined' ? artistname : "ROOT";
+    currentArtist = artistname;
+    $.post(ajaxpath+"?action=browse-artists", {name: artistname}, function(result,status){
         if(status=="success") {
             
             var response = JSON.parse(result);
@@ -386,11 +386,11 @@ function getArtists(artistid) {
 }
 
 //get albums
-function getAlbums(albumid) {
+function getAlbums(albumname) {
     $("#browse-albums").html(loading);
-    albumid = typeof albumid !== 'undefined' ? albumid : "ROOT";
-    currentAlbum = albumid;
-    $.post(ajaxpath+"?action=browse-albums", {name: albumid}, function(result,status){
+    albumname = typeof albumname !== 'undefined' ? albumname : "ROOT";
+    currentAlbum = albumname;
+    $.post(ajaxpath+"?action=browse-albums", {name: albumname}, function(result,status){
         if(status=="success") {
             
             var response = JSON.parse(result);
