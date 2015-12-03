@@ -59,6 +59,7 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 ### 1. Priority
 * laptop mpd volume
 * volume on hotkeys
+* interpret, album, playlists, oip, oiv => no filename but artist: title
 
 ### 2. Priority
 * addOneFileToMPDQueue(): get song from static playlist if($hn===null) / Default queue when no user is voting
