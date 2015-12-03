@@ -67,6 +67,11 @@ function addOneFileToMpdQueue($first=false) {
         if(!$stmt->execute(array(":fileid" => $hn->id))) {
             echo "error";
         }
+        
+        $stmt = $GLOBALS["db"]->prepare("INSERT INTO playlog (fileid,date) VALUES (:fileid,NOW())");
+        if(!$stmt->execute(array(":fileid" => $hn->id))) {
+            echo "error";
+        }
     } else {
         Tasker::add(5,'daemonCallInit',array());
     }
@@ -219,8 +224,35 @@ function getFile($id) {
 //get the next song in highscore
 function getNextsongInHighscore() {
     $tmp = doShowhighscore();
-    if($tmp===false || $tmp===null || count($tmp)==0) return null;
-    return $tmp[0];
+    if(!($tmp===false || $tmp===null || count($tmp)==0)) {
+        //return first highscore item
+        return $tmp[0];
+    } else {
+        //no first highscore item availiable, so pick least played from default playlist
+
+        //todo least played
+        $subFiles = array();
+        $stmt = $GLOBALS["db"]->prepare("
+            SELECT 
+                id,
+                filename,
+                artist,
+                title,
+                length,
+                size 
+            FROM 
+                playlistitems 
+            INNER JOIN 
+                files on(files.id=playlistitems.fileid) 
+            WHERE 
+                fileid IS NOT NULL AND 
+                playlistname=:name");
+        if($stmt->execute(array(":name" => $GLOBALS["defaultplaylist"]))) {
+            if($row = $stmt->fetchObject()) {
+                return $row; //todo check for correct format
+            } else return false;
+        } else return false;
+    }
 }
 
 //vote for a song

@@ -15,6 +15,7 @@ $db_database="votempd";
 /* music folder */
 $GLOBALS["path"]=""; // without trailing "/"
 $GLOBALS["pathplaylists"]=""; // without trailing "/"
+$GLOBALS["defaultplaylist"]=""; // playlist tu use if highscore is empty
 
 /* MPD connection */
 $GLOBALS["mpdport"]=6600;

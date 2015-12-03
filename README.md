@@ -59,6 +59,8 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 ### 1. Priority
 * laptop mpd volume
 * laptop volume on hotkeys
+* test add to playlog,vote,highscore
+//todos in function.php
 
 ### Upload File
 * uploadform
@@ -71,15 +73,9 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * new table options when last playlist was saved
 * if last save is 10h in past and in the last 10h was no vote => save new playlist
 
-### static playlist
-* addOneFileToMPDQueue(): if($hn===null)
-* Default queue when no user is voting
-* define playlistname in settings.php
-* add playlistitem with lowest playcount (in playlog)
 
 ### 2. Priority
 * Implement as Androidapp, so you only need a Tablet/2nd Smartphone instead of Notebook/RaspberryPi
-* Maybe do not scan filesystem. Instead Get Music Database from MPD. Advantage: no need to run on the same server
 * Multilanguage
 
 ### Used Librarys/Icons/Codesnippets
