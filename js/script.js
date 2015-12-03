@@ -39,10 +39,10 @@ function loadTab() {
         case(0): getMy(); break;
         case(1): getHigh(); break;
         case(2): doSearch(); break;
-        case(3): getFolders(); break;
-        case(4): getArtists(); break;
-        case(5): getAlbums(); break;
-        case(6): getPlaylists();break;
+        case(3): getFolders(currentFolder); break;
+        case(4): getArtists(currentArtist); break;
+        case(5): getAlbums(currentAlbum); break;
+        case(6): getPlaylists(currentPlaylist);break;
         case(7): getOftenPlaylists(); break;
         case(8): getOftenVotes();break;
         default: break;
