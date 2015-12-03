@@ -61,7 +61,6 @@ function doRoot($p) {
     $GLOBALS["Tdb"]=0; //insert into database
     $GLOBALS["Tpro"]=0; //calculate and print progress
     
-    
     echo "Do Root: ".$p."\n";
     
     //calculate total filecount

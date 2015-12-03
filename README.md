@@ -59,11 +59,9 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 ### 1. Priority
 * laptop mpd volume
 * volume on hotkeys
-* interpret, album, playlists, oip, oiv => no filename but artist: title
 
 ### 2. Priority
-* addOneFileToMPDQueue(): get song from static playlist if($hn===null) / Default queue when no user is voting
-* every code/comment should be english
+* ...id -> ...name where it is by name and not ny id
 
 ### 3. Priority
 * Implement as Androidapp, so you only need a Tablet/2nd Smartphone instead of Notebook/RaspberryPi
@@ -71,7 +69,7 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * Upload File
 * save playlog to playlist (new plalist on 10h pause)
 * Multilanguage
-* Explain m3u format (Linebreaks,charset,relative path to)
+* addOneFileToMPDQueue(): get song from static playlist if($hn===null) / Default queue when no user is voting
 
 ### Used Librarys/Icons/Codesnippets
 * phpMp3 (for MPD communication) http://sourceforge.net/projects/phpmp3

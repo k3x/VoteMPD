@@ -1,5 +1,4 @@
 /* HEAD */
-
 div#banner {
 	background-image: url(../gfx/logo_64.png);
 	background-position: 5px center;
@@ -26,13 +25,13 @@ div#innerhead {
 }
 
 /* accordion */
-div#auswahl > div > ol {
+div#accordion > div > ol {
 	padding: 0px;
 	margin:0px;
 	padding-left: 2.2em;
 }
 
-div#auswahl > div > ul {
+div#accordion > div > ul {
 	padding: 0px;
 	margin:0px;
 	padding-left: 1em;
