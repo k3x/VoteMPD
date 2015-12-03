@@ -49,18 +49,20 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * sudo nano /etc/dnsmasq.conf   (dhcp-range,listen-address,interface,address) (see dist/dnsmasq.conf)
 * sudo service dnsmasq restart
 
+### Information
+
+#### Playlists
+* .m3u playlists with one song per line. Linebreaks: \x0d\x0a Charset: UTF-8
+* Paths have to be relative to your root dir. For example: "somedir/somefile.mp3" (without quotes)
+
 ## Todos
 ### 1. Priority
 * laptop mpd volume
+* volume on hotkeys
 
 ### 2. Priority
 * addOneFileToMPDQueue(): get song from static playlist if($hn===null) / Default queue when no user is voting
-* SCAN case insensetive jpg,m3u,mp3 (glob('my/dir/*.[cC][sS][vV]') ?)
-* volume on hotkeys
-* do not load so much ajax. only on demand.
-* spinner.gif on ajax load
 * every code/comment should be english
-* Comment
 
 ### 3. Priority
 * Implement as Androidapp, so you only need a Tablet/2nd Smartphone instead of Notebook/RaspberryPi
@@ -69,12 +71,44 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * save playlog to playlist (new plalist on 10h pause)
 * Multilanguage
 * Explain m3u format (Linebreaks,charset,relative path to)
-* License
+
+### Used Librarys/Icons/Codesnippets
+* phpMp3 (for MPD communication) http://sourceforge.net/projects/phpmp3
+* getID3 (for getting id3 tags) http://getid3.sourceforge.net
 
 ## License
 
-### VoteMPD
+VoteMPD is free software. It is released under the terms of
+the following BSD License.
 
-### Used Librarys/Icons/Codesnippets
-* phpMp3 http://sourceforge.net/projects/phpmp3
-* getID3 http://getid3.sourceforge.net   
+Copyright © 2015 by 
+    Felix 'K3X' Sterzelmaier
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+ * Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the
+   distribution.
+ * Neither the name of VoteMPD nor the names of its
+   contributors may be used to endorse or promote products derived
+   from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.

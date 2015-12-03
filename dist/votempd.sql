@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 02. Dez 2015 um 02:20
+-- Erstellungszeit: 03. Dez 2015 um 00:56
 -- Server Version: 5.5.46-0ubuntu0.14.04.2
 -- PHP-Version: 5.5.9-1ubuntu4.14
 
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `files` (
   `length` int(11) NOT NULL COMMENT 'in seconds',
   `size` int(11) NOT NULL COMMENT 'Bytes',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=8072 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=15957 ;
 
 -- --------------------------------------------------------
 
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `folders` (
   `foldername` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
   `picture` mediumblob,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1231 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2463 ;
 
 -- --------------------------------------------------------
 
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `votes` (
   `date` datetime NOT NULL,
   `played` tinyint(4) NOT NULL DEFAULT '0' COMMENT '1 wenn bereits abgespielt',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=43 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=27 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -3,10 +3,12 @@
 require("includes/settings.php");
 require("includes/functions.php");
 
+// error on no action
 if(!isset($_GET["action"])) {
     doError("No action specified");
 }
 
+//specify what to do on which action
 switch($_GET["action"]) {
     case("showhighscore"):
         $r = doShowhighscore();

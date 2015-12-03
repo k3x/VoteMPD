@@ -23,9 +23,12 @@ $mpd->cmd("playlistinfo");
 
 require("settings.php");
 
+
 class MPD {
+    // Connection
     var $link;
 
+    //open connection
     function open() {
         global $MPD_HOST,$MPD_PORT;
         $this->link = fsockopen($GLOBALS["mpdip"],$GLOBALS["mpdport"],$errno,$errstr,2);
@@ -36,11 +39,13 @@ class MPD {
         fgets($this->link);
     }
 
+    //close connection
     function close() {
         fwrite($this->link,"close\n");
         fclose($this->link);
     }
     
+    //do a command and return answer
     function cmd($cmd) { 
         $this->open();
         $q = "";
@@ -64,18 +69,6 @@ class MPD {
 
         $this->close();
         return $result;
-    }
-
-    function status() {
-        $this->open();
-        fwrite($this->link,"status\n");
-        $status = "";
-        while (!feof($this->link)) {
-            $status .= fread($this->link,8192);
-            
-        }
-        $this->close();
-        return $status;
-    }    
+    }  
 }
 ?>
