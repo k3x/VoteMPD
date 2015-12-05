@@ -230,7 +230,7 @@ function getNextsongInHighscore() {
     } else {
         //no first highscore item availiable, so pick least played from default playlist
         return null; //todo remove
-        //todo current id save in daemon variable, or database options table
+        //todo current id save in database options table
         $subFiles = array();
         $stmt = $GLOBALS["db"]->prepare("
             SELECT 
@@ -314,6 +314,35 @@ function doShowhighscore() {
         while ($row = $stmt->fetchObject()) {
             $tmp[] = $row;
         }
+        
+        for($i=0;$i<count($tmp);$i++) {
+            $stmt = $GLOBALS["db"]->prepare("SELECT date FROM votes WHERE fileid =:fid AND ip=:ip ORDER BY date DESC LIMIT 1");
+            $dateLastVote=null;
+            if($stmt->execute(array(":fid" => $tmp[$i]->id,":ip" => $_SERVER['REMOTE_ADDR']))) {
+                if ($row = $stmt->fetchObject()) {
+                    $dateLastVote = $row->date;
+                }
+            }
+            
+            $stmt = $GLOBALS["db"]->prepare("SELECT date FROM playlog WHERE fileid =:fid ORDER BY date DESC LIMIT 1");
+            $dateLastPlay=null;
+            if($stmt->execute(array(":fid" => $tmp[$i]->id))) {
+                if ($row = $stmt->fetchObject()) {
+                    $dateLastPlay = $row->date;
+                }
+            }
+            
+            if($dateLastVote===null && $dateLastPlay===null) {
+                $tmp[$i]->alreadyVoted = false;
+            } elseif($dateLastVote===null && $dateLastPlay!==null) {
+                $tmp[$i]->alreadyVoted = false;
+            } elseif($dateLastVote!==null && $dateLastPlay===null) {
+                $tmp[$i]->alreadyVoted = true;
+            } elseif($dateLastVote!==null && $dateLastPlay!==null) {
+                $tmp[$i]->alreadyVoted = ($dateLastVote>$dateLastPlay);
+            }
+        }
+        
         return $tmp;
     } else doError("Highscore db query failed");
 }

@@ -246,7 +246,14 @@ function getHigh() {
                     
                     for (index = 0; index < response.content.length; index++) {
                         entry = response.content[index];
-                        content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+entry.anzahl+" Stimmen)</li>";
+                        var st = "Stimmen";
+                        if(entry.anzahl==1) st = "Stimme";
+                        content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+entry.anzahl+" "+st+") ";
+                        if(entry.alreadyVoted) {
+                            content+='<img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                        } else {
+                            content+='<img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+entry.id+');"></li>';
+                        }
                     }
                     content+="</ol>";
                 }
