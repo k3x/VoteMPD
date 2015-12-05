@@ -60,7 +60,7 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * laptop mpd volume
 * laptop volume on hotkeys
 * test add to playlog,vote,highscore
-//todos in function.php
+* //todos in function.php
 
 ### Upload File
 * uploadform
@@ -77,6 +77,15 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 ### 2. Priority
 * Implement as Androidapp, so you only need a Tablet/2nd Smartphone instead of Notebook/RaspberryPi
 * Multilanguage
+* Vote in highscore
+* Vote for next song
+* Default playlist: der reihe nach
+* Schalter postgres
+* Gitignore settings
+* Publish
+
+
+
 
 ### Used Librarys/Icons/Codesnippets
 * phpMp3 (for MPD communication) http://sourceforge.net/projects/phpmp3

@@ -229,8 +229,8 @@ function getNextsongInHighscore() {
         return $tmp[0];
     } else {
         //no first highscore item availiable, so pick least played from default playlist
-
-        //todo least played
+        return null; //todo remove
+        //todo current id save in daemon variable, or database options table
         $subFiles = array();
         $stmt = $GLOBALS["db"]->prepare("
             SELECT 
