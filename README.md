@@ -58,6 +58,9 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 ## Todos
 ### 1. Priority
 * laptop volume on hotkeys
+* laptop start faster wihout ethernet =>  A start job is running for Wait for all "auto" /etc/network... to be up for network-online.target
+* out of playlist: top bar fails
+* out of current/playlist: show message instead of error
 * //todos in function.php
 * Vote for next song
 * Default playlist: der reihe nach
