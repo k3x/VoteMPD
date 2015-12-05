@@ -17,7 +17,7 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 ### Base
 * sudo apt-get install php5 php5-cli php5-json php5-mysql apache2 mysql-server mpd alsa-base
 * php shell exec has to be eneabled
-* configure /etc/mpd.conf (music library and audio autput)
+* configure /etc/mpd.conf (music library and audio autput, mixer_type "software")
 * sudo service mpd restart
 * sudo apt-get install gmpc
 * run gmpc, connect to mpd, do Server -> Update MPD Database
@@ -57,7 +57,6 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 
 ## Todos
 ### 1. Priority
-* laptop mpd volume
 * laptop volume on hotkeys
 * //todos in function.php
 * Vote for next song
