@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 03. Dez 2015 um 00:56
+-- Erstellungszeit: 06. Dez 2015 um 17:11
 -- Server Version: 5.5.46-0ubuntu0.14.04.2
 -- PHP-Version: 5.5.9-1ubuntu4.14
 
@@ -56,6 +56,19 @@ CREATE TABLE IF NOT EXISTS `folders` (
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `options_int`
+--
+
+CREATE TABLE IF NOT EXISTS `options_int` (
+  `id` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
+  `value` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `playlistitems`
 --
 
@@ -76,7 +89,7 @@ CREATE TABLE IF NOT EXISTS `playlog` (
   `fileid` int(11) NOT NULL,
   `date` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=27 ;
 
 -- --------------------------------------------------------
 
@@ -91,7 +104,7 @@ CREATE TABLE IF NOT EXISTS `votes` (
   `date` datetime NOT NULL,
   `played` tinyint(4) NOT NULL DEFAULT '0' COMMENT '1 wenn bereits abgespielt',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=27 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=10 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
