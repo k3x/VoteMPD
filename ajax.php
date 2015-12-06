@@ -38,11 +38,7 @@ switch($_GET["action"]) {
         break;
     case("getnextsong"):
         $r = getNextsongInHighscore();
-        if($r===null) {
-            doError("Getnext failed");
-        } else {
-            doOutput($r,"getnextsong");
-        }
+        doOutput($r,"getnextsong");
         break;
     case("mpdcurrent"):
         $r = getMpdCurrentSong();

@@ -127,6 +127,9 @@ function getCurrent() {
                         lastcurrent = response.content;
                         tempposition = parseFloat(parseInt(response.content.time));
                     }
+                } else {
+                    content="(keine Wiedergabe)";
+                    lastcurrent = null;
                 }
             }
             if(picture==true) {
@@ -157,7 +160,7 @@ function getNext() {
                 content="Es trat ein Fehler auf!";
             } else {
                 if(response.content==null) {
-                    content="No next Song!";
+                    content="Next: (keiner)";
                 } else {
                     content="Next: "+response.content.artist+" - "+response.content.title+" "+formatLength(response.content.length);
                 }
