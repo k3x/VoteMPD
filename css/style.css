@@ -39,13 +39,7 @@ div#accordion > div > ul {
 
 /* votecircle */
 div#search > ul > li > img, 
-div#browse-folders img.votecircle, 
-div#browse-artists img.votecircle, 
-div#browse-albums img.votecircle, 
-div#browse-playlists img.votecircle, 
-div#browse-often-playlists img.votecircle, 
-div#high img.votecircle, 
-div#browse-often-votes img.votecircle {
+img.votecircle {
 	height: 22px;
 	vertical-align: middle;
 	cursor: pointer;

@@ -92,6 +92,10 @@ switch($_GET["action"]) {
         $r = getBrowseOftenVote();
         doOutput($r,"browse-often-votes");
         break;
+    case("browse-playlog"):
+        $r = getBrowsePlaylog();
+        doOutput($r,"browse-playlog");
+        break;
     default: doError("No valid action specified");
 }
 

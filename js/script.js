@@ -17,7 +17,8 @@ $(function() {
             active: null,
             heightStyle: "content",
             collapsible: true, 
-            activate: function( event, ui ) {loadTab();}
+            activate: function( event, ui ) {loadTab();},
+            beforeActivate: function( event, ui ) {setLoading(ui.newPanel);}
     });
     
     
@@ -29,6 +30,11 @@ $(function() {
     setInterval(function(){ intervalMid(); }, 2000); //do mid update (current song changed?, paused? current position in song?)
     setInterval(function(){ intervalFast(); }, intervalfast); //do fast update (only local, interpolate song position)
 });
+
+//set loading circle in tab/panel
+function setLoading(panel) {
+    panel.html(loading);
+}
 
 //refresh content of currently open accoredon-tab
 function loadTab() {
@@ -45,6 +51,7 @@ function loadTab() {
         case(6): getPlaylists(currentPlaylist);break;
         case(7): getOftenPlaylists(); break;
         case(8): getOftenVotes();break;
+        case(9): getPlaylog();break;
         default: break;
     }
 }
@@ -97,6 +104,20 @@ function formatLength(length) {
 //format date to time
 function formatDate(date) {
     return date.substring(11,16)+" Uhr";
+}
+
+//format Minutes
+function formatMinutes(min) {
+    min = parseInt(min);
+    
+    if(min==1) return "vor "+min+" Minute";
+    if(min<60) return "vor "+min+" Minuten";
+    var hour = Math.floor(min/60);
+    if(hour==1) return "vor "+hour+" Stunde";
+    if(hour<24) return "vor "+hour+" Stunden";
+    var days = Math.floor(hour/24);
+    if(days==1) return "vor "+days+" Tag";
+    return "vor "+days+" Tagen";
 }
 
 //update fileinfos for currently played song
@@ -545,6 +566,38 @@ function getOftenVotes() {
         }
     }
     var str = ajaxpath+"?action=browse-often-votes";
+    xhttp.open("GET", str, true);
+    xhttp.send();
+}
+
+//get files that were played last
+function getPlaylog() {
+    $("#browse-playlog").html(loading);
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var response = JSON.parse(xhttp.responseText);
+            var content = "";
+            if(response.status!="success" || response.action!="browse-playlog") {
+                content="Es trat ein Fehler auf!";
+            } else {
+                content += "<ul>";
+                for(var i=0;i<response.content.files.length;i++) {
+                    content += '<li class="file">'+formatMinutes(response.content.files[i].date)+": "+response.content.files[i].artist+": "+response.content.files[i].title;
+                    
+                    if(response.content.files[i].alreadyVoted) {
+                        content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                    } else {
+                        content+=' <img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
+                    }
+                    content+="</li>";
+                }
+                content += "</ul>";
+            }
+            $("#browse-playlog").html(content);
+        }
+    }
+    var str = ajaxpath+"?action=browse-playlog";
     xhttp.open("GET", str, true);
     xhttp.send();
 }
