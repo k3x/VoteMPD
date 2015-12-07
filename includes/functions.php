@@ -157,8 +157,8 @@ function getFileinfosforfilepath($path) {
     foreach($folders as $f) {
         $stmt = $GLOBALS["db"]->prepare("SELECT id,picture FROM folders WHERE parentid=:p AND foldername=:f");
         if($stmt->execute(array(":p" => $curDir,":f" => $f))) {
-            $row = $stmt->fetchObject();
-            $curDir=$row->id;
+            if($row = $stmt->fetchObject()) $curDir=$row->id;
+            else doError("getFileinfosforfilepath db query failed");
         } else doError("getFileinfosforfilepath db query failed");
     }
     
@@ -510,6 +510,8 @@ function getBrowseFolder($id) {
 
 //browse artists
 function getBrowseArtist($name) {
+    $subFiles = array();
+    
     if($name=="ROOT") {
         $artists = array();
         $stmt = $GLOBALS["db"]->prepare("SELECT artist FROM files WHERE artist!='' AND artist!=' ' GROUP BY artist");
@@ -521,8 +523,6 @@ function getBrowseArtist($name) {
         } else doError("getBrowseArtist (getArtists) db query failed");
         return ["name"=>$name,"artists"=>$subFiles];
     }
-
-    $subFiles = array();
     
     $stmt = $GLOBALS["db"]->prepare("SELECT id,filename,artist,title,length,size FROM files WHERE artist=:name");
     if($stmt->execute(array(":name" => $name))) {
@@ -564,6 +564,8 @@ function getBrowseArtist($name) {
 
 //browse albums
 function getBrowseAlbum($name) {
+    $subFiles = array();
+    
     if($name=="ROOT") {
         $artists = array();
         $stmt = $GLOBALS["db"]->prepare("SELECT album FROM files WHERE album!='' AND album!=' ' GROUP BY album");
@@ -575,8 +577,6 @@ function getBrowseAlbum($name) {
         } else doError("getBrowseAlbum (getAlbum) db query failed");
         return ["name"=>$name,"albums"=>$subFiles];
     }
-
-    $subFiles = array();
     
     $stmt = $GLOBALS["db"]->prepare("SELECT id,filename,artist,title,length,size FROM files WHERE album=:name");
     if($stmt->execute(array(":name" => $name))) {
@@ -618,6 +618,8 @@ function getBrowseAlbum($name) {
 
 //browse playlists
 function getBrowsePlaylist($name) {
+    $subFiles = array();
+    
     if($name=="ROOT") {
         $playlists = array();
         $stmt = $GLOBALS["db"]->prepare("SELECT playlistname FROM playlistitems WHERE playlistname!='' AND playlistname!=' ' GROUP BY playlistname");
@@ -629,8 +631,6 @@ function getBrowsePlaylist($name) {
         } else doError("getBrowsePlaylist (getPlaylist) db query failed");
         return ["name"=>$name,"playlists"=>$subFiles];
     }
-
-    $subFiles = array();
     
     $stmt = $GLOBALS["db"]->prepare("SELECT id,filename,artist,title,length,size from playlistitems INNER JOIN files on(files.id=playlistitems.fileid) WHERE fileid IS NOT NULL AND playlistname=:name");
     if($stmt->execute(array(":name" => $name))) {

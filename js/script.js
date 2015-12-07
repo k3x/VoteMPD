@@ -2,7 +2,7 @@ var ajaxpath = window.location.href+"ajax.php"; //absolute url to ajax.php
 var ajaxpathrel = "ajax.php"; //relative path to ajax.php
 var lastcurrent = null; //last fileinfos for currently played song
 var tempposition = null; //interpolated position of song
-var intervalfast = 500; //fast update interval (interpolate song position)
+var intervalfast = 1000; //fast update interval (interpolate song position)
 var currentFolder = -1; //first folder for "browse-folders"
 var currentArtist = "ROOT"; //first folder for "browse-artists"
 var currentAlbum = "ROOT"; //first folder for "browse-albums"
@@ -28,7 +28,7 @@ $(function() {
     getNext(); //update fileinfos for next played song
     
     setInterval(function(){ intervalSlow(); }, 30000); //do slow update every 30s (not really needed, but for safety)
-    setInterval(function(){ intervalMid(); }, 2000); //do mid update (current song changed?, paused? current position in song?)
+    setInterval(function(){ intervalMid(); }, 5000); //do mid update (current song changed?, paused? current position in song?)
     setInterval(function(){ intervalFast(); }, intervalfast); //do fast update (only local, interpolate song position)
 });
 
