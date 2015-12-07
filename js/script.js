@@ -18,7 +18,8 @@ $(function() {
             heightStyle: "content",
             collapsible: true, 
             activate: function( event, ui ) {loadTab();},
-            beforeActivate: function( event, ui ) {setLoading(ui.newPanel);}
+            beforeActivate: function( event, ui ) {setLoading(ui.newPanel);},
+            animate: 200
     });
     
     
@@ -52,6 +53,7 @@ function loadTab() {
         case(7): getOftenPlaylists(); break;
         case(8): getOftenVotes();break;
         case(9): getPlaylog();break;
+        case(10): getVoteskip();break;
         default: break;
     }
 }
@@ -109,7 +111,6 @@ function formatDate(date) {
 //format Minutes
 function formatMinutes(min) {
     min = parseInt(min);
-    
     if(min==1) return "vor "+min+" Minute";
     if(min<60) return "vor "+min+" Minuten";
     var hour = Math.floor(min/60);
@@ -601,3 +602,11 @@ function getPlaylog() {
     xhttp.open("GET", str, true);
     xhttp.send();
 }
+
+//button to vote for skip current song
+function getVoteskip() {
+    $("#vote-skip").html(loading);
+    //TODO
+    $("#vote-skip").html("ABC");
+}
+

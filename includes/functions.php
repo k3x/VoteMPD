@@ -36,10 +36,36 @@ function doOutput($content,$action) {
 
 //first daemon call
 function daemonCallInit() {
+    Tasker::removeAll();
     $mpd = new MPD();
     $mpd->cmd("stop");
     $mpd->cmd("clear");
     addOneFileToMpdQueue(true);
+    Tasker::add(5,'checkForSkipSong');
+}
+
+//called periodically. Checks for enough votes in table "voteforskip"
+function checkForSkipSong() {
+    Tasker::add(5,'checkForSkipSong');
+    
+    $timeTotal = intval(getMpdValue("currentsong","Time"));
+    $timeCurrent = intval(getMpdCurrentTime());
+    if(($timeTotal-$timeCurrent)<10) return;
+            
+            
+    $fileid = getMpdCurrentSong()["fileinfos"]->id;
+    $skip = false;
+    $stmt = $GLOBALS["db"]->prepare("SELECT COUNT(*) as anzahl FROM voteforskip WHERE fileid=:fileid AND DATE>DATE_SUB(NOW(),INTERVAL :seconds SECOND)");
+    if($stmt->execute(array(":fileid" => $fileid,":seconds" => $timeCurrent))) {
+        $row = $stmt->fetchObject();
+        if($row->anzahl >=5) $skip = true;
+    }
+    
+    if($skip) {
+        $stmt = $GLOBALS["db"]->prepare("DELETE FROM voteforskip");
+        $stmt->execute();
+        daemonCallInit();
+    }
 }
 
 //take first file from highscore and add it to mpd Queue
@@ -61,7 +87,7 @@ function addOneFileToMpdQueue($first=false) {
             $timeCurrent = getMpdCurrentTime();
             $timeToAction = intval($hn->length)+(intval($timeTotal)-intval($timeCurrent))-4;
         }
-        Tasker::add($timeToAction,'addOneFileToMpdQueue',array());
+        Tasker::add($timeToAction,'addOneFileToMpdQueue');
         
         $stmt = $GLOBALS["db"]->prepare("UPDATE votes set played=1 WHERE fileid=:fileid");
         if(!$stmt->execute(array(":fileid" => $hn->id))) {

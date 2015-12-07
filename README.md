@@ -57,8 +57,7 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 
 ## Todos
 ### 1. Priority
-* out of playlist: top bar fails
-* Vote for next song
+* Vote for skip (todo in script.js unten)
 
 ### Upload File
 * uploadform
@@ -76,7 +75,6 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * Multilanguage
 * Schalter postgres
 * Publish
-* laptop start faster wihout ethernet =>  A start job is running for Wait for all "auto" /etc/network... to be up for network-online.target
 
 ### Used Librarys/Icons/Codesnippets
 * phpMp3 (for MPD communication) http://sourceforge.net/projects/phpmp3

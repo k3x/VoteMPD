@@ -26,5 +26,9 @@ class Tasker {
             }
         }
     }
+    
+    public static function removeAll() {
+        self::$jobs = array();
+    }
 }
 ?>
