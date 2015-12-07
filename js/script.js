@@ -61,6 +61,7 @@ function loadTab() {
 //do slow update ()
 function intervalSlow() {
     getNext(); //update fileinfos for next played song
+    getVoteskip(); //possible to vote?
 }
 
 //do mid update
@@ -215,6 +216,25 @@ function doVote(id) {
     xhttp.send();
 }
 
+//vote for skip current song
+function doVoteSkip() {
+    $("#vote-skip").html(loading);
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var response = JSON.parse(xhttp.responseText);
+            var content = "";
+            if(response.status!="success" || response.action!="vote-skip-action") {
+                content="Es trat ein Fehler auf!";
+            } else {
+                loadTab();
+            }
+        }
+    }
+    var str = ajaxpath+"?action=vote-skip-action";
+    xhttp.open("GET", str, true);
+    xhttp.send();
+}
 
 /*
 -----------------------------------------------------------------------------------------
@@ -606,7 +626,30 @@ function getPlaylog() {
 //button to vote for skip current song
 function getVoteskip() {
     $("#vote-skip").html(loading);
-    //TODO
-    $("#vote-skip").html("ABC");
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var response = JSON.parse(xhttp.responseText);
+            var content = "";
+            if(response.status!="success" || response.action!="vote-skip-check") {
+                content="Es trat ein Fehler auf!";
+            } else {
+                if(response.content==0) {
+                    content+='<img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVoteSkip();">';
+                } 
+                if(response.content==1) {
+                    content+='<img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt">';
+                }
+                if(response.content==2) {
+                    content+='<img class="votecircle" src="gfx/vote_disabled.png" alt="Nicht möglich">';
+                }
+            }
+            $("#vote-skip").html(content);
+        }
+    }
+    var str = ajaxpath+"?action=vote-skip-check";
+    xhttp.open("GET", str, true);
+    xhttp.send();
 }
 

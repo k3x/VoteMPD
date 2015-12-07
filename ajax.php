@@ -16,17 +16,13 @@ switch($_GET["action"]) {
         else doOutput($r,"showhighscore");
         break;
     case("search"):
-        if(!isset($_POST["keyword"])) {
-            doError("No keyword specified");
-        }
+        if(!isset($_POST["keyword"])) doError("No keyword specified");
         $r = doSearch($_POST["keyword"]);
         if($r===false) doError("Error while searching");
         else doOutput($r,"search");
         break;
     case("vote"):
-        if(!isset($_GET["id"])) {
-            doError("No id specified");
-        }
+        if(!isset($_GET["id"])) doError("No id specified");
         $r = doVote($_SERVER['REMOTE_ADDR'],$_GET["id"]);
         if($r===false) doError("Error while voting");
         else doOutput($r,"vote");
@@ -37,64 +33,50 @@ switch($_GET["action"]) {
         else doOutput($r,"getmyvotes");
         break;
     case("getnextsong"):
-        $r = getNextsongInHighscore();
-        doOutput($r,"getnextsong");
+        doOutput(getNextsongInHighscore(),"getnextsong");
         break;
     case("mpdcurrent"):
         $r = getMpdCurrentSong();
-        if($r===false) {
-            doError("mpdcurrent failed");
-        } else {
-            doOutput($r,"mpdcurrent");
-        }
+        if($r===false) doError("mpdcurrent failed");
+        else doOutput($r,"mpdcurrent");
         break;
     case("getfolderpic"):
-        if(!isset($_GET["id"])) {
-            doError("No id specified");
-        }
+        if(!isset($_GET["id"])) doError("No id specified");
         $folder = getFolderPic($_GET["id"]);
         header('Content-type:image/png');
         echo $folder->picture;
         break;
     case("browse-folders"):
-        if(!isset($_GET["id"])) {
-            doError("No id specified");
-        }
-        $r = getBrowseFolder(intval($_GET["id"]));
-        doOutput($r,"browse-folders");
+        if(!isset($_GET["id"])) doError("No id specified");
+        doOutput(getBrowseFolder(intval($_GET["id"])),"browse-folders");
         break;
     case("browse-artists"):
-        if(!isset($_POST["name"])) {
-            doError("No post-name specified");
-        }
-        $r = getBrowseArtist($_POST["name"]);
-        doOutput($r,"browse-artists");
+        if(!isset($_POST["name"])) doError("No post-name specified");
+        doOutput(getBrowseArtist($_POST["name"]),"browse-artists");
         break;
     case("browse-albums"):
-        if(!isset($_POST["name"])) {
-            doError("No post-name specified");
-        }
-        $r = getBrowseAlbum($_POST["name"]);
-        doOutput($r,"browse-albums");
+        if(!isset($_POST["name"])) doError("No post-name specified");
+        doOutput(getBrowseAlbum($_POST["name"]),"browse-albums");
         break;
     case("browse-playlists"):
-        if(!isset($_POST["name"])) {
-            doError("No post-name specified");
-        }
-        $r = getBrowsePlaylist($_POST["name"]);
-        doOutput($r,"browse-playlists");
+        if(!isset($_POST["name"])) doError("No post-name specified");
+        doOutput(getBrowsePlaylist($_POST["name"]),"browse-playlists");
         break;
     case("browse-often-playlists"):
-        $r = getBrowseOftenPlaylist();
-        doOutput($r,"browse-often-playlists");
+        doOutput(getBrowseOftenPlaylist(),"browse-often-playlists");
         break;
     case("browse-often-votes"):
-        $r = getBrowseOftenVote();
-        doOutput($r,"browse-often-votes");
+        doOutput(getBrowseOftenVote(),"browse-often-votes");
         break;
     case("browse-playlog"):
-        $r = getBrowsePlaylog();
-        doOutput($r,"browse-playlog");
+        doOutput(getBrowsePlaylog(),"browse-playlog");
+        break;
+    case("vote-skip-check"):
+        doOutput(getVoteSkipCheck(),"vote-skip-check");
+        break;
+    case("vote-skip-action"):
+        doOutput(getVoteSkipAction(),"vote-skip-action");
+        break;
         break;
     default: doError("No valid action specified");
 }

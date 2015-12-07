@@ -56,9 +56,6 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * Paths have to be relative to your root dir. For example: "somedir/somefile.mp3" (without quotes)
 
 ## Todos
-### 1. Priority
-* Vote for skip (todo in script.js unten)
-
 ### Upload File
 * uploadform
 * move to folder inside library
@@ -67,10 +64,10 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 
 ### save playlog
 * save playlog to playlist
-* new table options when last playlist was saved
+* new table "options". Save when last playlist was saved
 * if last save is 10h in past and in the last 10h was no vote => save new playlist
 
-### 2. Priority
+### (others)
 * Implement as Androidapp, so you only need a Tablet/2nd Smartphone instead of Notebook/RaspberryPi
 * Multilanguage
 * Schalter postgres

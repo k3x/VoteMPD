@@ -51,14 +51,13 @@ function checkForSkipSong() {
     $timeTotal = intval(getMpdValue("currentsong","Time"));
     $timeCurrent = intval(getMpdCurrentTime());
     if(($timeTotal-$timeCurrent)<10) return;
-            
-            
+
     $fileid = getMpdCurrentSong()["fileinfos"]->id;
     $skip = false;
     $stmt = $GLOBALS["db"]->prepare("SELECT COUNT(*) as anzahl FROM voteforskip WHERE fileid=:fileid AND DATE>DATE_SUB(NOW(),INTERVAL :seconds SECOND)");
     if($stmt->execute(array(":fileid" => $fileid,":seconds" => $timeCurrent))) {
         $row = $stmt->fetchObject();
-        if($row->anzahl >=5) $skip = true;
+        if($row->anzahl >= $GLOBALS["voteskipcount"]) $skip = true;
     }
     
     if($skip) {
@@ -325,6 +324,16 @@ function doVote($ip,$id) {
         $stmt = $GLOBALS["db"]->prepare("INSERT INTO votes (fileid,ip,date) VALUES (:fid,:ip,NOW())");
         return ($stmt->execute(array(":fid" => $id,":ip"=>$ip)));
     }
+}
+
+//vote vor next song
+function getVoteSkipAction() {
+    $fileid = getMpdCurrentSong()["fileinfos"]->id;
+    $stmt = $GLOBALS["db"]->prepare("INSERT INTO voteforskip (fileid,ip,date) VALUES (:fileid,:ip,NOW())");
+    if($stmt->execute(array(":fileid" => $fileid, "ip" => $_SERVER['REMOTE_ADDR']))) {
+        return true;
+    }
+    return false;
 }
 
 /*
@@ -787,6 +796,27 @@ function getBrowsePlaylog() {
     return ["files"=>$subFiles];
 }
 
+//vote possible?
+function getVoteSkipCheck() {
+    //not possible if state!=playing
+    $state = getMpdValue("status","state");
+    if($state != "play") return 2;
 
+    //not possible in last 10 seconds of song
+    $timeTotal = intval(getMpdValue("currentsong","Time"));
+    $timeCurrent = intval(getMpdCurrentTime());
+    if(($timeTotal-$timeCurrent)<10) return 2;
+
+    //not possible if already voted
+    $fileid = getMpdCurrentSong()["fileinfos"]->id;
+    $stmt = $GLOBALS["db"]->prepare("SELECT * FROM voteforskip WHERE fileid=:fileid AND ip=:ip AND DATE>DATE_SUB(NOW(),INTERVAL :seconds SECOND)");
+    if($stmt->execute(array(":fileid" => $fileid, "ip" => $_SERVER['REMOTE_ADDR'], ":seconds" => $timeCurrent))) {
+        $row = $stmt->fetchObject();
+        if($row!==false) return 1;
+    }
+
+    //possible
+    return 0;
+}
 
 ?>

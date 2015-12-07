@@ -6,9 +6,9 @@ ini_set("log_errors", 1);
 ini_set("error_log", "logs/votempd.txt");
 
 /* mysql database connection */
-$db_server="";
-$db_port="";
-$db_user="";
+$db_server="localhost";
+$db_port="3306";
+$db_user="root";
 $db_pass="";
 $db_database="votempd";
 
@@ -16,6 +16,7 @@ $db_database="votempd";
 $GLOBALS["path"]=""; // without trailing "/"
 $GLOBALS["pathplaylists"]=""; // without trailing "/"
 $GLOBALS["defaultplaylist"]=""; // playlist tu use if highscore is empty
+$GLOBALS["voteskipcount"]=2; // if more than x user vote for skip => skip
 
 /* MPD connection */
 $GLOBALS["mpdport"]=6600;
