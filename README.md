@@ -55,8 +55,9 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * .m3u playlists with one song per line. Linebreaks: \x0d\x0a Charset: UTF-8
 * Paths have to be relative to your root dir. For example: "somedir/somefile.mp3" (without quotes)
 
+
+
 ## Todos
-* Multilanguage
 * Publish
 
 ### save playlog
@@ -64,13 +65,11 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * new table "options". Save when last playlist was saved
 * if last save is 10h in past and in the last 10h was no vote => save new playlist
 
-$max_size = ini_get('post_max_size');
-$max_size2 = ini_get('upload_max_filesize');
-if(return_bytes($max_size2)<return_bytes($max_size)) $max_size=$max_size2;
-return_bytes($max_size)
-ALSO CHECK IF UPLOADS ARE ENABLED
 
-### Used Librarys/Icons/Codesnippets
+
+
+
+## Used Librarys/Icons/Codesnippets
 * phpMp3 (for MPD communication) http://sourceforge.net/projects/phpmp3
 * getID3 (for getting id3 tags) http://getid3.sourceforge.net
 

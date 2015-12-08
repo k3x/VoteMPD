@@ -1,3 +1,30 @@
+<?php
+
+function return_bytes($val) {
+    $val = trim($val);
+    $last = strtolower($val[strlen($val)-1]);
+    switch($last) {
+        // The 'G' modifier is available since PHP 5.1.0
+        case 'g':
+            $val *= 1024;
+        case 'm':
+            $val *= 1024;
+        case 'k':
+            $val *= 1024;
+    }
+    return $val;
+}
+
+$max_size = ini_get('post_max_size');
+$max_size2 = ini_get('upload_max_filesize');
+if(return_bytes($max_size2)<return_bytes($max_size)) $max_size=$max_size2;
+echo 'var maxsize = '.return_bytes($max_size).";\n";
+
+if(ini_get('file_uploads') == 1) echo "var uploadsenabled=true;\n";
+else echo "var uploadsenabled=false;\n";
+
+?>
+
 var ajaxpath = window.location.href+"ajax.php"; //absolute url to ajax.php
 var ajaxpathrel = "ajax.php"; //relative path to ajax.php
 var lastcurrent = null; //last fileinfos for currently played song
@@ -649,15 +676,19 @@ function getVoteskip() {
 }
 
 function getUploadForm() {
-    var content = 'Only upload mp3 files!'+
-    '<form enctype="multipart/form-data" action="ajax.php?action=upload-file" method="post">'+
-    '<input type="hidden" name="max_file_size" value="33554432"> <!-- todo -->'+
-    '<input type="hidden" name="abgeschickt" value="ja">'+
-    'Upload: <input name="thefile[]" type="file" multiple="multiple" style="border: 1px solid #555;"><br />'+
-    '<input type="submit" value="senden">'+
-    '<!--<input name="abbrechen" type="button" value="Abbrechen" id="abbrechen"><br />'+
-    '<progress max="1" value="0" id="fortschritt"></progress>'+
-    '<p id="fortschritt_txt"></p>-->'+
-    '</form>';
+    if(uploadsenabled) {
+        var content = 'Only upload mp3 files!'+
+        '<form enctype="multipart/form-data" action="ajax.php?action=upload-file" method="post">'+
+        '<input type="hidden" name="max_file_size" value="'+maxsize+'">'+
+        '<input type="hidden" name="abgeschickt" value="ja">'+
+        'Upload: <input name="thefile[]" type="file" multiple="multiple" style="border: 1px solid #555;"><br />'+
+        '<input type="submit" value="senden">'+
+        '<!--<input name="abbrechen" type="button" value="Abbrechen" id="abbrechen"><br />'+
+        '<progress max="1" value="0" id="fortschritt"></progress>'+
+        '<p id="fortschritt_txt"></p>-->'+
+        '</form>';
+    } else {
+        var content = 'File uploads are dissabled on this system!';
+    }
     $("#upload-file").html(content);
 }
