@@ -16,7 +16,7 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 
 ### Base
 * sudo apt-get install php5 php5-cli php5-json php5-mysql apache2 mysql-server mpd alsa-base
-* php shell exec has to be eneabled
+* php shell exec has to be eneabled; php.ini: file_uploads = On,post_max_size = 100M,upload_max_filesize = 100M
 * configure /etc/mpd.conf (music library and audio autput, mixer_type "software")
 * sudo service mpd restart
 * sudo apt-get install gmpc
@@ -56,12 +56,6 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * Paths have to be relative to your root dir. For example: "somedir/somefile.mp3" (without quotes)
 
 ## Todos
-### Upload File
-* uploadform
-* move to folder inside library
-* add into mpd database
-* add into votempd database
-
 ### save playlog
 * save playlog to playlist
 * new table "options". Save when last playlist was saved
@@ -72,6 +66,13 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * Multilanguage
 * Schalter postgres
 * Publish
+* 2x start scan as daemon parameter
+
+
+$max_size = ini_get('post_max_size');
+$max_size2 = ini_get('upload_max_filesize');
+if(return_bytes($max_size2)<return_bytes($max_size)) $max_size=$max_size2;
+return_bytes($max_size)
 
 ### Used Librarys/Icons/Codesnippets
 * phpMp3 (for MPD communication) http://sourceforge.net/projects/phpmp3

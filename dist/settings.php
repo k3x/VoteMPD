@@ -14,8 +14,9 @@ $db_database="votempd";
 
 /* music folder */
 $GLOBALS["path"]=""; // without trailing "/"
-$GLOBALS["pathplaylists"]=""; // without trailing "/"
-$GLOBALS["defaultplaylist"]=""; // playlist tu use if highscore is empty
+$GLOBALS["pathplaylists"]=""; // without trailing "/"; Folder inside $GLOBALS["path"]
+$GLOBALS["pathuploads"]=""; // without trailing "/"; Folder inside $GLOBALS["path"]
+$GLOBALS["defaultplaylist"]=""; // playlist to use if highscore is empty
 $GLOBALS["voteskipcount"]=2; // if more than x user vote for skip => skip
 
 /* MPD connection */

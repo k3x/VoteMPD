@@ -77,6 +77,8 @@ switch($_GET["action"]) {
     case("vote-skip-action"):
         doOutput(getVoteSkipAction(),"vote-skip-action");
         break;
+    case("upload-file"):
+        doUploadFile();
         break;
     default: doError("No valid action specified");
 }

@@ -2,6 +2,7 @@
 
 require("mpd.php");
 require("settings.php");
+require_once('libs/getid3/getid3.php');
 
 /*
 ---------------------------------------------------------------------------
@@ -102,6 +103,15 @@ function addOneFileToMpdQueue($first=false) {
     }
 }
 
+function scanP() {
+    doRootPlaylists($GLOBALS["path"]."/".$GLOBALS["pathplaylists"]);
+}
+
+function scanF() {
+    $GLOBALS["getid3"] = new getID3;
+    doRootFiles($GLOBALS["path"]);
+}
+
 /*
 ---------------------------------------------------------------------------
 ------------------------------MPD STUFF------------------------------------
@@ -144,11 +154,32 @@ function getMpdCurrentSong() {
     return array("state"=>$state,"time"=>getMpdCurrentTime(),"fileinfos"=>$fileinfos);
 }
 
+//adds a mp3 to mpd library
+function mpdScan($filepath) {
+    $mpd = new MPD();
+    $r=$mpd->cmd('update "'.$filepath.'"');
+}
+
 /*
 ---------------------------------------------------------------------------
 ------------------------------HELPER FUNCTIONS-----------------------------
 ---------------------------------------------------------------------------
 */
+
+// folderpath => folderid
+function getFolderidforFolderpath($path) {
+    $folders = explode("/",$path);
+    $curDir = -1;
+    foreach($folders as $f) {
+        $stmt = $GLOBALS["db"]->prepare("SELECT id,picture FROM folders WHERE parentid=:p AND foldername=:f");
+        if($stmt->execute(array(":p" => $curDir,":f" => $f))) {
+            if($row = $stmt->fetchObject()) $curDir=$row->id;
+            else doError("getFileinfosforfilepath db query failed");
+        } else doError("getFileinfosforfilepath db query failed");
+    }
+
+    return $curDir;
+}
 
 // filepath => infos
 function getFileinfosforfilepath($path) {
@@ -818,5 +849,285 @@ function getVoteSkipCheck() {
     //possible
     return 0;
 }
+
+//upload file
+function doUploadFile() {
+    $GLOBALS["getid3"] = new getID3;
+    $anzahl = count($_FILES['thefile']['error']);
+    $echohtml_content="";
+    for($i=0;$i<$anzahl;$i++) {
+        $echohtml_content.= "<h2>".$_FILES['thefile']['name'][$i]."</h2>";
+        if(!($_FILES['thefile']['error'][$i]===0))      $echohtml_content.= "Errorcode: ".$_FILES['thefile']['error'][$i]." http://php.net/manual/de/features.file-upload.errors.php<br />";
+        if(!isset($_FILES['thefile']['tmp_name'][$i])) 	{$echohtml_content.= "Fehler: kein tmp_filename"; break; }
+        if($_FILES['thefile']['tmp_name'][$i]=="") 		{$echohtml_content.= "Fehler: tmp_filename ist leer"; break; } //[tmp_name] => /home/www/sp01_62/phptmp/phpLqU14d
+        if(!isset($_FILES['thefile']['name'][$i])) 		{$echohtml_content.= "Fehler: kein name"; break; } //name] => lircd.bak
+        if($_FILES['thefile']['name'][$i]=="") 		    {$echohtml_content.= "Fehler: name ist leer"; break; }
+        if(!isset($_FILES['thefile']['error'][$i])) 	{$echohtml_content.= "Fehler: kein errorcode"; break; }
+        if(!($_FILES['thefile']['error'][$i]===0))  	{$echohtml_content.= "Fehler: errornummer ist nicht 0"; break; } //[error] => 0
+        if($_FILES['thefile']['size'][$i]==0) 		    {$echohtml_content.= "Fehler: Datei hat Gr&ouml;sse 0"; break; } //[size] => 2917 ca 3kb => 10mb
+        $endunga=strrchr($_FILES['thefile']['name'][$i], ".");
+        $endunga=str_replace(".", "", $endunga);
+        $endunga=strtolower($endunga);
+        if ($endunga!="mp3") { $echohtml_content.="Fehler: Dateiendung nicht akzeptiert (.".$endunga.")<br>"; break; }
+
+        $date=date("Y.m.d_H.i.s");
+        $file_name=$date."_".preg_replace("/[^A-Za-z0-9._ ]/", '', $_FILES['thefile']['name'][$i]);
+        $file_name=str_replace(" ","_",$file_name);
+        $file_name=str_replace(" ","_",$file_name);
+        $file_path_rel=$GLOBALS["pathuploads"]."/".$file_name;
+        $file_path_abs=$GLOBALS["path"]."/".$file_path_rel;
+        if (file_exists($file_path_abs)) { $echohtml_content.= "Fehler: datei existiert bereits<br>"; break; }
+        if(move_uploaded_file($_FILES['thefile']['tmp_name'][$i],$file_path_abs)){
+            $echohtml_content.="OK<br>Datei hei&szlig;t: ".$file_name."<br>";
+            mpdScan($file_path_rel);
+            $foldernum = getFolderidforFolderpath($GLOBALS["pathuploads"]);
+            insertFileInDb($foldernum,$file_path_abs,false);
+        } else $echohtml_content.="Fehler: beim kopieren";
+    }
+    $echohtml_content.="<br /><br /><a href=\"/\">zur&uuml;ck</a>";
+    echo $echohtml_content;
+}
+
+/*
+---------------------------------------------------------------------------
+------------------------------SCAN FILES STUFF-----------------------------
+---------------------------------------------------------------------------
+*/
+
+//Print current progress in console
+function printProgress() {
+
+    //calculate fps (files per second) every x seconds
+    if(time()>=$GLOBALS["next10sec"]) {
+        $GLOBALS["next10sec"] = time() + $GLOBALS["timestep"];
+        $diff = $GLOBALS["files"] - $GLOBALS["lastfiles"];
+        $GLOBALS["filespersec"] = $diff/$GLOBALS["timestep"];
+        $GLOBALS["lastfiles"] = $GLOBALS["files"];
+    }
+    
+    //only continue this function every x files ($GLOBALS["outputeveryxfiles"])
+    if($GLOBALS["files"]%$GLOBALS["outputeveryxfiles"]!=0) return;
+    
+    //echo ProgressBar
+    echo "[";
+    $num = $GLOBALS["ProgressBarLength"]*$GLOBALS["files"]/$GLOBALS["totalfiles"];
+    for($i=0;$i<$GLOBALS["ProgressBarLength"];$i++) {
+        if($i<=intval($num)) echo "#";
+        else echo ".";
+    }
+    echo "]     ";
+    
+    //echo currentFiles/totalFiles and percent
+    echo    $GLOBALS["files"]."/".$GLOBALS["totalfiles"]." ".
+            number_format(100*$GLOBALS["files"]/$GLOBALS["totalfiles"],2)."% ";
+            
+    //echo files per second
+    if($GLOBALS["filespersec"]!=0) {
+        echo    $GLOBALS["filespersec"]."fps ".
+                number_format(((($GLOBALS["totalfiles"]-$GLOBALS["files"])/$GLOBALS["filespersec"])/60),2)."min remaining";
+    }
+    echo "\n";
+
+}
+
+//first called function
+function doRootFiles($p) {
+    $GLOBALS["files"]=0;
+    $GLOBALS["totalfiles"]=0;
+    $GLOBALS["filespersec"]=0;
+    $GLOBALS["next10sec"]=0;
+    $GLOBALS["lastfiles"]=0;
+    $GLOBALS["ProgressBarLength"] = 40; //length of ProgressBar
+    $GLOBALS["timestep"] = 5; //re-calculate files per second every x seconds
+    $GLOBALS["outputeveryxfiles"] = 10; //print status every x files
+    $GLOBALS["next10sec"] = time() + $GLOBALS["timestep"];
+    
+    //calculate time for specific tasks
+    $GLOBALS["Ttags"]=0; //get Tags
+    $GLOBALS["Tsize"]=0; //get size
+    $GLOBALS["Tdb"]=0; //insert into database
+    $GLOBALS["Tpro"]=0; //calculate and print progress
+    
+    echo "Do Root: ".$p."\n";
+    
+    //calculate total filecount
+    $GLOBALS["totalfiles"]=intval(shell_exec('find "'.$p.'" -iname "*.mp3" | wc -l'));
+    
+    //do mp3s in root
+    $sPath = $p.'/*.mp3';
+    foreach (glob($sPath) AS $mp3)
+    {
+        //insert mp3 in database
+        insertFileInDb(-1,$mp3);
+    }
+    
+    //do folders in root
+    foreach(glob($p.'/*' , GLOB_ONLYDIR) AS $dir) {
+        doOneFolder(-1,$dir);
+    }
+    
+    //print timers
+    echo "\nFinished!\n";
+    echo "TAGS: ".$GLOBALS["Ttags"]."s\n";
+    echo "DABA: ".$GLOBALS["Tdb"]."s\n";
+    echo "PROG: ".$GLOBALS["Tpro"]."s\n";
+    echo "SIZE: ".$GLOBALS["Tsize"]."s\n";
+}
+
+//proceed one folder
+function doOneFolder($parentid,$p) {
+    echo "Do Folder: ".$p."\n";
+
+    //insert folder in db
+    $foldernum = insertFolderInDb($parentid,$p);
+    
+    //do mp3s
+    $sPath = $p.'/*.mp3';
+    foreach (glob($sPath) AS $mp3)
+    {
+        //insert mp3 in database
+        insertFileInDb($foldernum,$mp3);
+    }
+    
+    //continue with sub-folders
+    foreach(glob($p.'/*' , GLOB_ONLYDIR) AS $dir) {
+        doOneFolder($foldernum,$dir);
+    }
+}
+
+//enters folder in database
+//returns folderid
+function insertFolderInDb($parentid,$folderpath) {
+
+    //get picture
+    $pic = null;
+    if(file_exists($folderpath."/cover.jpg")) {
+        $pic = file_get_contents($folderpath."/cover.jpg");
+    } else if(file_exists($folderpath."/AlbumArtSmall.jpg")) {
+        $pic = file_get_contents($folderpath."/AlbumArtSmall.jpg");
+    } else if(file_exists($folderpath."/Folder.jpg")) {
+        $pic = file_get_contents($folderpath."/Folder.jpg");
+    }
+    
+    //insert in database
+    $stmt = $GLOBALS["db"]->prepare("INSERT INTO folders (parentid,foldername,picture) VALUES(:pid, :fname, :pic)");
+    $foldername = basename($folderpath);
+    if(!$stmt->execute(array(':pid' => intval($parentid), ':fname' => $foldername, ':pic' => $pic))) {
+        die("insertFolderInDb: Error");
+    }
+    
+    //return id
+    return intval($GLOBALS["db"]->lastInsertID());
+}
+
+//enters file in database
+//returns fileid
+function insertFileInDb($foldernum,$p,$scan = true) {
+    //get size
+    if($scan) $Tstart = microtime(true);
+    $size = filesize($p);
+    if($scan) $GLOBALS["Tsize"]+=(microtime(true)-$Tstart);
+    
+    //get tags&length
+    if($scan) $Tstart = microtime(true);
+    $ThisFileInfo = $GLOBALS["getid3"]->analyze($p);
+    $year =     isset($ThisFileInfo['tags']['id3v2']['year'][0]) ? $ThisFileInfo['tags']['id3v2']['year'][0] : "";
+    $artist =   isset($ThisFileInfo['tags']['id3v2']['artist'][0]) ? $ThisFileInfo['tags']['id3v2']['artist'][0] : "";
+    $title =    isset($ThisFileInfo['tags']['id3v2']['title'][0] ) ? $ThisFileInfo['tags']['id3v2']['title'][0]  : "";
+    $album =    isset($ThisFileInfo['tags']['id3v2']['album'][0] ) ? $ThisFileInfo['tags']['id3v2']['album'][0]  : "";
+    $length =   isset($ThisFileInfo['playtime_seconds']) ? $ThisFileInfo['playtime_seconds'] : 0;
+    if($year===null) $year="";
+    if($scan) $GLOBALS["Ttags"]+=(microtime(true)-$Tstart);
+    
+    //insert into database
+    if($scan) $Tstart = microtime(true);
+    $stmt = $GLOBALS["db"]->prepare("INSERT INTO files (filename,folderid,artist,title,album,year,length,size) VALUES(:fname, :fid,:ar,:ti,:al,:ye,:le,:si)");
+    $filename = basename($p);
+    if(!$stmt->execute(array(
+        ':fname' => $filename, 
+        ':fid' => intval($foldernum),
+        ':ar' => $artist,
+        ':ti' => $title,
+        ':al' => $album,
+        ':ye' => $year,
+        ':le' => $length,
+        ':si' => intval($size)
+        
+    ))) {
+        print_r($stmt->queryString."\n");
+        print_r($stmt->errorInfo());
+        die("insertFileInDb: Error");
+    }
+    if($scan) $GLOBALS["Tdb"]+=(microtime(true)-$Tstart);
+    
+    if($scan) $GLOBALS["files"]++;
+    
+    //print Progress
+    if($scan) $Tstart = microtime(true);
+    if($scan) printProgress();
+    if($scan) $GLOBALS["Tpro"]+=(microtime(true)-$Tstart);
+    
+    //return id
+    return intval($GLOBALS["db"]->lastInsertID());
+}
+
+/*
+---------------------------------------------------------------------------
+---------------------------SCAN PLAYLISTS STUFF----------------------------
+---------------------------------------------------------------------------
+*/
+
+
+//first called function
+function doRootPlaylists($p) {
+    //scan for m3us
+    $sPath = $p.'/*.m3u';
+    foreach (glob($sPath) AS $m3u)
+    {
+        //proceed with one playlist
+        doPlaylist($m3u);
+    }
+}
+
+//one playlist
+function doPlaylist($p) {
+    //read file content
+    $content = file_get_contents($p);
+    
+    //get filename
+    $filename = basename($p);
+    $filename = basename($p, '.m3u');
+    echo "Do Playlist: ".$filename."\n";
+    
+    //get lines
+    $array = explode("\x0d\x0a",$content);
+    
+    //foreach line (song)
+    foreach($array as $a) {
+        if(trim($a)=="") continue;
+        if(file_exists($GLOBALS["path"]."/".$a)) {
+            //if file exists enter fileid in database
+            $fileinfos = getFileinfosforfilepath($a);
+            if($fileinfos===false) {
+                $path = $a;
+                $id = null;
+            } else {
+                $path=null;
+                $id = $fileinfos->id;
+            }
+        } else {
+            //if file does not exists enter path in database
+            $id=null;
+            $path = $a;
+        }
+        
+        //enter into database
+        $stmt = $GLOBALS["db"]->prepare("INSERT INTO playlistitems (playlistname,fileid,filepath) VALUES(:pname, :fid, :fpath)");
+        if(!$stmt->execute(array(':pname' => $filename, ':fid' => $id, ':fpath' => $path))) {
+            die("insertPlaylistInDb: Error");
+        }
+    }
+}
+
 
 ?>

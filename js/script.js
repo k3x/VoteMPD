@@ -18,8 +18,7 @@ $(function() {
             heightStyle: "content",
             collapsible: true, 
             activate: function( event, ui ) {loadTab();},
-            beforeActivate: function( event, ui ) {setLoading(ui.newPanel);},
-            animate: 200
+            animate: 0
     });
     
     
@@ -31,11 +30,6 @@ $(function() {
     setInterval(function(){ intervalMid(); }, 5000); //do mid update (current song changed?, paused? current position in song?)
     setInterval(function(){ intervalFast(); }, intervalfast); //do fast update (only local, interpolate song position)
 });
-
-//set loading circle in tab/panel
-function setLoading(panel) {
-    panel.html(loading);
-}
 
 //refresh content of currently open accoredon-tab
 function loadTab() {
@@ -54,6 +48,7 @@ function loadTab() {
         case(8): getOftenVotes();break;
         case(9): getPlaylog();break;
         case(10): getVoteskip();break;
+        case(11): getUploadForm();
         default: break;
     }
 }
@@ -313,15 +308,15 @@ function getHigh() {
 
 //get search
 function doSearch() {
-    var text = $("#search-text").val();
-    if(text.length==0) return;
-    if(text.length<3) {
+    var textVal = $("#search-text").val();
+    if(textVal.length==0) return;
+    if(textVal.length<3) {
         $("#search > ul").html("Bitte mindestens 3 Zeichen eingeben!");  
         return;
     }
     $("#search > ul").html(loading);
 
-    $.post(ajaxpath+"?action=search", {keyword: text}, function(result,status){
+    $.post(ajaxpath+"?action=search", {keyword: textVal}, function(result,status){
         if(status=="success") {
             var response = JSON.parse(result);
             var content = "";
@@ -653,3 +648,16 @@ function getVoteskip() {
     xhttp.send();
 }
 
+function getUploadForm() {
+    var content = 'Only upload mp3 files!'+
+    '<form enctype="multipart/form-data" action="ajax.php?action=upload-file" method="post">'+
+    '<input type="hidden" name="max_file_size" value="33554432"> <!-- todo -->'+
+    '<input type="hidden" name="abgeschickt" value="ja">'+
+    'Upload: <input name="thefile[]" type="file" multiple="multiple" style="border: 1px solid #555;"><br />'+
+    '<input type="submit" value="senden">'+
+    '<!--<input name="abbrechen" type="button" value="Abbrechen" id="abbrechen"><br />'+
+    '<progress max="1" value="0" id="fortschritt"></progress>'+
+    '<p id="fortschritt_txt"></p>-->'+
+    '</form>';
+    $("#upload-file").html(content);
+}
