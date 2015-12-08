@@ -66,8 +66,6 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * Multilanguage
 * Schalter postgres
 * Publish
-* 2x start scan as daemon parameter
-
 
 $max_size = ini_get('post_max_size');
 $max_size2 = ini_get('upload_max_filesize');
