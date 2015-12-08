@@ -71,8 +71,14 @@ function checkForSkipSong() {
 //take first file from highscore and add it to mpd Queue
 function addOneFileToMpdQueue($first=false) {
     $mpd = new MPD();
-    $hn = getNextsongInHighscore(true);
     
+    $voted = false;
+    $tmp = doShowhighscore(true);
+    if($tmp!==false && $tmp!==null && count($tmp)>=1) {
+        $voted = true;
+    }
+    
+    $hn = getNextsongInHighscore(true);
     if($hn!==null) {
         $path = getFilepathForFileid($hn->id);
         $mpd->cmd('add "'.$path.'"');
@@ -89,17 +95,45 @@ function addOneFileToMpdQueue($first=false) {
         }
         Tasker::add($timeToAction,'addOneFileToMpdQueue');
         
-        $stmt = $GLOBALS["db"]->prepare("UPDATE votes set played=1 WHERE fileid=:fileid");
-        if(!$stmt->execute(array(":fileid" => $hn->id))) {
-            echo "error";
-        }
-        
-        $stmt = $GLOBALS["db"]->prepare("INSERT INTO playlog (fileid,date) VALUES (:fileid,NOW())");
-        if(!$stmt->execute(array(":fileid" => $hn->id))) {
-            echo "error";
+        if($voted) {
+            $stmt = $GLOBALS["db"]->prepare("UPDATE votes set played=1 WHERE fileid=:fileid");
+            if(!$stmt->execute(array(":fileid" => $hn->id))) {
+                echo "error";
+            }
+            
+            
+            $stmt = $GLOBALS["db"]->prepare("INSERT INTO playlog (fileid,date) VALUES (:fileid,NOW())");
+            if(!$stmt->execute(array(":fileid" => $hn->id))) {
+                echo "error";
+            }
         }
     } else {
         Tasker::add(5,'daemonCallInit',array());
+    }
+    checkForSavePlaylog();
+}
+
+//maybe saves playlog to playlist
+function checkForSavePlaylog() { //todo
+    $lastDate = getLastPlaylogSaveDate();
+    
+    if($lastDate===null) { //do initial set lastplaylogsave
+        $stmt = $GLOBALS["db"]->prepare("INSERT INTO options_date (id,value) VALUES (\"lastplaylogsave\",NOW())");
+        $stmt->execute();
+        return;
+    }
+    
+    $hours = getHoursSinceLastPlaylogSaveDate();    
+    $songs = getSongsSinceLastPlaylogSaveDate();  //array of strings (fileid)
+    if($hours>10 && count($songs)>0) {
+        $stmt = $GLOBALS["db"]->prepare("UPDATE options_date set value=NOW() WHERE id=\"lastplaylogsave\"");
+        $stmt->execute();
+        $name = gmDate("Y_m_d\-H.i")."_autosave";
+        foreach($songs as $s) {
+            $s = intval($s);
+            $stmt = $GLOBALS["db"]->prepare("INSERT INTO playlistitems (playlistname,fileid,filepath) VALUES (:n,:s,NULL)");
+            $stmt->execute(array(":n"=>$name,":s"=>$s));
+        }
     }
 }
 
@@ -165,6 +199,39 @@ function mpdScan($filepath) {
 ------------------------------HELPER FUNCTIONS-----------------------------
 ---------------------------------------------------------------------------
 */
+
+//returns date of last saved item in playlog, or null
+function getLastPlaylogSaveDate() {
+    $stmt = $GLOBALS["db"]->prepare("SELECT value FROM options_date WHERE id=\"lastplaylogsave\"");
+    if($stmt->execute()) {
+        if($row = $stmt->fetchColumn()) return $row;
+    }
+    return null;
+}
+
+//returns hours passed since date of last saved item in playlog, or null
+function getHoursSinceLastPlaylogSaveDate() {
+    $d = getLastPlaylogSaveDate();
+    if($d===null) return null;
+
+    $stmt = $GLOBALS["db"]->prepare("SELECT HOUR(TIMEDIFF (NOW(),:d))");
+    if($stmt->execute(array("d"=>$d))) {
+        if($row = $stmt->fetchColumn()) return intval($row);
+    }
+    return null;
+}
+
+//returns songs played since date of last saved item in playlog (or empty array)
+function getSongsSinceLastPlaylogSaveDate() {
+    $d = getLastPlaylogSaveDate();
+    if($d===null) return array();
+
+    $stmt = $GLOBALS["db"]->prepare("SELECT fileid from playlog WHERE date>:d");
+    if($stmt->execute(array("d"=>$d))) {
+        if($rows = $stmt->fetchAll(PDO::FETCH_COLUMN)) return $rows;
+    }
+    return array();
+}
 
 // folderpath => folderid
 function getFolderidforFolderpath($path) {
@@ -299,8 +366,8 @@ function getNextsongInHighscore($daemoncall = false) {
             }
         }
         
-    $subFiles = array();
-    $stmt = $GLOBALS["db"]->prepare("
+        $subFiles = array();
+        $stmt = $GLOBALS["db"]->prepare("
             SELECT 
                 id,
                 filename,
@@ -315,24 +382,24 @@ function getNextsongInHighscore($daemoncall = false) {
             WHERE 
                 fileid IS NOT NULL AND 
                 playlistname=:name");
-    if($stmt->execute(array(":name" => $GLOBALS["defaultplaylist"]))) {
-        while ($row = $stmt->fetchObject()) {
-            $subFiles[] = $row;
-        }
-    } else doError("getNextsongInHighscore db query failed");
-    if(count($subFiles)==0) return null;
-    
-    if($pos>=count($subFiles)) $pos = 0;
-    
-    if($daemoncall) {
-        $newpos=$pos+1;
-        if($newpos>=count($subFiles)) $newpos = 0;
+        if($stmt->execute(array(":name" => $GLOBALS["defaultplaylist"]))) {
+            while ($row = $stmt->fetchObject()) {
+                $subFiles[] = $row;
+            }
+        } else doError("getNextsongInHighscore db query failed");
+        if(count($subFiles)==0) return null;
         
-        $stmt = $GLOBALS["db"]->prepare("UPDATE options_int SET value=:v WHERE id='defaultplaylistposition'");
-        if(!$stmt->execute(array(":v"=>$newpos))) {
-            doError("ERROR: save defaultplaylistposition");
+        if($pos>=count($subFiles)) $pos = 0;
+        
+        if($daemoncall) {
+            $newpos=$pos+1;
+            if($newpos>=count($subFiles)) $newpos = 0;
+            
+            $stmt = $GLOBALS["db"]->prepare("UPDATE options_int SET value=:v WHERE id='defaultplaylistposition'");
+            if(!$stmt->execute(array(":v"=>$newpos))) {
+                doError("ERROR: save defaultplaylistposition");
+            }
         }
-    }
     
     return $subFiles[$pos];
     }

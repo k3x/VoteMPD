@@ -55,19 +55,9 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * .m3u playlists with one song per line. Linebreaks: \x0d\x0a Charset: UTF-8
 * Paths have to be relative to your root dir. For example: "somedir/somefile.mp3" (without quotes)
 
-
-
 ## Todos
 * Publish
-
-### save playlog
-* save playlog to playlist
-* new table "options". Save when last playlist was saved
-* if last save is 10h in past and in the last 10h was no vote => save new playlist
-
-
-
-
+* create mpd playlists
 
 ## Used Librarys/Icons/Codesnippets
 * phpMp3 (for MPD communication) http://sourceforge.net/projects/phpmp3
