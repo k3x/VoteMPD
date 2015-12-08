@@ -23,7 +23,7 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * run gmpc, connect to mpd, do Server -> Update MPD Database
 * Install mysql server, create new database and configure "includes/settings.php". Enter your mpd connection infos and also enter the same "path" like you configured for mpd.
 * import dist/votempd.sql in the created mysql database.
-* run "php scan-files.php" and run "php scan-playlists.php"
+* run "php daemon.php -f" and run "php daemon.php -p"
 * Let your Apache "/" point to the root folder (the folder with index.html)
 * in console run php daemon.php
 
@@ -56,21 +56,19 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * Paths have to be relative to your root dir. For example: "somedir/somefile.mp3" (without quotes)
 
 ## Todos
+* Multilanguage
+* Publish
+
 ### save playlog
 * save playlog to playlist
 * new table "options". Save when last playlist was saved
 * if last save is 10h in past and in the last 10h was no vote => save new playlist
 
-### (others)
-* Implement as Androidapp, so you only need a Tablet/2nd Smartphone instead of Notebook/RaspberryPi
-* Multilanguage
-* Schalter postgres
-* Publish
-
 $max_size = ini_get('post_max_size');
 $max_size2 = ini_get('upload_max_filesize');
 if(return_bytes($max_size2)<return_bytes($max_size)) $max_size=$max_size2;
 return_bytes($max_size)
+ALSO CHECK IF UPLOADS ARE ENABLED
 
 ### Used Librarys/Icons/Codesnippets
 * phpMp3 (for MPD communication) http://sourceforge.net/projects/phpmp3
