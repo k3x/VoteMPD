@@ -70,8 +70,9 @@ function checkForSkipSong() {
 
 //take first file from highscore and add it to mpd Queue
 function addOneFileToMpdQueue($first=false) {
+    checkForSavePlaylog();
     $mpd = new MPD();
-    
+
     $voted = false;
     $tmp = doShowhighscore(true);
     if($tmp!==false && $tmp!==null && count($tmp)>=1) {
@@ -110,7 +111,6 @@ function addOneFileToMpdQueue($first=false) {
     } else {
         Tasker::add(5,'daemonCallInit',array());
     }
-    checkForSavePlaylog();
 }
 
 //maybe saves playlog to playlist

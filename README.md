@@ -1,8 +1,8 @@
 # VoteMPD
 
 * Author: Felix Sterzelmaier
-* Version 0.4
-* Date: 02. December 2015
+* Version 0.6
+* Date: 09. December 2015
 
 VoteMPD allows your party guests to fill the queue of your MusicPlayerDaemon.
 Just run this Script on a server and make it availiable over wifi. See also: http://getfestify.com
@@ -49,22 +49,15 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * sudo nano /etc/dnsmasq.conf   (dhcp-range,listen-address,interface,address) (see dist/dnsmasq.conf)
 * sudo service dnsmasq restart
 
-### Information
-
-#### Playlists
+## Playlists Information
 * .m3u playlists with one song per line. Linebreaks: \x0d\x0a Charset: UTF-8
 * Paths have to be relative to your root dir. For example: "somedir/somefile.mp3" (without quotes)
 
-## Todos
-* Publish
-* create mpd playlists
-
-## Used Librarys/Icons/Codesnippets
+## Used Librarys
 * phpMp3 (for MPD communication) http://sourceforge.net/projects/phpmp3
 * getID3 (for getting id3 tags) http://getid3.sourceforge.net
 
 ## License
-
 VoteMPD is free software. It is released under the terms of
 the following BSD License.
 
