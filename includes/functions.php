@@ -267,9 +267,10 @@ function getFileinfosforfilepath($path) {
     
     $stmt = $GLOBALS["db"]->prepare("SELECT * FROM files WHERE folderid=:folderid AND filename=:filename");
     if($stmt->execute(array(":folderid" => $curDir,":filename" => basename($path)))) {
-        $row = $stmt->fetchObject();
-        $row->picture = $pic;
-        return $row;
+        if($row = $stmt->fetchObject()) {
+            $row->picture = $pic;
+            return $row;
+        } else return false;
     } else doError("getFileinfosforfilepath db query failed2");
     return false;
 }
@@ -1184,7 +1185,7 @@ function doPlaylist($p) {
             }
         } else {
             //if file does not exists enter path in database
-            $id=null;
+            $id = null;
             $path = $a;
         }
         
