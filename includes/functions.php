@@ -241,8 +241,8 @@ function getFolderidforFolderpath($path) {
         $stmt = $GLOBALS["db"]->prepare("SELECT id,picture FROM folders WHERE parentid=:p AND foldername=:f");
         if($stmt->execute(array(":p" => $curDir,":f" => $f))) {
             if($row = $stmt->fetchObject()) $curDir=$row->id;
-            else doError("getFileinfosforfilepath db query failed");
-        } else doError("getFileinfosforfilepath db query failed");
+            else doError("getFolderidforFolderpath db query failed (1) ".print_r(array(":p" => $curDir,":f" => $f),true));
+        } else doError("getFolderidforFolderpath db query failed (2) ".print_r(array(":p" => $curDir,":f" => $f),true));
     }
 
     return $curDir;
@@ -256,8 +256,8 @@ function getFileinfosforfilepath($path) {
         $stmt = $GLOBALS["db"]->prepare("SELECT id,picture FROM folders WHERE parentid=:p AND foldername=:f");
         if($stmt->execute(array(":p" => $curDir,":f" => $f))) {
             if($row = $stmt->fetchObject()) $curDir=$row->id;
-            else doError("getFileinfosforfilepath db query failed");
-        } else doError("getFileinfosforfilepath db query failed");
+            else doError("getFileinfosforfilepath db query failed (1) ".print_r(array(":p" => $curDir,":f" => $f),true));
+        } else doError("getFileinfosforfilepath db query failed (2) ".print_r(array(":p" => $curDir,":f" => $f),true));
     }
     
     $pic=false;
@@ -271,7 +271,7 @@ function getFileinfosforfilepath($path) {
             $row->picture = $pic;
             return $row;
         } else return false;
-    } else doError("getFileinfosforfilepath db query failed2");
+    } else doError("getFileinfosforfilepath db query failed (3) ".print_r(array(":folderid" => $curDir,":filename" => basename($path)),true));
     return false;
 }
 

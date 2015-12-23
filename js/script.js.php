@@ -95,9 +95,10 @@ function intervalMid() {
 function intervalFast() {
     if(tempposition==null || lastcurrent==null || lastcurrent.state!="play") return;
     tempposition += intervalfast/1000;
-    var percent = 100*tempposition/lastcurrent.fileinfos.length
+    var percent = 100*tempposition/lastcurrent.fileinfos.length;
     if(percent>100) percent=100;
     $("#innerhead").css("background","linear-gradient(90deg, rgba(164,164,164,0.7) "+percent+"%, rgba(256,256,256,0.8) "+percent+"%)");
+    $("#timespan").html(formatLength(tempposition)+"/"+formatLength(lastcurrent.fileinfos.length));
 }
 
 
@@ -163,7 +164,7 @@ function getCurrent() {
                         lastcurrent = null;
                     } else {
                         content=    response.content.fileinfos.artist+" - "+
-                                    response.content.fileinfos.title;
+                                    response.content.fileinfos.title+" (<span id='timespan'>"+formatLength(response.content.time)+"/"+formatLength(response.content.fileinfos.length)+"</span>)";
                         percent = 100*response.content.time/response.content.fileinfos.length;
                         picture = response.content.fileinfos.picture;
                         if(lastcurrent==null || lastcurrent.fileinfos.id!=response.content.fileinfos.id) {
