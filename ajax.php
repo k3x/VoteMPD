@@ -89,6 +89,10 @@ switch($_GET["action"]) {
         if(!isset($_GET["id"])) doError("No id specified");
         doDownloadFileDo($_GET["id"]);
         break;
+    case("download-playlist"):
+        if(!isset($_GET["name"])) doError("No name specified");
+        doDownloadPlaylistDo($_GET["name"]);
+        break;
     default: doError("No valid action specified");
 }
 

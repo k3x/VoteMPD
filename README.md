@@ -65,6 +65,7 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * vote down
 * remove vote
 * vote for volume
+* export playlists (_autosave) to file
 
 ## License
 VoteMPD is free software. It is released under the terms of

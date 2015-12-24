@@ -457,6 +457,26 @@ function doDownloadFileDo($id) {
 	readfile($path);
 }
 
+//download a playlist
+function doDownloadPlaylistDo($name) {
+    $subFiles = array();
+    
+    $stmt = $GLOBALS["db"]->prepare("SELECT id from playlistitems INNER JOIN files on(files.id=playlistitems.fileid) WHERE fileid IS NOT NULL AND playlistname=:name");
+    if($stmt->execute(array(":name" => $name))) {
+        $r = "\xef\xbb\xbf";
+        while ($row = $stmt->fetchObject()) {
+            $r .= "../".getFilepathForFileid($row->id)."\r\n";
+        }
+        
+        header('Content-Disposition: attachment; filename="'.$name.'.m3u"');
+        header("Content-type: audio/mpegurl;");
+        header("Content-Length: ".strlen($r)); //in bytes, not characters!
+        echo $r;
+        die();
+        
+    } else doError("doDownloadPlaylistDo DB error");   
+}
+
 /*
 ---------------------------------------------------------------------------
 ------------------------------ACCORDION STUFF------------------------------

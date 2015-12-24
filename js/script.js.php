@@ -269,8 +269,14 @@ function doVoteSkip() {
     xhttp.send();
 }
 
+//download mp3
 function doDownload(id) {
     window.open(ajaxpath+"?action=download-file-do&id="+id,'_blank');
+}
+
+//download m3u playlist
+function doDownloadPlaylist(name) {
+    window.open(ajaxpath+"?action=download-playlist&name="+name,'_blank');
 }
 
 /*
@@ -532,7 +538,10 @@ function getPlaylists(name) {
                 content="Es trat ein Fehler auf!";
             } else {
         
-                if(response.content.name!="ROOT") content += '<span class="current">'+response.content.name+"</span>";
+                if(response.content.name!="ROOT") {
+                    content += '<span class="current">'+response.content.name+"</span> ";
+                    content += '<img class="download" src="gfx/download.png" alt="Download" onclick="javascript:doDownloadPlaylist(\''+response.content.name+'\');">';
+                }
                 content += "<ul>";
                 
                 if(response.content.name!="ROOT") {
