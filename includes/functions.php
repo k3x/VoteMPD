@@ -53,7 +53,12 @@ function checkForSkipSong() {
     $timeCurrent = intval(getMpdCurrentTime());
     if(($timeTotal-$timeCurrent)<10) return;
 
-    $fileid = getMpdCurrentSong()["fileinfos"]->id;
+    $c = getMpdCurrentSong();
+    if($c===null || $c===false) return;
+    if(!isset($c["fileinfos"])) return;
+    if(!isset($c["fileinfos"]->id)) return;
+
+    $fileid = $c["fileinfos"]->id;
     $skip = false;
     $stmt = $GLOBALS["db"]->prepare("SELECT COUNT(*) as anzahl FROM voteforskip WHERE fileid=:fileid AND DATE>DATE_SUB(NOW(),INTERVAL :seconds SECOND)");
     if($stmt->execute(array(":fileid" => $fileid,":seconds" => $timeCurrent))) {
@@ -114,7 +119,7 @@ function addOneFileToMpdQueue($first=false) {
 }
 
 //maybe saves playlog to playlist
-function checkForSavePlaylog() { //todo
+function checkForSavePlaylog() {
     $lastDate = getLastPlaylogSaveDate();
     
     if($lastDate===null) { //do initial set lastplaylogsave
@@ -408,7 +413,11 @@ function getNextsongInHighscore($daemoncall = false) {
 
 //vote for a song
 function doVote($ip,$id) {
-    $stmt = $GLOBALS["db"]->prepare("SELECT votes.date,files.* FROM votes INNER JOIN files on files.id=votes.fileid WHERE votes.ip=:ip AND votes.played=0 AND votes.fileid=:fileid");
+    if($id=="" || !ctype_digit($id)) doError("doVote no number");
+    $file = getFile($id);
+    if($file===false) doError("doVote no valid number");
+
+    $stmt = $GLOBALS["db"]->prepare("SELECT votes.date FROM votes WHERE votes.ip=:ip AND votes.played=0 AND votes.fileid=:fileid");
     $tmp = array();
     $exists = false;
     if($stmt->execute(array(":ip" => $ip,":fileid" => $id))) {
@@ -418,10 +427,11 @@ function doVote($ip,$id) {
     } else doError("Getmyvotes db query failed");
     
     if($exists) {
-        return false;
+        doError("doVote already voted");
     } else {
         $stmt = $GLOBALS["db"]->prepare("INSERT INTO votes (fileid,ip,date) VALUES (:fid,:ip,NOW())");
-        return ($stmt->execute(array(":fid" => $id,":ip"=>$ip)));
+        if(!($stmt->execute(array(":fid" => $id,":ip"=>$ip)))) return false;
+        else return $id;
     }
 }
 
@@ -433,6 +443,18 @@ function getVoteSkipAction() {
         return true;
     }
     return false;
+}
+
+//download a file
+function doDownloadFileDo($id) {
+    $path = $GLOBALS["path"]."/".getFilepathForFileid($id);    
+	if (!file_exists($path)) die("Datei existiert nicht !");
+	$filesize = filesize($path);
+	$mimetype=mime_content_type($path);
+	header('Content-Disposition: attachment; filename="'.basename($path).'"');
+	header("Content-type: ".$mimetype);
+	header("Content-Length: $filesize");
+	readfile($path);
 }
 
 /*
@@ -895,6 +917,47 @@ function getBrowsePlaylog() {
     return ["files"=>$subFiles];
 }
 
+function getBrowseOftenPlayed() {
+    $subFiles = array();
+    
+    $stmt = $GLOBALS["db"]->prepare("SELECT files.id,filename,artist,title,length,size,COUNT(*) as count from playlog INNER JOIN files on(files.id=playlog.fileid) GROUP BY files.id ORDER BY count DESC LIMIT 100");
+    if($stmt->execute()) {
+        while ($row = $stmt->fetchObject()) {
+            $subFiles[] = $row;
+        }
+        
+        for($i=0;$i<count($subFiles);$i++) {
+            $stmt = $GLOBALS["db"]->prepare("SELECT date FROM votes WHERE fileid =:fid AND ip=:ip ORDER BY date DESC LIMIT 1");
+            $dateLastVote=null;
+            if($stmt->execute(array(":fid" => $subFiles[$i]->id,":ip" => $_SERVER['REMOTE_ADDR']))) {
+                if ($row = $stmt->fetchObject()) {
+                    $dateLastVote = $row->date;
+                }
+            }
+            
+            $stmt = $GLOBALS["db"]->prepare("SELECT date FROM playlog WHERE fileid =:fid ORDER BY date DESC LIMIT 1");
+            $dateLastPlay=null;
+            if($stmt->execute(array(":fid" => $subFiles[$i]->id))) {
+                if ($row = $stmt->fetchObject()) {
+                    $dateLastPlay = $row->date;
+                }
+            }
+            
+            if($dateLastVote===null && $dateLastPlay===null) {
+                $subFiles[$i]->alreadyVoted = false;
+            } elseif($dateLastVote===null && $dateLastPlay!==null) {
+                $subFiles[$i]->alreadyVoted = false;
+            } elseif($dateLastVote!==null && $dateLastPlay===null) {
+                $subFiles[$i]->alreadyVoted = true;
+            } elseif($dateLastVote!==null && $dateLastPlay!==null) {
+                $subFiles[$i]->alreadyVoted = ($dateLastVote>$dateLastPlay);
+            }
+        }
+        
+    } else doError("getBrowseOftenPlayed (getSubFiles) db query failed");
+    return ["files"=>$subFiles];
+}
+
 //vote possible?
 function getVoteSkipCheck() {
     //not possible if state!=playing
@@ -954,6 +1017,38 @@ function doUploadFile() {
     }
     $echohtml_content.="<br /><br /><a href=\"/\">zur&uuml;ck</a>";
     echo $echohtml_content;
+}
+
+//returns list with "currentsong","myvotes","highscoreItems"
+function doDownloadFilelist() {
+    $z = getMpdCurrentSong();
+    if($z["state"]!="play" || !isset($z["fileinfos"])) $z=array();
+    else $z=array($z["fileinfos"]);
+    
+    $a = array();
+    $b = array();
+    $c = array();
+    $already = array();
+    
+    foreach($z as $item) {
+        if(!in_array($item->id,$already)) {
+            $a[] = $item;
+            $already[] = $item->id;
+        }
+    }
+    foreach(doGetmyvotes() as $item) {
+        if(!in_array($item->id,$already)) {
+            $b[] = $item;
+            $already[] = $item->id;
+        }
+    }
+    foreach(doShowhighscore() as $item) {
+        if(!in_array($item->id,$already)) {
+            $c[] = $item;
+            $already[] = $item->id;
+        }
+    }
+    return array("a"=>$a,"b"=>$b,"c"=>$c);
 }
 
 /*

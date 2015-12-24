@@ -45,6 +45,12 @@ img.votecircle {
 	cursor: pointer;
 }
 
+/* Downloadbutton */
+img.download {
+	height: 22px;
+	vertical-align: middle;
+	cursor: pointer;
+}
 
 /* browse-x */
 div#browse-folders li.file {

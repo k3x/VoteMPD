@@ -38,6 +38,10 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * sudo systemctl start votempd.service
 * systemctl status votempd.service
 
+### Let apache not wait for ethernet (only wifi)
+* sudo nano /lib/systemd/system/network-online.target.wants/ifup-wait-all-auto.service
+* for i in $(echo "wlp1s0"); do INTERFACES="$INTERFACES$i "; done; \
+
 ### create WIFI Hotspot (Accesspoint/AP/Master Mode)
 * sudo apt-get install hostapd
 * sudo nano /etc/hostapd/hostapd.conf     (see dist/etc-hostapd-hostapd.conf)
@@ -56,6 +60,11 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 ## Used Librarys
 * phpMp3 (for MPD communication) http://sourceforge.net/projects/phpmp3
 * getID3 (for getting id3 tags) http://getid3.sourceforge.net
+
+## todo
+* vote down
+* remove vote
+* vote for volume
 
 ## License
 VoteMPD is free software. It is released under the terms of

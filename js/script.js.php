@@ -70,12 +70,14 @@ function loadTab() {
         case(3): getFolders(currentFolder); break;
         case(4): getArtists(currentArtist); break;
         case(5): getAlbums(currentAlbum); break;
-        case(6): getPlaylists(currentPlaylist);break;
+        case(6): getPlaylists(currentPlaylist); break;
         case(7): getOftenPlaylists(); break;
-        case(8): getOftenVotes();break;
-        case(9): getPlaylog();break;
-        case(10): getVoteskip();break;
-        case(11): getUploadForm();
+        case(8): getOftenVotes(); break;
+        case(9): getPlaylog(); break;
+        case(10): getVoteskip(); break;
+        case(11): getUploadForm(); break;
+        case(12): getDownloads(); break;
+        case(13): getOftenPlayed(); break;
         default: break;
     }
 }
@@ -84,6 +86,7 @@ function loadTab() {
 function intervalSlow() {
     getNext(); //update fileinfos for next played song
     getVoteskip(); //possible to vote?
+    getHigh(); //update highscore
 }
 
 //do mid update
@@ -206,9 +209,9 @@ function getNext() {
                 content="Es trat ein Fehler auf!";
             } else {
                 if(response.content==null) {
-                    content="Next: (keiner)";
+                    content="Als nächstes: (keins)";
                 } else {
-                    content="Next: "+response.content.artist+" - "+response.content.title+" "+formatLength(response.content.length);
+                    content="Als nächstes: "+response.content.artist+" - "+response.content.title+" "+formatLength(response.content.length);
                 }
             }
             $("#next").html(content);
@@ -229,8 +232,15 @@ function doVote(id) {
             if(response.status!="success" || response.action!="vote") {
                 alert("Es trat ein Fehler auf!");
             } else {
-                loadTab();
+                //loadTab();
                 getNext();
+                var myclass = ".votecircle-id-"+response.content;
+                
+                $(myclass).each(function(index) {
+                    $(this).attr( "alt","Bereits abgestimmt");
+                    $(this).attr("src","gfx/voted.png");
+                });
+
             }
         }
     }
@@ -257,6 +267,10 @@ function doVoteSkip() {
     var str = ajaxpath+"?action=vote-skip-action";
     xhttp.open("GET", str, true);
     xhttp.send();
+}
+
+function doDownload(id) {
+    window.open(ajaxpath+"?action=download-file-do&id="+id,'_blank');
 }
 
 /*
@@ -320,7 +334,7 @@ function getHigh() {
                         if(entry.alreadyVoted) {
                             content+='<img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
                         } else {
-                            content+='<img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+entry.id+');"></li>';
+                            content+='<img class="votecircle votecircle-id-'+entry.id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+entry.id+');"></li>';
                         }
                     }
                     content+="</ol>";
@@ -388,8 +402,8 @@ function getFolders(folderid) {
                 content += "<ul>";
                 
                 if(response.content.this!="ROOT") {
-                    content += '<li class="goup" onclick="javascript:getFolders(-1);">(root)</li>';
-                    content += '<li class="goup" onclick="javascript:getFolders('+response.content.this.parentid+');">(..)</li>';
+                    content += '<li class="goup" onclick="javascript:getFolders(-1);">(nach ganz oben)</li>';
+                    content += '<li class="goup" onclick="javascript:getFolders('+response.content.this.parentid+');">(eins nach oben)</li>';
                 }
                 
                 for(var i=0;i<response.content.folders.length;i++) {
@@ -401,7 +415,7 @@ function getFolders(folderid) {
                     if(response.content.files[i].alreadyVoted) {
                         content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
                     } else {
-                        content+=' <img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
+                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                     }
                     content+="</li>";
                 }
@@ -434,7 +448,7 @@ function getArtists(artistname) {
                 content += "<ul>";
                 
                 if(response.content.name!="ROOT") {
-                    content += '<li class="goup" onclick="javascript:getArtists(\'ROOT\');">(root)</li>';
+                    content += '<li class="goup" onclick="javascript:getArtists(\'ROOT\');">(zurück)</li>';
                 }
                 
                 if(response.content.name=="ROOT") {
@@ -448,7 +462,7 @@ function getArtists(artistname) {
                         if(response.content.files[i].alreadyVoted) {
                             content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
                         } else {
-                            content+=' <img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
+                            content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                         }
                         content+="</li>";
                     }
@@ -478,7 +492,7 @@ function getAlbums(albumname) {
                 content += "<ul>";
                 
                 if(response.content.name!="ROOT") {
-                    content += '<li class="goup" onclick="javascript:getAlbums(\'ROOT\');">(root)</li>';
+                    content += '<li class="goup" onclick="javascript:getAlbums(\'ROOT\');">(zurück)</li>';
                 }
                 
                 if(response.content.name=="ROOT") {
@@ -492,7 +506,7 @@ function getAlbums(albumname) {
                         if(response.content.files[i].alreadyVoted) {
                             content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
                         } else {
-                            content+=' <img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
+                            content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                         }
                         content+="</li>";
                     }
@@ -522,7 +536,7 @@ function getPlaylists(name) {
                 content += "<ul>";
                 
                 if(response.content.name!="ROOT") {
-                    content += '<li class="goup" onclick="javascript:getPlaylists(\'ROOT\');">(root)</li>';
+                    content += '<li class="goup" onclick="javascript:getPlaylists(\'ROOT\');">(zurück)</li>';
                 }
                 
                 if(response.content.name=="ROOT") {
@@ -536,7 +550,7 @@ function getPlaylists(name) {
                         if(response.content.files[i].alreadyVoted) {
                             content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
                         } else {
-                            content+=' <img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
+                            content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                         }
                         content+="</li>";
                     }
@@ -566,7 +580,7 @@ function getOftenPlaylists() {
                     if(response.content.files[i].alreadyVoted) {
                         content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
                     } else {
-                        content+=' <img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
+                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                     }
                     content+="</li>";
                 }
@@ -599,7 +613,7 @@ function getOftenVotes() {
                     if(response.content.files[i].alreadyVoted) {
                         content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
                     } else {
-                        content+=' <img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
+                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                     }
                     content+="</li>";
                 }
@@ -632,7 +646,7 @@ function getPlaylog() {
                     if(response.content.files[i].alreadyVoted) {
                         content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
                     } else {
-                        content+=' <img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
+                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                     }
                     content+="</li>";
                 }
@@ -678,11 +692,11 @@ function getVoteskip() {
 
 function getUploadForm() {
     if(uploadsenabled) {
-        var content = 'Only upload mp3 files!'+
+        var content = 'Es werden nur mp3 Dateien akzeptiert!'+
         '<form enctype="multipart/form-data" action="ajax.php?action=upload-file" method="post">'+
         '<input type="hidden" name="max_file_size" value="'+maxsize+'">'+
         '<input type="hidden" name="abgeschickt" value="ja">'+
-        'Upload: <input name="thefile[]" type="file" multiple="multiple" style="border: 1px solid #555;"><br />'+
+        'Datei auswählen: <input name="thefile[]" type="file" multiple="multiple" style="border: 1px solid #555;"><br />'+
         '<input type="submit" value="senden">'+
         '<!--<input name="abbrechen" type="button" value="Abbrechen" id="abbrechen"><br />'+
         '<progress max="1" value="0" id="fortschritt"></progress>'+
@@ -693,3 +707,84 @@ function getUploadForm() {
     }
     $("#upload-file").html(content);
 }
+
+function getDownloads() {
+    $("#download-file").html(loading);
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var response = JSON.parse(xhttp.responseText);
+            var content = "";
+            if(response.status!="success" || response.action!="download-file") {
+                content="Es trat ein Fehler auf!";
+            } else {
+                content += "<h2>Derzeitiges Lied</h2>";
+                content += "<ul>";
+                for(var i=0;i<response.content.a.length;i++) {
+                    content += '<li class="file">'+response.content.a[i].artist+": "+response.content.a[i].title;
+                    content+=' <img class="download" src="gfx/download.png" alt="Download" onclick="javascript:doDownload('+response.content.a[i].id+');"></li>';
+                    content+="</li>";
+                }
+                content += "</ul>";
+                
+                content += "<h2>Von mir abgestimmte Lieder</h2>";
+                content += "<ul>";
+                for(var i=0;i<response.content.b.length;i++) {
+                    content += '<li class="file">'+response.content.b[i].artist+": "+response.content.b[i].title;
+                    content+=' <img class="download" src="gfx/download.png" alt="Download" onclick="javascript:doDownload('+response.content.b[i].id+');"></li>';
+                    content+="</li>";
+                }
+                content += "</ul>";
+                
+                
+                content += "<h2>Highscore</h2>";
+                content += "<ul>";
+                for(var i=0;i<response.content.c.length;i++) {
+                    content += '<li class="file">'+response.content.c[i].artist+": "+response.content.c[i].title;
+                    content+=' <img class="download" src="gfx/download.png" alt="Download" onclick="javascript:doDownload('+response.content.c[i].id+');"></li>';
+                    content+="</li>";
+                }
+                content += "</ul>";
+            }
+            $("#download-file").html(content);
+        }
+    }
+    var str = ajaxpath+"?action=download-file";
+    xhttp.open("GET", str, true);
+    xhttp.send();
+}
+
+//get files that were played often
+function getOftenPlayed() {
+    $("#browse-often-played").html(loading);
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var response = JSON.parse(xhttp.responseText);
+            var content = "";
+            if(response.status!="success" || response.action!="browse-often-played") {
+                content="Es trat ein Fehler auf!";
+            } else {
+                content += "<ol>";
+                for(var i=0;i<response.content.files.length;i++) {
+                    content += '<li class="file">'+response.content.files[i].count+": "+response.content.files[i].artist+": "+response.content.files[i].title;
+                    
+                    if(response.content.files[i].alreadyVoted) {
+                        content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                    } else {
+                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
+                    }
+                    content+="</li>";
+                }
+                
+                content += "</ol>";
+            }
+            $("#browse-often-played").html(content);
+        }
+    }
+    var str = ajaxpath+"?action=browse-often-played";
+    xhttp.open("GET", str, true);
+    xhttp.send();
+}
+
+

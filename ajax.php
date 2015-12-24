@@ -24,8 +24,7 @@ switch($_GET["action"]) {
     case("vote"):
         if(!isset($_GET["id"])) doError("No id specified");
         $r = doVote($_SERVER['REMOTE_ADDR'],$_GET["id"]);
-        if($r===false) doError("Error while voting");
-        else doOutput($r,"vote");
+        doOutput($r,"vote");
         break;
     case("getmyvotes"):
         $r = doGetmyvotes();
@@ -65,6 +64,9 @@ switch($_GET["action"]) {
     case("browse-often-playlists"):
         doOutput(getBrowseOftenPlaylist(),"browse-often-playlists");
         break;
+    case("browse-often-played"):
+        doOutput(getBrowseOftenPlayed(),"browse-often-played");
+        break;
     case("browse-often-votes"):
         doOutput(getBrowseOftenVote(),"browse-often-votes");
         break;
@@ -79,6 +81,13 @@ switch($_GET["action"]) {
         break;
     case("upload-file"):
         doUploadFile();
+        break;
+    case("download-file"):
+        doOutput(doDownloadFilelist(),"download-file");
+        break;
+    case("download-file-do"):
+        if(!isset($_GET["id"])) doError("No id specified");
+        doDownloadFileDo($_GET["id"]);
         break;
     default: doError("No valid action specified");
 }
