@@ -270,8 +270,27 @@ function doVoteSkip() {
 
 //remove vote
 function doRemoveVote(id) {
-    //todo
-    alert(id);
+    //todo test
+    
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var response = JSON.parse(xhttp.responseText);
+            var content = "";
+            if(response.status!="success" || response.action!="remove-my-vote") {
+                content="Es trat ein Fehler auf!";
+            } else {
+                var myclass = ".myvote-"+response.content;
+                
+                $(myclass).each(function(index) {
+                    $(this).remove();
+                });
+            }
+        }
+    }
+    var str = ajaxpath+"?action=remove-my-vote&id="+id;
+    xhttp.open("GET", str, true);
+    xhttp.send();
 }
 
 //download mp3
@@ -286,7 +305,7 @@ function doDownloadPlaylist(name) {
 
 /*
 -----------------------------------------------------------------------------------------
------------Below this line are functions for every accordion-tab-------------------------
+-----------Below this line are functions for each accordion-tab-------------------------
 -----------------------------------------------------------------------------------------
 */
 
@@ -308,7 +327,7 @@ function getMy() {
                     
                     for (index = 0; index < response.content.length; index++) {
                         entry = response.content[index];
-                        content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+formatDate(entry.date)+")";
+                        content+="<li class=myvote-"+entry.id+">"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+formatDate(entry.date)+")";
                         content+='<img class="votetrash" src="gfx/trash.png" alt="Stimme löschen" onclick="javascript:doRemoveVote('+entry.id+');"></li>';
                     }
                     content+="</ol>";

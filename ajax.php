@@ -93,6 +93,10 @@ switch($_GET["action"]) {
         if(!isset($_GET["name"])) doError("No name specified");
         doDownloadPlaylistDo($_GET["name"]);
         break;
+    case("remove-my-vote"):
+        if(!isset($_GET["id"])) doError("No id specified");
+        doOutput(doRemoveMyVote($_SERVER['REMOTE_ADDR'],$_GET["id"]),"remove-my-vote");
+        break;
     default: doError("No valid action specified");
 }
 ?>

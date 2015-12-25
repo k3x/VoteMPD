@@ -61,11 +61,6 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * phpMp3 (for MPD communication) http://sourceforge.net/projects/phpmp3
 * getID3 (for getting id3 tags) http://getid3.sourceforge.net
 
-## todo
-* vote down
-* remove vote
-* vote for volume
-
 ## License
 VoteMPD is free software. It is released under the terms of
 the following BSD License.

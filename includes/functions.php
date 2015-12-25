@@ -435,6 +435,17 @@ function doVote($ip,$id) {
     }
 }
 
+//remove one of my votes
+function doRemoveMyVote($ip,$id) {
+    $stmt = $GLOBALS["db"]->prepare("DELETE FROM votes WHERE votes.ip=:ip AND votes.played=0 AND votes.fileid=:fileid");
+    if($stmt->execute(array(":ip" => $ip,":fileid" => $id))) {
+        $num = $stmt->rowCount();
+        if($num===0) doError("doRemoveMyVote no row found");
+        if($num===1) return $id;
+        if($num>=2) doError("doRemoveMyVote more than one row found");
+    } else doError("doRemoveMyVote db query failed");
+}
+
 //vote vor next song
 function getVoteSkipAction() {
     $fileid = getMpdCurrentSong()["fileinfos"]->id;
