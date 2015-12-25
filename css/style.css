@@ -37,16 +37,11 @@ div#accordion > div > ul {
 	padding-left: 1em;
 }
 
-/* votecircle */
+/* votecircle, Downloadbutton, Remove Vote Button */
 div#search > ul > li > img, 
-img.votecircle {
-	height: 22px;
-	vertical-align: middle;
-	cursor: pointer;
-}
-
-/* Downloadbutton */
-img.download {
+img.votecircle,
+img.download,
+img.votetrash {
 	height: 22px;
 	vertical-align: middle;
 	cursor: pointer;

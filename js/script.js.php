@@ -22,7 +22,6 @@ echo 'var maxsize = '.return_bytes($max_size).";\n";
 
 if(ini_get('file_uploads') == 1) echo "var uploadsenabled=true;\n";
 else echo "var uploadsenabled=false;\n";
-
 ?>
 
 var ajaxpath = window.location.href+"ajax.php"; //absolute url to ajax.php
@@ -269,6 +268,12 @@ function doVoteSkip() {
     xhttp.send();
 }
 
+//remove vote
+function doRemoveVote(id) {
+    //todo
+    alert(id);
+}
+
 //download mp3
 function doDownload(id) {
     window.open(ajaxpath+"?action=download-file-do&id="+id,'_blank');
@@ -303,7 +308,8 @@ function getMy() {
                     
                     for (index = 0; index < response.content.length; index++) {
                         entry = response.content[index];
-                        content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+formatDate(entry.date)+")</li>";
+                        content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+formatDate(entry.date)+")";
+                        content+='<img class="votetrash" src="gfx/trash.png" alt="Stimme löschen" onclick="javascript:doRemoveVote('+entry.id+');"></li>';
                     }
                     content+="</ol>";
                 }

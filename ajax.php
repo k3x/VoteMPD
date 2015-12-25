@@ -95,9 +95,4 @@ switch($_GET["action"]) {
         break;
     default: doError("No valid action specified");
 }
-
 ?>
-
-
-
-
