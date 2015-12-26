@@ -3,6 +3,9 @@
 * Author: Felix Sterzelmaier
 * Version 0.6
 * Date: 09. December 2015
+* Github Page: http://k3x.github.io/VoteMPD/
+* Github Code: https://github.com/k3x/VoteMPD
+* Github Git URL: https://github.com/k3x/VoteMPD.git
 
 VoteMPD allows your party guests to fill the queue of your MusicPlayerDaemon.
 Just run this Script on a server and make it availiable over wifi. See also: http://getfestify.com
