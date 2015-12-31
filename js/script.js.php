@@ -404,7 +404,7 @@ function doSearch() {
                         entry = response.content[index];
                         content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+') ';
                         if(entry.alreadyVoted) {
-                            content+='<img src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                            content+='<img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
                         } else {
                             content+='<img class="votecircle votecircle-id-'+entry.id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+entry.id+');"></li>';
                         }
