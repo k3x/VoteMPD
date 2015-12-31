@@ -38,7 +38,6 @@ div#accordion > div > ul {
 }
 
 /* votecircle, Downloadbutton, Remove Vote Button */
-div#search > ul > li > img, 
 img.votecircle,
 img.download,
 img.votetrash {
@@ -63,7 +62,7 @@ div#browse-folders span.current, div#browse-artists span.current, div#browse-alb
 
 div#browse-folders li.folder, div#browse-artists li.artist, div#browse-albums li.album, div#browse-playlists li.playlist {
 	cursor: pointer;
-	color: #a50;
+	color: #a50; /* dark-orange or brown */
 }
 
 /* search */

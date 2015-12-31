@@ -234,7 +234,7 @@ function doVote(id) {
                 //loadTab();
                 getNext();
                 var myclass = ".votecircle-id-"+response.content;
-                
+                console.log(myclass);
                 $(myclass).each(function(index) {
                     $(this).attr( "alt","Bereits abgestimmt");
                     $(this).attr("src","gfx/voted.png");
@@ -406,7 +406,7 @@ function doSearch() {
                         if(entry.alreadyVoted) {
                             content+='<img src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
                         } else {
-                            content+='<img src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+entry.id+');"></li>';
+                            content+='<img class="votecircle votecircle-id-'+entry.id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+entry.id+');"></li>';
                         }
                     }
                 }
