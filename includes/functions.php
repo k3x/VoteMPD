@@ -907,10 +907,11 @@ function getBrowseOftenVote() {
 }
 
 //get files last played
-function getBrowsePlaylog() {
+function getBrowsePlaylog($number = 100) {
     $subFiles = array();
     
-    $stmt = $GLOBALS["db"]->prepare("SELECT files.id,filename,artist,title,length,size,TIMESTAMPDIFF(MINUTE,playlog.date,NOW()) as date from playlog INNER JOIN files on(files.id=playlog.fileid) ORDER BY date ASC LIMIT 100");
+    $stmt = $GLOBALS["db"]->prepare("SELECT files.id,filename,artist,title,length,size,TIMESTAMPDIFF(MINUTE,playlog.date,NOW()) as date from playlog INNER JOIN files on(files.id=playlog.fileid) ORDER BY date ASC LIMIT :number");
+    $stmt->bindParam(':number', $number, PDO::PARAM_INT);
     if($stmt->execute()) {
         while ($row = $stmt->fetchObject()) {
             $subFiles[] = $row;
@@ -943,7 +944,6 @@ function getBrowsePlaylog() {
                 $subFiles[$i]->alreadyVoted = ($dateLastVote>$dateLastPlay);
             }
         }
-        
     } else doError("getBrowseOftenPlaylist (getSubFiles) db query failed");
     return ["files"=>$subFiles];
 }
@@ -1059,6 +1059,7 @@ function doDownloadFilelist() {
     $a = array();
     $b = array();
     $c = array();
+    $d = array();
     $already = array();
     
     foreach($z as $item) {
@@ -1079,7 +1080,13 @@ function doDownloadFilelist() {
             $already[] = $item->id;
         }
     }
-    return array("a"=>$a,"b"=>$b,"c"=>$c);
+    foreach(getBrowsePlaylog(10)["files"] as $item) {
+        if(!in_array($item->id,$already)) {
+            $d[] = $item;
+            $already[] = $item->id;
+        }
+    }
+    return array("a"=>$a,"b"=>$b,"c"=>$c,"d"=>$d);
 }
 
 /*

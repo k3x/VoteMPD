@@ -779,6 +779,16 @@ function getDownloads() {
                     content+="</li>";
                 }
                 content += "</ul>";
+                
+                
+                content += "<h2>zuletzt gespielte Lieder</h2>";
+                content += "<ul>";
+                for(var i=0;i<response.content.d.length;i++) {
+                    content += '<li class="file">'+response.content.d[i].artist+": "+response.content.d[i].title;
+                    content+=' <img class="download" src="gfx/download.png" alt="Download" onclick="javascript:doDownload('+response.content.d[i].id+');"></li>';
+                    content+="</li>";
+                }
+                content += "</ul>";
             }
             $("#download-file").html(content);
         }
