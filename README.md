@@ -2,7 +2,7 @@
 
 * Author: Felix Sterzelmaier
 * Version 0.7
-* Date: 02. January 2016
+* Date: 03. January 2016
 * Github Page: http://k3x.github.io/VoteMPD/
 * Github Code: https://github.com/k3x/VoteMPD
 * Github Git URL: https://github.com/k3x/VoteMPD.git
@@ -41,6 +41,7 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * $GLOBALS["voteskipcount"]: Integer. If this amount of users voted to skip the song it is skipped. Example: 2
 
 ### Sample Folderstructure for examples in settings.php
+```
 /
 |-home
   |-k3x
@@ -52,8 +53,8 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
         |-Back in Black.mp3
       |-Creedence Clearwater Revival
         |-Proud Mary.mp3
-        
-In this example a valif entry in the playlist would be: "ACDC/Back in Black.mp3"
+```
+In this example a valid entry in the playlist would be: "ACDC/Back in Black.mp3"
 
 ### Further information / find errors
 * if you configured mpd to use alsa and you can not hear music check "alsamixer". Also check that no channel is muted.
@@ -66,7 +67,7 @@ In this example a valif entry in the playlist would be: "ACDC/Back in Black.mp3"
 * sudo systemctl start votempd.service
 * systemctl status votempd.service
 
-### Let apache not wait for ethernet on boot(only wifi)
+### Let apache not wait for ethernet on boot (only wifi)
 * sudo nano /lib/systemd/system/network-online.target.wants/ifup-wait-all-auto.service
 * for i in $(echo "wlp1s0"); do INTERFACES="$INTERFACES$i "; done; \
 
