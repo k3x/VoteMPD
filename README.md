@@ -1,8 +1,8 @@
 # VoteMPD
 
 * Author: Felix Sterzelmaier
-* Version 0.6
-* Date: 09. December 2015
+* Version 0.7
+* Date: 02. January 2016
 * Github Page: http://k3x.github.io/VoteMPD/
 * Github Code: https://github.com/k3x/VoteMPD
 * Github Git URL: https://github.com/k3x/VoteMPD.git
@@ -12,8 +12,12 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 
 ## Features
 * Scan Filesystem and fill id3 information into database
+* Scan m3u playlists ans fill information into database
 * Allow users to vote for songs via a mobile friendly webpage
 * MPD queue is filled with highest voted songs
+* Delete own votes
+* Show highscore
+* Upload/Download mp3 files
 
 ## Install
 
@@ -22,26 +26,47 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * php shell exec has to be eneabled; php.ini: file_uploads = On,post_max_size = 100M,upload_max_filesize = 100M
 * configure /etc/mpd.conf (music library and audio autput, mixer_type "software")
 * sudo service mpd restart
-* sudo apt-get install gmpc
-* run gmpc, connect to mpd, do Server -> Update MPD Database
-* Install mysql server, create new database and configure "includes/settings.php". Enter your mpd connection infos and also enter the same "path" like you configured for mpd.
+* let mpd rescan the database. For example: on a client: sudo apt-get install gmpc; run gmpc; connect to mpd; do Server -> Update MPD Database
+* Create new mysql database and configure "includes/settings.php". Enter your mpd connection infos and also enter the same "path" like you configured for mpd.
 * import dist/votempd.sql in the created mysql database.
 * run "php daemon.php -f" and run "php daemon.php -p"
 * Let your Apache "/" point to the root folder (the folder with index.html)
-* in console run php daemon.php
+* in console run: php daemon.php
+
+### settings.php
+* $GLOBALS["path"]: absolute path to your music library. Has to be the same like you configured in your mpd.conf. Example: "/home/k3x/music"
+* $GLOBALS["pathplaylists"]: relative path to your playlistfolder inside $GLOBALS["path"]. Example: "playlists"
+* $GLOBALS["pathuploads"]: relative path to your uploadsfolder inside $GLOBALS["path"]. Example: "uploads"
+* $GLOBALS["defaultplaylist"]: name of your default playlist (without ".m3u"). The playlist uses the databasetable "playlistitems" so this playlist hast to be scanned before using the command "php daemon.php -p". Example: "charts_2015"
+* $GLOBALS["voteskipcount"]: Integer. If this amount of users voted to skip the song it is skipped. Example: 2
+
+### Sample Folderstructure for examples in settings.php
+/
+|-home
+  |-k3x
+    |-music
+      |-playlists
+        |-charts_2015.m3u
+      |-uploads
+      |-ACDC
+        |-Back in Black.mp3
+      |-Creedence Clearwater Revival
+        |-Proud Mary.mp3
+        
+In this example a valif entry in the playlist would be: "ACDC/Back in Black.mp3"
 
 ### Further information / find errors
 * if you configured mpd to use alsa and you can not hear music check "alsamixer". Also check that no channel is muted.
 * ncmpc is a commandline mpd client
 
 ### Autostart
-* if you want to the daemon to start on every reboot maybe the systemd script dist/votempd.service will help you.
+* if you want the daemon to start on every boot maybe the systemd script dist/votempd.service will help you.
 * sudo nano /etc/systemd/system/votempd.service
 * sudo systemctl daemon-reload
 * sudo systemctl start votempd.service
 * systemctl status votempd.service
 
-### Let apache not wait for ethernet (only wifi)
+### Let apache not wait for ethernet on boot(only wifi)
 * sudo nano /lib/systemd/system/network-online.target.wants/ifup-wait-all-auto.service
 * for i in $(echo "wlp1s0"); do INTERFACES="$INTERFACES$i "; done; \
 
