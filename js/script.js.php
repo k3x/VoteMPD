@@ -234,7 +234,6 @@ function doVote(id) {
                 //loadTab();
                 getNext();
                 var myclass = ".votecircle-id-"+response.content;
-                console.log(myclass);
                 $(myclass).each(function(index) {
                     $(this).attr( "alt","Bereits abgestimmt");
                     $(this).attr("src","gfx/voted.png");
