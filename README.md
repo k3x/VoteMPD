@@ -40,7 +40,7 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * $GLOBALS["defaultplaylist"]: name of your default playlist (without ".m3u"). The playlist uses the databasetable "playlistitems" so this playlist hast to be scanned before using the command "php daemon.php -p". Example: "charts_2015"
 * $GLOBALS["voteskipcount"]: Integer. If this amount of users voted to skip the song it is skipped. Example: 2
 
-### Sample Folderstructure for examples in settings.php
+### Sample folderstructure for examples in settings.php
 ```
 /
 |-home
@@ -83,7 +83,7 @@ In this example a valid entry in the playlist would be: "ACDC/Back in Black.mp3"
 * sudo service dnsmasq restart
 
 ## Playlists Information
-* .m3u playlists with one song per line. Linebreaks: \x0d\x0a Charset: UTF-8
+* .m3u playlists with one song per line. Linebreaks: \x0D\x0A Charset: UTF-8 (with Byte Order Mark (BOM), so files start with \xEF\xBB\xBF)
 * Paths have to be relative to your root dir. For example: "somedir/somefile.mp3" (without quotes)
 
 ## Used Librarys

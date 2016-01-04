@@ -1294,6 +1294,7 @@ function doRootPlaylists($p) {
 function doPlaylist($p) {
     //read file content
     $content = file_get_contents($p);
+    $content = str_replace("\xef\xbb\xbf","",$content);
     
     //get filename
     $filename = basename($p);
