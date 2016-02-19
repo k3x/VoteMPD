@@ -60,10 +60,10 @@ function checkForSkipSong() {
 
     $fileid = $c["fileinfos"]->id;
     $skip = false;
-    $stmt = $GLOBALS["db"]->prepare("SELECT COUNT(*) as anzahl FROM voteforskip WHERE fileid=:fileid AND DATE>DATE_SUB(NOW(),INTERVAL :seconds SECOND)");
+    $stmt = $GLOBALS["db"]->prepare("SELECT COUNT(*) as count FROM voteforskip WHERE fileid=:fileid AND DATE>DATE_SUB(NOW(),INTERVAL :seconds SECOND)");
     if($stmt->execute(array(":fileid" => $fileid,":seconds" => $timeCurrent))) {
         $row = $stmt->fetchObject();
-        if($row->anzahl >= $GLOBALS["voteskipcount"]) $skip = true;
+        if($row->count >= $GLOBALS["voteskipcount"]) $skip = true;
     }
     
     if($skip) {
@@ -510,7 +510,7 @@ function doGetmyvotes() {
 function doShowhighscore($daemoncall = false) {
     $stmt = $GLOBALS["db"]->prepare("
         SELECT 
-            files.*,votes.date,COUNT(*) as anzahl 
+            files.*,votes.date,COUNT(*) as count 
         FROM 
             (SELECT * FROM votes ORDER BY date ASC) as votes
         INNER JOIN 
@@ -520,7 +520,7 @@ function doShowhighscore($daemoncall = false) {
         GROUP BY
             votes.fileid
         ORDER BY
-            anzahl DESC,
+            count DESC,
 			date ASC");
     $tmp = array();
     if($stmt->execute()) {
@@ -1015,22 +1015,22 @@ function getVoteSkipCheck() {
 //upload file
 function doUploadFile() {
     $GLOBALS["getid3"] = new getID3;
-    $anzahl = count($_FILES['thefile']['error']);
+    $count = count($_FILES['thefile']['error']);
     $echohtml_content="";
-    for($i=0;$i<$anzahl;$i++) {
+    for($i=0;$i<$count;$i++) {
         $echohtml_content.= "<h2>".$_FILES['thefile']['name'][$i]."</h2>";
         if(!($_FILES['thefile']['error'][$i]===0))      $echohtml_content.= "Errorcode: ".$_FILES['thefile']['error'][$i]." http://php.net/manual/de/features.file-upload.errors.php<br />";
-        if(!isset($_FILES['thefile']['tmp_name'][$i])) 	{$echohtml_content.= "Fehler: kein tmp_filename"; break; }
-        if($_FILES['thefile']['tmp_name'][$i]=="") 		{$echohtml_content.= "Fehler: tmp_filename ist leer"; break; } //[tmp_name] => /home/www/sp01_62/phptmp/phpLqU14d
-        if(!isset($_FILES['thefile']['name'][$i])) 		{$echohtml_content.= "Fehler: kein name"; break; } //name] => lircd.bak
-        if($_FILES['thefile']['name'][$i]=="") 		    {$echohtml_content.= "Fehler: name ist leer"; break; }
-        if(!isset($_FILES['thefile']['error'][$i])) 	{$echohtml_content.= "Fehler: kein errorcode"; break; }
-        if(!($_FILES['thefile']['error'][$i]===0))  	{$echohtml_content.= "Fehler: errornummer ist nicht 0"; break; } //[error] => 0
-        if($_FILES['thefile']['size'][$i]==0) 		    {$echohtml_content.= "Fehler: Datei hat Gr&ouml;sse 0"; break; } //[size] => 2917 ca 3kb => 10mb
-        $endunga=strrchr($_FILES['thefile']['name'][$i], ".");
-        $endunga=str_replace(".", "", $endunga);
-        $endunga=strtolower($endunga);
-        if ($endunga!="mp3") { $echohtml_content.="Fehler: Dateiendung nicht akzeptiert (.".$endunga.")<br>"; break; }
+        if(!isset($_FILES['thefile']['tmp_name'][$i])) 	{$echohtml_content.= "Error: no tmp_filename"; break; }
+        if($_FILES['thefile']['tmp_name'][$i]=="") 		{$echohtml_content.= "Error: tmp_filename ist empty"; break; } //[tmp_name] => /home/www/sp01_62/phptmp/phpLqU14d
+        if(!isset($_FILES['thefile']['name'][$i])) 		{$echohtml_content.= "Error: no name"; break; } //name] => lircd.bak
+        if($_FILES['thefile']['name'][$i]=="") 		    {$echohtml_content.= "Error: name ist blank"; break; }
+        if(!isset($_FILES['thefile']['error'][$i])) 	{$echohtml_content.= "Error: no errorcode"; break; }
+        if(!($_FILES['thefile']['error'][$i]===0))  	{$echohtml_content.= "Error: errornumber ist not 0"; break; } //[error] => 0
+        if($_FILES['thefile']['size'][$i]==0) 		    {$echohtml_content.= "Error: Filesize is zero"; break; } //[size] => 2917 ca 3kb => 10mb
+        $ending=strrchr($_FILES['thefile']['name'][$i], ".");
+        $ending=str_replace(".", "", $ending);
+        $ending=strtolower($ending);
+        if ($ending!="mp3") { $echohtml_content.="Error: Only .mp3 files are allowed!<br>"; break; }
 
         $date=date("Y.m.d_H.i.s");
         $file_name=$date."_".preg_replace("/[^A-Za-z0-9._ ]/", '', $_FILES['thefile']['name'][$i]);
@@ -1038,13 +1038,13 @@ function doUploadFile() {
         $file_name=str_replace(" ","_",$file_name);
         $file_path_rel=$GLOBALS["pathuploads"]."/".$file_name;
         $file_path_abs=$GLOBALS["path"]."/".$file_path_rel;
-        if (file_exists($file_path_abs)) { $echohtml_content.= "Fehler: datei existiert bereits<br>"; break; }
+        if (file_exists($file_path_abs)) { $echohtml_content.= "Error: File already exists!<br>"; break; }
         if(move_uploaded_file($_FILES['thefile']['tmp_name'][$i],$file_path_abs)){
-            $echohtml_content.="OK<br>Datei hei&szlig;t: ".$file_name."<br>";
+            $echohtml_content.="Success<br>Filename: ".$file_name."<br>";
             mpdScan($file_path_rel);
             $foldernum = getFolderidforFolderpath($GLOBALS["pathuploads"]);
             insertFileInDb($foldernum,$file_path_abs,false);
-        } else $echohtml_content.="Fehler: beim kopieren";
+        } else $echohtml_content.="Error: There was an error copying yout file. Maybe the program has no write access to the destination folder?";
     }
     $echohtml_content.="<br /><br /><a href=\"/\">zur&uuml;ck</a>";
     echo $echohtml_content;

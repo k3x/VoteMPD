@@ -23,7 +23,6 @@ $mpd->cmd("playlistinfo");
 
 require("settings.php");
 
-
 class MPD {
     // Connection
     var $link;

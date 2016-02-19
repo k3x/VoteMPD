@@ -22,6 +22,79 @@ echo 'var maxsize = '.return_bytes($max_size).";\n";
 
 if(ini_get('file_uploads') == 1) echo "var uploadsenabled=true;\n";
 else echo "var uploadsenabled=false;\n";
+
+$language = "de";
+$translation = Array();
+if($language=="de") {
+    $translation["clock"] = "Uhr";
+    $translation["error"] = "Es trat ein Fehler auf!";
+    $translation["noplay"] = "keine Wiedergabe";
+    $translation["none"] = "keins";
+    $translation["next"] = "Als nächstes";
+    $translation["min"] = "Minute";
+    $translation["mins"] = "Minuten";
+    $translation["hour"] = "Stunde";
+    $translation["hours"] = "Stunden";
+    $translation["day"] = "Tag";
+    $translation["days"] = "Tagen";
+    $translation["ago"] = "vor";
+    $translation["alreadyvoted"] = "Bereits abgestimmt";
+    $translation["noelements"] = "Keine Elemente!";
+    $translation["vote"] = "Stimme";
+    $translation["votes"] = "Stimmen";
+    $translation["enteratleast3"] = "Bitte mindestens 3 Zeichen eingeben!";
+    $translation["goroot"] = "nach ganz oben";
+    $translation["gooneup"] = "eins nach oben";
+    $translation["back"] = "zurück";
+    $translation["currentsong"] = "Derzeitiges Lied";
+    $translation["myvotedsongs"] = "Von mir abgestimmte Lieder";
+    $translation["highscore"] = "Highscore";
+    $translation["lastplayedsongs"] = "zuletzt gespielte Lieder";
+    $translation["onlymp3"] = "Es werden nur mp3 Dateien akzeptiert!";
+    $translation["selectfile"] = "Datei auswählen";
+    $translation["send"] = "senden";
+    $translation["cancel"] = "Abbrechen";
+    $translation["deletevote"] = "Stimme löschen";
+    $translation["dovote"] = "Abstimmen";
+    $translation["notpossible"] = "Nicht möglich";
+    $translation["download"] = "Download";
+} 
+
+if($language=="en") {
+    $translation["clock"] = "o'clock";
+    $translation["error"] = "There was an error!";
+    $translation["noplay"] = "No song is played";
+    $translation["none"] = "none";
+    $translation["next"] = "Next";
+    $translation["min"] = "minute";
+    $translation["mins"] = "minutes";
+    $translation["hour"] = "hour";
+    $translation["hours"] = "hours";
+    $translation["day"] = "day";
+    $translation["days"] = "days";
+    $translation["ago"] = "ago";
+    $translation["alreadyvoted"] = "already voted";
+    $translation["noelements"] = "No elements!";
+    $translation["vote"] = "vote";
+    $translation["votes"] = "votes";
+    $translation["enteratleast3"] = "enter at least 3 characters!";
+    $translation["goroot"] = "go to root";
+    $translation["gooneup"] = "go one up";
+    $translation["back"] = "back";
+    $translation["currentsong"] = "Current song";
+    $translation["myvotedsongs"] = "My voted songs";
+    $translation["highscore"] = "Highscore";
+    $translation["lastplayedsongs"] = "last played songs";
+    $translation["onlymp3"] = "only mp3 files are allowed!";
+    $translation["selectfile"] = "select file";
+    $translation["send"] = "send";
+    $translation["cancel"] = "cancel";
+    $translation["deletevote"] = "delete vote";
+    $translation["dovote"] = "vote";
+    $translation["notpossible"] = "not possible";
+    $translation["download"] = "Download";
+}
+
 ?>
 
 var ajaxpath = window.location.href+"ajax.php"; //absolute url to ajax.php
@@ -131,20 +204,34 @@ function formatLength(length) {
 
 //format date to time
 function formatDate(date) {
-    return date.substring(11,16)+" Uhr";
+    return date.substring(11,16)+" "+"<?php echo $translation["clock"] ?>";
 }
 
 //format Minutes
 function formatMinutes(min) {
     min = parseInt(min);
-    if(min==1) return "vor "+min+" Minute";
-    if(min<60) return "vor "+min+" Minuten";
-    var hour = Math.floor(min/60);
-    if(hour==1) return "vor "+hour+" Stunde";
-    if(hour<24) return "vor "+hour+" Stunden";
-    var days = Math.floor(hour/24);
-    if(days==1) return "vor "+days+" Tag";
-    return "vor "+days+" Tagen";
+    var language = "<?php echo $language ?>";
+    if(language=="de") {
+        if(min==1) return "<?php echo $translation["ago"] ?>"+" "+min+" "+"<?php echo $translation["min"] ?>";
+        if(min<60) return "<?php echo $translation["ago"] ?>"+" "+min+" "+"<?php echo $translation["mins"] ?>";
+        var hour = Math.floor(min/60);
+        if(hour==1) return "<?php echo $translation["ago"] ?>"+" "+hour+" "+"<?php echo $translation["hour"] ?>";
+        if(hour<24) return "<?php echo $translation["ago"] ?>"+" "+hour+" "+"<?php echo $translation["hours"] ?>";
+        var days = Math.floor(hour/24);
+        if(days==1) return "<?php echo $translation["ago"] ?>"+" "+days+" "+"<?php echo $translation["day"] ?>";
+        return "<?php echo $translation["ago"] ?>"+" "+days+" "+"<?php echo $translation["days"] ?>";
+    }
+    
+    if(language=="en") {
+        if(min==1) return min+" "+"<?php echo $translation["min"] ?>"+" "+"<?php echo $translation["ago"] ?>";
+        if(min<60) return min+" "+"<?php echo $translation["mins"] ?>"+" "+"<?php echo $translation["ago"] ?>";
+        var hour = Math.floor(min/60);
+        if(hour==1) return hour+" "+"<?php echo $translation["hour"] ?>"+" "+"<?php echo $translation["ago"] ?>";
+        if(hour<24) return hour+" "+"<?php echo $translation["hours"] ?>"+" "+"<?php echo $translation["ago"] ?>";
+        var days = Math.floor(hour/24);
+        if(days==1) return days+" "+"<?php echo $translation["day"] ?>"+" "+"<?php echo $translation["ago"] ?>";
+        return days+" "+"<?php echo $translation["days"] ?>"+" "+"<?php echo $translation["ago"] ?>";
+    }
 }
 
 //update fileinfos for currently played song
@@ -157,12 +244,12 @@ function getCurrent() {
             var percent = 0;
             var picture = null;
             if(response.status!="success" || response.action!="mpdcurrent") {
-                content="Es trat ein Fehler auf!";
+                content="<?php echo $translation["error"] ?>";
                 lastcurrent = null;
             } else {
                 if(response.content.state!="stop") {
                     if(response.content.fileinfos==null) {
-                        content="Error";
+                        content="<?php echo $translation["error"] ?>";
                         lastcurrent = null;
                     } else {
                         content=    response.content.fileinfos.artist+" - "+
@@ -176,7 +263,7 @@ function getCurrent() {
                         tempposition = parseFloat(parseInt(response.content.time));
                     }
                 } else {
-                    content="(keine Wiedergabe)";
+                    content="("+"<?php echo $translation["noplay"] ?>"+")";
                     lastcurrent = null;
                 }
             }
@@ -205,12 +292,12 @@ function getNext() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="getnextsong") {
-                content="Es trat ein Fehler auf!";
+                content="<?php echo $translation["error"] ?>";
             } else {
                 if(response.content==null) {
-                    content="Als nächstes: (keins)";
+                    content=": ("+tranlation["none"]+")";
                 } else {
-                    content="Als nächstes: "+response.content.artist+" - "+response.content.title+" "+formatLength(response.content.length);
+                    content="<?php echo $translation["next"] ?>"+": "+response.content.artist+" - "+response.content.title+" "+formatLength(response.content.length);
                 }
             }
             $("#next").html(content);
@@ -229,13 +316,13 @@ function doVote(id) {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="vote") {
-                alert("Es trat ein Fehler auf!");
+                alert("<?php echo $translation["error"] ?>");
             } else {
                 //loadTab();
                 getNext();
                 var myclass = ".votecircle-id-"+response.content;
                 $(myclass).each(function(index) {
-                    $(this).attr( "alt","Bereits abgestimmt");
+                    $(this).attr( "alt","<?php echo $translation["alreadyvoted"] ?>");
                     $(this).attr("src","gfx/voted.png");
                 });
 
@@ -256,7 +343,7 @@ function doVoteSkip() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="vote-skip-action") {
-                content="Es trat ein Fehler auf!";
+                content="<?php echo $translation["error"] ?>";
             } else {
                 loadTab();
             }
@@ -268,16 +355,14 @@ function doVoteSkip() {
 }
 
 //remove vote
-function doRemoveVote(id) {
-    //todo test
-    
+function doRemoveVote(id) {    
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="remove-my-vote") {
-                content="Es trat ein Fehler auf!";
+                content="<?php echo $translation["error"] ?>";
             } else {
                 var myclass = ".myvote-"+response.content;
                 
@@ -317,17 +402,17 @@ function getMy() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="getmyvotes") {
-                content="Es trat ein Fehler auf!";
+                content="<?php echo $translation["error"] ?>";
             } else {
                 if(response.content.length==0) {
-                    content="Keine Elemente!";
+                    content="<?php echo $translation["noelements"] ?>";
                 } else {
                     content+="<ol>";
                     
                     for (index = 0; index < response.content.length; index++) {
                         entry = response.content[index];
                         content+="<li class=myvote-"+entry.id+">"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+formatDate(entry.date)+")";
-                        content+='<img class="votetrash" src="gfx/trash.png" alt="Stimme löschen" onclick="javascript:doRemoveVote('+entry.id+');"></li>';
+                        content+='<img class="votetrash" src="gfx/trash.png" alt="'+"<?php echo $translation["deletevote"] ?>"+'" onclick="javascript:doRemoveVote('+entry.id+');"></li>';
                     }
                     content+="</ol>";
                 }
@@ -349,22 +434,22 @@ function getHigh() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="showhighscore") {
-                content="Es trat ein Fehler auf!";
+                content="<?php echo $translation["error"] ?>";
             } else {
                 if(response.content.length==0) {
-                    content="Keine Elemente!";
+                    content="<?php echo $translation["noelements"] ?>";
                 } else {
                     content+="<ol>";
                     
                     for (index = 0; index < response.content.length; index++) {
                         entry = response.content[index];
-                        var st = "Stimmen";
-                        if(entry.anzahl==1) st = "Stimme";
-                        content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+entry.anzahl+" "+st+") ";
+                        var st = "<?php echo $translation["votes"] ?>";
+                        if(entry.count==1) st = translation["vote"];
+                        content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+entry.count+" "+st+") ";
                         if(entry.alreadyVoted) {
-                            content+='<img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                            content+='<img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
                         } else {
-                            content+='<img class="votecircle votecircle-id-'+entry.id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+entry.id+');"></li>';
+                            content+='<img class="votecircle votecircle-id-'+entry.id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+entry.id+');"></li>';
                         }
                     }
                     content+="</ol>";
@@ -383,7 +468,7 @@ function doSearch() {
     var textVal = $("#search-text").val();
     if(textVal.length==0) return;
     if(textVal.length<3) {
-        $("#search > ul").html("Bitte mindestens 3 Zeichen eingeben!");  
+        $("#search > ul").html("<?php echo $translation["enteratleast3"] ?>");  
         return;
     }
     $("#search > ul").html(loading);
@@ -394,18 +479,18 @@ function doSearch() {
             var content = "";
             
             if(response.status!="success" || response.action!="search") {
-                content="Es trat ein Fehler auf!";
+                content="<?php echo $translation["error"] ?>";
             } else {
                 if(response.content.length==0) {
-                    content="Keine Elemente!";
+                    content="<?php echo $translation["noelements"] ?>";
                 } else {
                     for (index = 0; index < response.content.length; index++) {
                         entry = response.content[index];
                         content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+') ';
                         if(entry.alreadyVoted) {
-                            content+='<img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                            content+='<img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
                         } else {
-                            content+='<img class="votecircle votecircle-id-'+entry.id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+entry.id+');"></li>';
+                            content+='<img class="votecircle votecircle-id-'+entry.id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+entry.id+');"></li>';
                         }
                     }
                 }
@@ -426,14 +511,14 @@ function getFolders(folderid) {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="browse-folders") {
-                content="Es trat ein Fehler auf!";
+                content="<?php echo $translation["error"] ?>";
             } else {
                 content += '<span class="current">'+response.content.path+"</span>";
                 content += "<ul>";
                 
                 if(response.content.this!="ROOT") {
-                    content += '<li class="goup" onclick="javascript:getFolders(-1);">(nach ganz oben)</li>';
-                    content += '<li class="goup" onclick="javascript:getFolders('+response.content.this.parentid+');">(eins nach oben)</li>';
+                    content += '<li class="goup" onclick="javascript:getFolders(-1);">('+"<?php echo $translation["goroot"] ?>"+')</li>';
+                    content += '<li class="goup" onclick="javascript:getFolders('+response.content.this.parentid+');">'+"<?php echo $translation["gooneup"] ?>"+'</li>';
                 }
                 
                 for(var i=0;i<response.content.folders.length;i++) {
@@ -443,9 +528,9 @@ function getFolders(folderid) {
                     content += '<li class="file">'+response.content.files[i].filename;
                     
                     if(response.content.files[i].alreadyVoted) {
-                        content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                        content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
                     } else {
-                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
+                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                     }
                     content+="</li>";
                 }
@@ -471,14 +556,14 @@ function getArtists(artistname) {
             var response = JSON.parse(result);
             var content = "";
             if(response.status!="success" || response.action!="browse-artists") {
-                content="Es trat ein Fehler auf!";
+                content="<?php echo $translation["error"] ?>";
             } else {
         
                 if(response.content.name!="ROOT") content += '<span class="current">'+response.content.name+"</span>";
                 content += "<ul>";
                 
                 if(response.content.name!="ROOT") {
-                    content += '<li class="goup" onclick="javascript:getArtists(\'ROOT\');">(zurück)</li>';
+                    content += '<li class="goup" onclick="javascript:getArtists(\'ROOT\');">('+"<?php echo $translation["back"] ?>"+')</li>';
                 }
                 
                 if(response.content.name=="ROOT") {
@@ -490,9 +575,9 @@ function getArtists(artistname) {
                         content += '<li class="file">'+response.content.files[i].artist+": "+response.content.files[i].title;
                         
                         if(response.content.files[i].alreadyVoted) {
-                            content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                            content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
                         } else {
-                            content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
+                            content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                         }
                         content+="</li>";
                     }
@@ -515,14 +600,14 @@ function getAlbums(albumname) {
             var response = JSON.parse(result);
             var content = "";
             if(response.status!="success" || response.action!="browse-albums") {
-                content="Es trat ein Fehler auf!";
+                content="<?php echo $translation["error"] ?>";
             } else {
         
                 if(response.content.name!="ROOT") content += '<span class="current">'+response.content.name+"</span>";
                 content += "<ul>";
                 
                 if(response.content.name!="ROOT") {
-                    content += '<li class="goup" onclick="javascript:getAlbums(\'ROOT\');">(zurück)</li>';
+                    content += '<li class="goup" onclick="javascript:getAlbums(\'ROOT\');">('+"<?php echo $translation["back"] ?>"+')</li>';
                 }
                 
                 if(response.content.name=="ROOT") {
@@ -534,9 +619,9 @@ function getAlbums(albumname) {
                         content += '<li class="file">'+response.content.files[i].artist+": "+response.content.files[i].title;
                         
                         if(response.content.files[i].alreadyVoted) {
-                            content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                            content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
                         } else {
-                            content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
+                            content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                         }
                         content+="</li>";
                     }
@@ -559,17 +644,17 @@ function getPlaylists(name) {
             var response = JSON.parse(result);
             var content = "";
             if(response.status!="success" || response.action!="browse-playlists") {
-                content="Es trat ein Fehler auf!";
+                content="<?php echo $translation["error"] ?>";
             } else {
         
                 if(response.content.name!="ROOT") {
                     content += '<span class="current">'+response.content.name+"</span> ";
-                    content += '<img class="download" src="gfx/download.png" alt="Download" onclick="javascript:doDownloadPlaylist(\''+response.content.name+'\');">';
+                    content += '<img class="download" src="gfx/download.png" alt="'+"<?php echo $translation["download"] ?>"+'" onclick="javascript:doDownloadPlaylist(\''+response.content.name+'\');">';
                 }
                 content += "<ul>";
                 
                 if(response.content.name!="ROOT") {
-                    content += '<li class="goup" onclick="javascript:getPlaylists(\'ROOT\');">(zurück)</li>';
+                    content += '<li class="goup" onclick="javascript:getPlaylists(\'ROOT\');">('+"<?php echo $translation["back"] ?>"+')</li>';
                 }
                 
                 if(response.content.name=="ROOT") {
@@ -581,9 +666,9 @@ function getPlaylists(name) {
                         content += '<li class="file">'+response.content.files[i].artist+": "+response.content.files[i].title;
                         
                         if(response.content.files[i].alreadyVoted) {
-                            content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                            content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
                         } else {
-                            content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
+                            content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                         }
                         content+="</li>";
                     }
@@ -604,16 +689,16 @@ function getOftenPlaylists() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="browse-often-playlists") {
-                content="Es trat ein Fehler auf!";
+                content="<?php echo $translation["error"] ?>";
             } else {
                 content += "<ol>";
                 for(var i=0;i<response.content.files.length;i++) {
                     content += '<li class="file">'+response.content.files[i].count+": "+response.content.files[i].artist+": "+response.content.files[i].title;
                     
                     if(response.content.files[i].alreadyVoted) {
-                        content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                        content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
                     } else {
-                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
+                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                     }
                     content+="</li>";
                 }
@@ -637,16 +722,16 @@ function getOftenVotes() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="browse-often-votes") {
-                content="Es trat ein Fehler auf!";
+                content="<?php echo $translation["error"] ?>";
             } else {
                 content += "<ol>";
                 for(var i=0;i<response.content.files.length;i++) {
                     content += '<li class="file">'+response.content.files[i].count+": "+response.content.files[i].artist+": "+response.content.files[i].title;
                     
                     if(response.content.files[i].alreadyVoted) {
-                        content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                        content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
                     } else {
-                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
+                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                     }
                     content+="</li>";
                 }
@@ -670,16 +755,16 @@ function getPlaylog() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="browse-playlog") {
-                content="Es trat ein Fehler auf!";
+                content="<?php echo $translation["error"] ?>";
             } else {
                 content += "<ul>";
                 for(var i=0;i<response.content.files.length;i++) {
                     content += '<li class="file">'+formatMinutes(response.content.files[i].date)+": "+response.content.files[i].artist+": "+response.content.files[i].title;
                     
                     if(response.content.files[i].alreadyVoted) {
-                        content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                        content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
                     } else {
-                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
+                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                     }
                     content+="</li>";
                 }
@@ -703,16 +788,16 @@ function getVoteskip() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="vote-skip-check") {
-                content="Es trat ein Fehler auf!";
+                content="<?php echo $translation["error"] ?>";
             } else {
                 if(response.content==0) {
-                    content+='<img class="votecircle" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVoteSkip();">';
+                    content+='<img class="votecircle" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVoteSkip();">';
                 } 
                 if(response.content==1) {
-                    content+='<img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt">';
+                    content+='<img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'">';
                 }
                 if(response.content==2) {
-                    content+='<img class="votecircle" src="gfx/vote_disabled.png" alt="Nicht möglich">';
+                    content+='<img class="votecircle" src="gfx/vote_disabled.png" alt="'+"<?php echo $translation["notpossible"] ?>"+'">';
                 }
             }
             $("#vote-skip").html(content);
@@ -725,13 +810,13 @@ function getVoteskip() {
 
 function getUploadForm() {
     if(uploadsenabled) {
-        var content = 'Es werden nur mp3 Dateien akzeptiert!'+
+        var content = "<?php echo $translation["onlymp3"] ?>"+
         '<form enctype="multipart/form-data" action="ajax.php?action=upload-file" method="post">'+
         '<input type="hidden" name="max_file_size" value="'+maxsize+'">'+
-        '<input type="hidden" name="abgeschickt" value="ja">'+
-        'Datei auswählen: <input name="thefile[]" type="file" multiple="multiple" style="border: 1px solid #555;"><br />'+
-        '<input type="submit" value="senden">'+
-        '<!--<input name="abbrechen" type="button" value="Abbrechen" id="abbrechen"><br />'+
+        '<input type="hidden" name="abgeschickt" value="ja">'+"<?php echo $translation["selectfile"] ?>"
+        ': <input name="thefile[]" type="file" multiple="multiple" style="border: 1px solid #555;"><br />'+
+        '<input type="submit" value="'+"<?php echo $translation["send"] ?>"+'">'+
+        '<!--<input name="abbrechen" type="button" value="'+"<?php echo $translation["cancel"] ?>"+'" id="abbrechen"><br />'+
         '<progress max="1" value="0" id="fortschritt"></progress>'+
         '<p id="fortschritt_txt"></p>-->'+
         '</form>';
@@ -749,42 +834,42 @@ function getDownloads() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="download-file") {
-                content="Es trat ein Fehler auf!";
+                content="<?php echo $translation["error"] ?>";
             } else {
-                content += "<h2>Derzeitiges Lied</h2>";
+                content += "<h2>"+"<?php echo $translation["currentsong"] ?>"+"</h2>";
                 content += "<ul>";
                 for(var i=0;i<response.content.a.length;i++) {
                     content += '<li class="file">'+response.content.a[i].artist+": "+response.content.a[i].title;
-                    content+=' <img class="download" src="gfx/download.png" alt="Download" onclick="javascript:doDownload('+response.content.a[i].id+');"></li>';
+                    content+=' <img class="download" src="gfx/download.png" alt="'+"<?php echo $translation["download"] ?>"+'" onclick="javascript:doDownload('+response.content.a[i].id+');"></li>';
                     content+="</li>";
                 }
                 content += "</ul>";
                 
-                content += "<h2>Von mir abgestimmte Lieder</h2>";
+                content += "<h2>"+"<?php echo $translation["myvotedsongs"] ?>"+"</h2>";
                 content += "<ul>";
                 for(var i=0;i<response.content.b.length;i++) {
                     content += '<li class="file">'+response.content.b[i].artist+": "+response.content.b[i].title;
-                    content+=' <img class="download" src="gfx/download.png" alt="Download" onclick="javascript:doDownload('+response.content.b[i].id+');"></li>';
+                    content+=' <img class="download" src="gfx/download.png" alt="'+"<?php echo $translation["download"] ?>"+'" onclick="javascript:doDownload('+response.content.b[i].id+');"></li>';
                     content+="</li>";
                 }
                 content += "</ul>";
                 
                 
-                content += "<h2>Highscore</h2>";
+                content += "<h2>"+"<?php echo $translation["highscore"] ?>"+"</h2>";
                 content += "<ul>";
                 for(var i=0;i<response.content.c.length;i++) {
                     content += '<li class="file">'+response.content.c[i].artist+": "+response.content.c[i].title;
-                    content+=' <img class="download" src="gfx/download.png" alt="Download" onclick="javascript:doDownload('+response.content.c[i].id+');"></li>';
+                    content+=' <img class="download" src="gfx/download.png" alt="'+"<?php echo $translation["download"] ?>"+'" onclick="javascript:doDownload('+response.content.c[i].id+');"></li>';
                     content+="</li>";
                 }
                 content += "</ul>";
                 
                 
-                content += "<h2>zuletzt gespielte Lieder</h2>";
+                content += "<h2>"+"<?php echo $translation["lastplayedsongs"] ?>"+"</h2>";
                 content += "<ul>";
                 for(var i=0;i<response.content.d.length;i++) {
                     content += '<li class="file">'+response.content.d[i].artist+": "+response.content.d[i].title;
-                    content+=' <img class="download" src="gfx/download.png" alt="Download" onclick="javascript:doDownload('+response.content.d[i].id+');"></li>';
+                    content+=' <img class="download" src="gfx/download.png" alt="'+"<?php echo $translation["download"] ?>"+'" onclick="javascript:doDownload('+response.content.d[i].id+');"></li>';
                     content+="</li>";
                 }
                 content += "</ul>";
@@ -806,16 +891,16 @@ function getOftenPlayed() {
             var response = JSON.parse(xhttp.responseText);
             var content = "";
             if(response.status!="success" || response.action!="browse-often-played") {
-                content="Es trat ein Fehler auf!";
+                content="<?php echo $translation["error"] ?>";
             } else {
                 content += "<ol>";
                 for(var i=0;i<response.content.files.length;i++) {
                     content += '<li class="file">'+response.content.files[i].count+": "+response.content.files[i].artist+": "+response.content.files[i].title;
                     
                     if(response.content.files[i].alreadyVoted) {
-                        content+=' <img class="votecircle" src="gfx/voted.png" alt="Bereits abgestimmt"></li>';
+                        content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
                     } else {
-                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="Abstimmen" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
+                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                     }
                     content+="</li>";
                 }

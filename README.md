@@ -56,9 +56,16 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 ```
 In this example a valid entry in the playlist would be: "ACDC/Back in Black.mp3"
 
+### Language
+* Errors are always in english
+* If you want the interface to be english instead of german: 
+** Delete index.html and rename index_en.html to index.html.
+** in script.js.php, line 26: $language = "en";
+
 ### Further information / find errors
 * if you configured mpd to use alsa and you can not hear music check "alsamixer". Also check that no channel is muted.
 * ncmpc is a commandline mpd client
+* for uploading files your folder has to be writeable
 
 ### Autostart
 * if you want the daemon to start on every boot maybe the systemd script dist/votempd.service will help you.
