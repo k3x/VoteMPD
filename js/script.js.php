@@ -295,7 +295,7 @@ function getNext() {
                 content="<?php echo $translation["error"] ?>";
             } else {
                 if(response.content==null) {
-                    content=": ("+tranlation["none"]+")";
+                    content=": ("<?php echo $translation["error"] ?>")";
                 } else {
                     content="<?php echo $translation["next"] ?>"+": "+response.content.artist+" - "+response.content.title+" "+formatLength(response.content.length);
                 }
@@ -444,7 +444,7 @@ function getHigh() {
                     for (index = 0; index < response.content.length; index++) {
                         entry = response.content[index];
                         var st = "<?php echo $translation["votes"] ?>";
-                        if(entry.count==1) st = translation["vote"];
+                        if(entry.count==1) st = "<?php echo $translation["vote"] ?>";
                         content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+entry.count+" "+st+") ";
                         if(entry.alreadyVoted) {
                             content+='<img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
@@ -813,7 +813,7 @@ function getUploadForm() {
         var content = "<?php echo $translation["onlymp3"] ?>"+
         '<form enctype="multipart/form-data" action="ajax.php?action=upload-file" method="post">'+
         '<input type="hidden" name="max_file_size" value="'+maxsize+'">'+
-        '<input type="hidden" name="abgeschickt" value="ja">'+"<?php echo $translation["selectfile"] ?>"
+        '<input type="hidden" name="abgeschickt" value="ja">'+"<?php echo $translation["selectfile"] ?>"+
         ': <input name="thefile[]" type="file" multiple="multiple" style="border: 1px solid #555;"><br />'+
         '<input type="submit" value="'+"<?php echo $translation["send"] ?>"+'">'+
         '<!--<input name="abbrechen" type="button" value="'+"<?php echo $translation["cancel"] ?>"+'" id="abbrechen"><br />'+

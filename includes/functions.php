@@ -1046,7 +1046,7 @@ function doUploadFile() {
             insertFileInDb($foldernum,$file_path_abs,false);
         } else $echohtml_content.="Error: There was an error copying yout file. Maybe the program has no write access to the destination folder?";
     }
-    $echohtml_content.="<br /><br /><a href=\"/\">zur&uuml;ck</a>";
+    $echohtml_content.='<br /><br /><a href="/">back</a>'; //todo translate this, or use icon
     echo $echohtml_content;
 }
 
