@@ -1,8 +1,8 @@
 # VoteMPD
 
 * Author: Felix Sterzelmaier
-* Version 0.7
-* Date: 03. January 2016
+* Version 0.8
+* Date: 11. March 2016
 * Github Page: http://k3x.github.io/VoteMPD/
 * Github Code: https://github.com/k3x/VoteMPD
 * Github Git URL: https://github.com/k3x/VoteMPD.git

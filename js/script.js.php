@@ -295,7 +295,7 @@ function getNext() {
                 content="<?php echo $translation["error"] ?>";
             } else {
                 if(response.content==null) {
-                    content=": ("<?php echo $translation["error"] ?>")";
+                    content=": ("+<?php echo $translation["error"] ?>+")";
                 } else {
                     content="<?php echo $translation["next"] ?>"+": "+response.content.artist+" - "+response.content.title+" "+formatLength(response.content.length);
                 }
