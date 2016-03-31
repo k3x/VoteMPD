@@ -27,7 +27,7 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * configure /etc/mpd.conf (music library and audio autput, mixer_type "software")
 * sudo service mpd restart
 * let mpd rescan the database. For example: on a client: sudo apt-get install gmpc; run gmpc; connect to mpd; do Server -> Update MPD Database
-* Create new mysql database and configure "includes/settings.php". Enter your mpd connection infos and also enter the same "path" like you configured for mpd.
+* Create new mysql database and configure "includes/settings.php" (copy from dist/settings.php). Enter your mpd connection infos and also enter the same "path" like you configured for mpd.
 * import dist/votempd.sql in the created mysql database.
 * run "php daemon.php -f" and run "php daemon.php -p"
 * Let your Apache "/" point to the root folder (the folder with index.html)
