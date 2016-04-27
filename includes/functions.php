@@ -42,7 +42,6 @@ function daemonCallInit() {
     $mpd->cmd("stop");
     $mpd->cmd("clear");
     addOneFileToMpdQueue(true);
-    Tasker::add(5,'checkForSkipSong');
 }
 
 //called periodically. Checks for enough votes in table "voteforskip"
@@ -113,6 +112,8 @@ function addOneFileToMpdQueue($first=false) {
                 echo "error";
             }
         }
+        
+        Tasker::add(5,'checkForSkipSong');
     } else {
         Tasker::add(5,'daemonCallInit',array());
     }
@@ -1330,6 +1331,7 @@ function doPlaylist($p) {
         }
     }
 }
+
 
 
 ?>

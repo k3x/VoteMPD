@@ -97,6 +97,11 @@ In this example a valid entry in the playlist would be: "ACDC/Back in Black.mp3"
 * phpMp3 (for MPD communication) http://sourceforge.net/projects/phpmp3
 * getID3 (for getting id3 tags) http://getid3.sourceforge.net
 
+## todo's
+* readme: mpd needs reding rights to files, upload folder has to be writeable
+* download name mit Künstler
+* on no play/no items in highscore: correct output
+
 ## License
 VoteMPD is free software. It is released under the terms of
 the following BSD License.
