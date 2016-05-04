@@ -510,19 +510,36 @@ function doGetmyvotes() {
 //return highscore
 function doShowhighscore($daemoncall = false) {
     $stmt = $GLOBALS["db"]->prepare("
-        SELECT 
-            files.*,votes.date,COUNT(*) as count 
-        FROM 
-            (SELECT * FROM votes ORDER BY date ASC) as votes
-        INNER JOIN 
-            files on files.id=votes.fileid 
-        WHERE 
-            votes.played=0
-        GROUP BY
-            votes.fileid
-        ORDER BY
-            count DESC,
-			date ASC");
+SELECT
+    t1.*,
+    t2.date
+FROM
+    (SELECT 
+        files.*, COUNT(*) as count
+    FROM 
+        votes, files
+    WHERE 
+        played=0 AND
+        files.id=votes.fileid
+    GROUP BY
+        id
+    ORDER BY
+        count DESC) as t1,
+    (SELECT
+        fileid,
+        min(date) as date
+    FROM
+        votes
+    WHERE
+        played=0
+    GROUP BY
+        fileid) as t2
+WHERE
+    t1.id=t2.fileid
+ORDER BY 
+    count DESC,
+    date ASC
+    ");
     $tmp = array();
     if($stmt->execute()) {
         while ($row = $stmt->fetchObject()) {
@@ -560,7 +577,12 @@ function doShowhighscore($daemoncall = false) {
         }
         
         return $tmp;
-    } else doError("Highscore db query failed");
+    } else {
+        print_r($stmt->queryString."\n");
+        var_dump($stmt->errorInfo());
+        echo "\n";
+        doError("Highscore db query failed");
+    }
 }
 
 //search for keywords
