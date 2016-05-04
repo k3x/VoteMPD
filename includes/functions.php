@@ -1239,6 +1239,8 @@ function insertFileInDb($foldernum,$p,$scan = true) {
     $album =    isset($ThisFileInfo['tags']['id3v2']['album'][0] ) ? $ThisFileInfo['tags']['id3v2']['album'][0]  : "";
     $length =   isset($ThisFileInfo['playtime_seconds']) ? $ThisFileInfo['playtime_seconds'] : 0;
     if($year===null) $year="";
+    if(!ctype_digit($year)) $year="";
+    if(strlen($year)>4) $year="";
     if($scan) $GLOBALS["Ttags"]+=(microtime(true)-$Tstart);
     
     //insert into database
@@ -1257,7 +1259,18 @@ function insertFileInDb($foldernum,$p,$scan = true) {
         
     ))) {
         print_r($stmt->queryString."\n");
-        print_r($stmt->errorInfo());
+        print_r($stmt->errorInfo()."\n");
+        print_r(array(
+        ':fname' => $filename, 
+        ':fid' => intval($foldernum),
+        ':ar' => $artist,
+        ':ti' => $title,
+        ':al' => $album,
+        ':ye' => $year,
+        ':le' => $length,
+        ':si' => intval($size)
+        
+        ));
         die("insertFileInDb: Error");
     }
     if($scan) $GLOBALS["Tdb"]+=(microtime(true)-$Tstart);
