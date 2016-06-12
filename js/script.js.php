@@ -176,6 +176,13 @@ function intervalFast() {
     $("#timespan").html(formatLength(tempposition)+"/"+formatLength(lastcurrent.fileinfos.length));
 }
 
+function getTitleToDisplay(song) {
+    if(song === undefined || song === null) return "(<?php echo $translation["none"]; ?>)";
+    if(song.artist!="" && song.title!="") return song.artist + " - " + song.title;
+    if(song.artist!="" && song.title=="") return song.artist + " - " + song.filename;
+    if(song.artist=="" && song.title!="") return song.title + "(" + song.filename + ")";
+	return song.filename;
+}
 
 //format Bytes to KB, MB,...
 //from http://stackoverflow.com/questions/15900485/correct-way-to-convert-size-in-bytes-to-kb-mb-gb-in-javascript
@@ -252,8 +259,7 @@ function getCurrent() {
                         content="<?php echo $translation["error"] ?>";
                         lastcurrent = null;
                     } else {
-                        content=    response.content.fileinfos.artist+" - "+
-                                    response.content.fileinfos.title+" (<span id='timespan'>"+formatLength(response.content.time)+"/"+formatLength(response.content.fileinfos.length)+"</span>)";
+                        content = getTitleToDisplay(response.content.fileinfos)+" (<span id='timespan'>"+formatLength(response.content.time)+"/"+formatLength(response.content.fileinfos.length)+"</span>)";
                         percent = 100*response.content.time/response.content.fileinfos.length;
                         picture = response.content.fileinfos.picture;
                         if(lastcurrent==null || lastcurrent.fileinfos.id!=response.content.fileinfos.id) {
@@ -297,7 +303,7 @@ function getNext() {
                 if(response.content==null) {
                     content="<?php echo $translation["next"] ?>: (<?php echo $translation["none"] ?>)";
                 } else {
-                    content="<?php echo $translation["next"] ?>"+": "+response.content.artist+" - "+response.content.title+" "+formatLength(response.content.length);
+                    content="<?php echo $translation["next"] ?>"+": "+getTitleToDisplay(response.content)+" "+formatLength(response.content.length);
                 }
             }
             $("#next").html(content);
@@ -411,7 +417,7 @@ function getMy() {
                     
                     for (index = 0; index < response.content.length; index++) {
                         entry = response.content[index];
-                        content+="<li class=myvote-"+entry.id+">"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+formatDate(entry.date)+")";
+                        content+="<li class=myvote-"+entry.id+">"+getTitleToDisplay(entry)+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+formatDate(entry.date)+")";
                         content+='<img class="votetrash" src="gfx/trash.png" alt="'+"<?php echo $translation["deletevote"] ?>"+'" onclick="javascript:doRemoveVote('+entry.id+');"></li>';
                     }
                     content+="</ol>";
@@ -445,7 +451,7 @@ function getHigh() {
                         entry = response.content[index];
                         var st = "<?php echo $translation["votes"] ?>";
                         if(entry.count==1) st = "<?php echo $translation["vote"] ?>";
-                        content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+entry.count+" "+st+") ";
+                        content+="<li>"+getTitleToDisplay(entry)+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+entry.count+" "+st+") ";
                         if(entry.alreadyVoted) {
                             content+='<img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
                         } else {
@@ -486,7 +492,7 @@ function doSearch() {
                 } else {
                     for (index = 0; index < response.content.length; index++) {
                         entry = response.content[index];
-                        content+="<li>"+entry.artist+": "+entry.title+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+') ';
+                        content+="<li>"+getTitleToDisplay(entry)+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+') ';
                         if(entry.alreadyVoted) {
                             content+='<img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
                         } else {
@@ -572,7 +578,7 @@ function getArtists(artistname) {
                     }
                 } else {
                     for(var i=0;i<response.content.files.length;i++) {
-                        content += '<li class="file">'+response.content.files[i].artist+": "+response.content.files[i].title;
+                        content += '<li class="file">'+getTitleToDisplay(response.content.files[i]);
                         
                         if(response.content.files[i].alreadyVoted) {
                             content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
@@ -616,7 +622,7 @@ function getAlbums(albumname) {
                     }
                 } else {
                     for(var i=0;i<response.content.files.length;i++) {
-                        content += '<li class="file">'+response.content.files[i].artist+": "+response.content.files[i].title;
+                        content += '<li class="file">'+getTitleToDisplay(response.content.files[i]);
                         
                         if(response.content.files[i].alreadyVoted) {
                             content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
@@ -663,7 +669,7 @@ function getPlaylists(name) {
                     }
                 } else {
                     for(var i=0;i<response.content.files.length;i++) {
-                        content += '<li class="file">'+response.content.files[i].artist+": "+response.content.files[i].title;
+                        content += '<li class="file">'+getTitleToDisplay(response.content.files[i]);
                         
                         if(response.content.files[i].alreadyVoted) {
                             content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
@@ -693,7 +699,7 @@ function getOftenPlaylists() {
             } else {
                 content += "<ol>";
                 for(var i=0;i<response.content.files.length;i++) {
-                    content += '<li class="file">'+response.content.files[i].count+": "+response.content.files[i].artist+": "+response.content.files[i].title;
+                    content += '<li class="file">'+response.content.files[i].count+": "+getTitleToDisplay(response.content.files[i]);
                     
                     if(response.content.files[i].alreadyVoted) {
                         content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
@@ -726,7 +732,7 @@ function getOftenVotes() {
             } else {
                 content += "<ol>";
                 for(var i=0;i<response.content.files.length;i++) {
-                    content += '<li class="file">'+response.content.files[i].count+": "+response.content.files[i].artist+": "+response.content.files[i].title;
+                    content += '<li class="file">'+response.content.files[i].count+": "+getTitleToDisplay(response.content.files[i]);
                     
                     if(response.content.files[i].alreadyVoted) {
                         content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
@@ -759,7 +765,7 @@ function getPlaylog() {
             } else {
                 content += "<ul>";
                 for(var i=0;i<response.content.files.length;i++) {
-                    content += '<li class="file">'+formatMinutes(response.content.files[i].date)+": "+response.content.files[i].artist+": "+response.content.files[i].title;
+                    content += '<li class="file">'+formatMinutes(response.content.files[i].date)+": "+getTitleToDisplay(response.content.files[i]);
                     
                     if(response.content.files[i].alreadyVoted) {
                         content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
@@ -839,7 +845,7 @@ function getDownloads() {
                 content += "<h2>"+"<?php echo $translation["currentsong"] ?>"+"</h2>";
                 content += "<ul>";
                 for(var i=0;i<response.content.a.length;i++) {
-                    content += '<li class="file">'+response.content.a[i].artist+": "+response.content.a[i].title;
+                    content += '<li class="file">'+getTitleToDisplay(response.content.a[i]);
                     content+=' <img class="download" src="gfx/download.png" alt="'+"<?php echo $translation["download"] ?>"+'" onclick="javascript:doDownload('+response.content.a[i].id+');"></li>';
                     content+="</li>";
                 }
@@ -848,7 +854,7 @@ function getDownloads() {
                 content += "<h2>"+"<?php echo $translation["myvotedsongs"] ?>"+"</h2>";
                 content += "<ul>";
                 for(var i=0;i<response.content.b.length;i++) {
-                    content += '<li class="file">'+response.content.b[i].artist+": "+response.content.b[i].title;
+                    content += '<li class="file">'+getTitleToDisplay(response.content.b[i]);
                     content+=' <img class="download" src="gfx/download.png" alt="'+"<?php echo $translation["download"] ?>"+'" onclick="javascript:doDownload('+response.content.b[i].id+');"></li>';
                     content+="</li>";
                 }
@@ -858,7 +864,7 @@ function getDownloads() {
                 content += "<h2>"+"<?php echo $translation["highscore"] ?>"+"</h2>";
                 content += "<ul>";
                 for(var i=0;i<response.content.c.length;i++) {
-                    content += '<li class="file">'+response.content.c[i].artist+": "+response.content.c[i].title;
+                    content += '<li class="file">'+getTitleToDisplay(response.content.c[i]);
                     content+=' <img class="download" src="gfx/download.png" alt="'+"<?php echo $translation["download"] ?>"+'" onclick="javascript:doDownload('+response.content.c[i].id+');"></li>';
                     content+="</li>";
                 }
@@ -868,7 +874,7 @@ function getDownloads() {
                 content += "<h2>"+"<?php echo $translation["lastplayedsongs"] ?>"+"</h2>";
                 content += "<ul>";
                 for(var i=0;i<response.content.d.length;i++) {
-                    content += '<li class="file">'+response.content.d[i].artist+": "+response.content.d[i].title;
+                    content += '<li class="file">'+getTitleToDisplay(response.content.d[i]);
                     content+=' <img class="download" src="gfx/download.png" alt="'+"<?php echo $translation["download"] ?>"+'" onclick="javascript:doDownload('+response.content.d[i].id+');"></li>';
                     content+="</li>";
                 }
@@ -895,7 +901,7 @@ function getOftenPlayed() {
             } else {
                 content += "<ol>";
                 for(var i=0;i<response.content.files.length;i++) {
-                    content += '<li class="file">'+response.content.files[i].count+": "+response.content.files[i].artist+": "+response.content.files[i].title;
+                    content += '<li class="file">'+response.content.files[i].count+": "+getTitleToDisplay(response.content.files[i]);
                     
                     if(response.content.files[i].alreadyVoted) {
                         content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
