@@ -26,6 +26,26 @@ switch($_GET["action"]) {
         $r = doVote($_SERVER['REMOTE_ADDR'],$_GET["id"]);
         doOutput($r,"vote");
         break;
+    case("voteFolder"):
+        if(!isset($_GET["id"])) doError("No id specified");
+        $r = doVoteFolder($_SERVER['REMOTE_ADDR'],$_GET["id"]); //todo
+        doOutput(null,"voteFolder");
+        break;
+    case("voteArtist"):
+        if(!isset($_GET["name"])) doError("No name specified");        
+        $r = doVoteArtist($_SERVER['REMOTE_ADDR'],$_GET["name"]); //todo
+        doOutput(null,"voteArtist");
+        break;
+    case("voteAlbum"):
+        if(!isset($_GET["name"])) doError("No name specified");
+        $r = doVoteAlbum($_SERVER['REMOTE_ADDR'],$_GET["name"]); //todo
+        doOutput(null,"voteAlbum");
+        break;
+    case("votePlaylist"):
+        if(!isset($_GET["name"])) doError("No name specified");
+        $r = doVotePlaylist($_SERVER['REMOTE_ADDR'],$_GET["name"]); //todo
+        doOutput(null,"votePlaylist");
+        break;
     case("getmyvotes"):
         $r = doGetmyvotes();
         if($r===false) doError("Error while getting your votes");

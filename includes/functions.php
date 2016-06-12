@@ -413,7 +413,7 @@ function getNextsongInHighscore($daemoncall = false) {
 }
 
 //vote for a song
-function doVote($ip,$id) {
+function doVote($ip,$id,$showerrors=true) {
     if($id=="" || !ctype_digit($id)) doError("doVote no number");
     $file = getFile($id);
     if($file===false) doError("doVote no valid number");
@@ -428,11 +428,43 @@ function doVote($ip,$id) {
     } else doError("Getmyvotes db query failed");
     
     if($exists) {
-        doError("doVote already voted");
+        if($showerrors) doError("doVote already voted");
     } else {
         $stmt = $GLOBALS["db"]->prepare("INSERT INTO votes (fileid,ip,date) VALUES (:fid,:ip,NOW())");
         if(!($stmt->execute(array(":fid" => $id,":ip"=>$ip)))) return false;
         else return $id;
+    }
+}
+
+function doVoteFolder($ip,$id) {
+    $files = getBrowseFolder(strval($id))["files"];
+    foreach($files as $file) {
+        $fid = $file -> id;
+        doVote($ip,$fid,false);
+    }
+}
+
+function doVoteArtist($ip,$name) {
+    $files = getBrowseArtist($name)["files"];
+    foreach($files as $file) {
+        $fid = $file -> id;
+        doVote($ip,$fid,false);
+    }
+}
+
+function doVoteAlbum($ip,$name) {
+    $files = getBrowseAlbum($name)["files"];
+    foreach($files as $file) {
+        $fid = $file -> id;
+        doVote($ip,$fid,false);
+    }
+}
+
+function doVotePlaylist($ip,$name) {
+    $files = getBrowsePlaylist($name)["files"];
+    foreach($files as $file) {
+        $fid = $file -> id;
+        doVote($ip,$fid,false);
     }
 }
 
@@ -457,13 +489,23 @@ function getVoteSkipAction() {
     return false;
 }
 
+function getTitleToDisplay($song) {
+    if($song === null) return "";
+    if($song->artist!="" && $song->title!="") return $song->artist . " - " . $song->title;
+    if($song->artist!="" && $song->title=="") return $song->artist . " - " . $song->filename;
+    if($song->artist=="" && $song->title!="") return $song->title . "(" . $song->filename . ")";
+	return $song->filename;
+}
+
 //download a file
 function doDownloadFileDo($id) {
-    $path = $GLOBALS["path"]."/".getFilepathForFileid($id);    
+    $path = $GLOBALS["path"]."/".getFilepathForFileid($id);
 	if (!file_exists($path)) die("Datei existiert nicht !");
 	$filesize = filesize($path);
 	$mimetype=mime_content_type($path);
-	header('Content-Disposition: attachment; filename="'.basename($path).'"');
+    $file = getFile($id);
+    $name = getTitleToDisplay($file) != "" ? getTitleToDisplay($file) : basename($path);
+	header('Content-Disposition: attachment; filename="'.$name.'.mp3"');
 	header("Content-type: ".$mimetype);
 	header("Content-Length: $filesize");
 	readfile($path);

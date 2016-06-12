@@ -340,6 +340,82 @@ function doVote(id) {
     xhttp.send();
 }
 
+//vote for one Folder
+function voteForFolder(id) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var response = JSON.parse(xhttp.responseText);
+            var content = "";
+            if(response.status!="success" || response.action!="voteFolder") {
+                alert("<?php echo $translation["error"] ?>");
+            } else {
+                loadTab();
+            }
+        }
+    }
+    var str = ajaxpath+"?action=voteFolder&id="+id;
+    xhttp.open("GET", str, true);
+    xhttp.send();
+}
+
+//vote for one Artist
+function voteForArtist(name) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var response = JSON.parse(xhttp.responseText);
+            var content = "";
+            if(response.status!="success" || response.action!="voteArtist") {
+                alert("<?php echo $translation["error"] ?>");
+            } else {
+                loadTab();
+            }
+        }
+    }
+    var str = ajaxpath+"?action=voteArtist&name="+encodeURIComponent(name);
+    xhttp.open("GET", str, true);
+    xhttp.send();
+}
+
+//vote for one Album
+function voteForAlbum(name) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var response = JSON.parse(xhttp.responseText);
+            var content = "";
+            if(response.status!="success" || response.action!="voteAlbum") {
+                alert("<?php echo $translation["error"] ?>");
+            } else {
+                loadTab();
+            }
+        }
+    }
+    var str = ajaxpath+"?action=voteAlbum&name="+encodeURIComponent(name);
+    xhttp.open("GET", str, true);
+    xhttp.send();
+}
+
+//vote for one Playlist
+function voteForPlaylist(name) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var response = JSON.parse(xhttp.responseText);
+            var content = "";
+            if(response.status!="success" || response.action!="votePlaylist") {
+                alert("<?php echo $translation["error"] ?>");
+            } else {
+                loadTab();
+            }
+        }
+    }
+    var str = ajaxpath+"?action=votePlaylist&name="+encodeURIComponent(name);
+    xhttp.open("GET", str, true);
+    xhttp.send();
+}
+
 //vote for skip current song
 function doVoteSkip() {
     $("#vote-skip").html(loading);
@@ -520,6 +596,7 @@ function getFolders(folderid) {
                 content="<?php echo $translation["error"] ?>";
             } else {
                 content += '<span class="current">'+response.content.path+"</span>";
+                content += ' <img class="votecircle" alt="'+"<?php echo $translation["dovote"] ?>"+'" src="gfx/circle.png" onclick="javascript:voteForFolder('+folderid+');">';
                 content += "<ul>";
                 
                 if(response.content.this!="ROOT") {
@@ -565,7 +642,10 @@ function getArtists(artistname) {
                 content="<?php echo $translation["error"] ?>";
             } else {
         
-                if(response.content.name!="ROOT") content += '<span class="current">'+response.content.name+"</span>";
+                if(response.content.name!="ROOT") {
+                    content += '<span class="current">'+response.content.name+"</span>";
+                    content += ' <img class="votecircle" alt="'+"<?php echo $translation["dovote"] ?>"+'" src="gfx/circle.png" onclick="javascript:voteForArtist(\''+artistname+'\');">';
+                }
                 content += "<ul>";
                 
                 if(response.content.name!="ROOT") {
@@ -590,7 +670,7 @@ function getArtists(artistname) {
                 }
                 content += "</ul>";
             }
-            $("#browse-artists").html(content);         
+            $("#browse-artists").html(content);
         }
     });
 }
@@ -609,7 +689,10 @@ function getAlbums(albumname) {
                 content="<?php echo $translation["error"] ?>";
             } else {
         
-                if(response.content.name!="ROOT") content += '<span class="current">'+response.content.name+"</span>";
+                if(response.content.name!="ROOT") {
+                    content += '<span class="current">'+response.content.name+"</span>";
+                    content += ' <img class="votecircle" alt="'+"<?php echo $translation["dovote"] ?>"+'" src="gfx/circle.png" onclick="javascript:voteForAlbum(\''+albumname+'\');">';
+                }
                 content += "<ul>";
                 
                 if(response.content.name!="ROOT") {
@@ -655,7 +738,9 @@ function getPlaylists(name) {
         
                 if(response.content.name!="ROOT") {
                     content += '<span class="current">'+response.content.name+"</span> ";
-                    content += '<img class="download" src="gfx/download.png" alt="'+"<?php echo $translation["download"] ?>"+'" onclick="javascript:doDownloadPlaylist(\''+response.content.name+'\');">';
+                    content += ' <img class="download" src="gfx/download.png" alt="'+"<?php echo $translation["download"] ?>"+'" onclick="javascript:doDownloadPlaylist(\''+response.content.name+'\');">';
+                    content += ' <img class="votecircle" alt="'+"<?php echo $translation["dovote"] ?>"+'" src="gfx/circle.png" onclick="javascript:voteForPlaylist(\''+name+'\');">';
+                
                 }
                 content += "<ul>";
                 

@@ -1,8 +1,8 @@
 # VoteMPD
 
 * Author: Felix Sterzelmaier
-* Version 0.8
-* Date: 11. March 2016
+* Version 0.8.3
+* Date: 12. June 2016
 * Github Page: http://k3x.github.io/VoteMPD/
 * Github Code: https://github.com/k3x/VoteMPD
 * Github Git URL: https://github.com/k3x/VoteMPD.git
@@ -22,6 +22,8 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 ## Install
 
 ### Base
+* mpd/php daemon needs reading rights to files
+* upload folder has to be writeable for php daemon
 * sudo apt-get install php5 php5-cli php5-json php5-mysql apache2 mysql-server mpd alsa-base
 * php shell exec has to be eneabled; php.ini: file_uploads = On,post_max_size = 100M,upload_max_filesize = 100M
 * configure /etc/mpd.conf (music library and audio autput, mixer_type "software")
@@ -98,9 +100,6 @@ In this example a valid entry in the playlist would be: "ACDC/Back in Black.mp3"
 * getID3 (for getting id3 tags) http://getid3.sourceforge.net
 
 ## todo's
-* readme: mpd needs reding rights to files, upload folder has to be writeable
-* download name mit Künstler
-* on no play/no items in highscore: correct output
 
 ## License
 VoteMPD is free software. It is released under the terms of
