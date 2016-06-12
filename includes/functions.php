@@ -578,9 +578,6 @@ ORDER BY
         
         return $tmp;
     } else {
-        print_r($stmt->queryString."\n");
-        var_dump($stmt->errorInfo());
-        echo "\n";
         doError("Highscore db query failed");
     }
 }
