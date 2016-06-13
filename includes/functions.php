@@ -436,47 +436,53 @@ function doVote($ip,$id,$showerrors=true) {
     }
 }
 
-function doVoteFolder($ip,$id) {
+function doVoteFolder($ip,$id,$vote) {
     $files = getBrowseFolder(strval($id))["files"];
     foreach($files as $file) {
         $fid = $file -> id;
-        doVote($ip,$fid,false);
+        if($vote) doVote($ip,$fid,false);
+        else doRemoveMyVote($ip,$fid,false);
     }
 }
 
-function doVoteArtist($ip,$name) {
+function doVoteArtist($ip,$name,$vote) {
     $files = getBrowseArtist($name)["files"];
     foreach($files as $file) {
         $fid = $file -> id;
-        doVote($ip,$fid,false);
+        if($vote) doVote($ip,$fid,false);
+        else doRemoveMyVote($ip,$fid,false);
     }
 }
 
-function doVoteAlbum($ip,$name) {
+function doVoteAlbum($ip,$name,$vote) {
     $files = getBrowseAlbum($name)["files"];
     foreach($files as $file) {
         $fid = $file -> id;
-        doVote($ip,$fid,false);
+        if($vote) doVote($ip,$fid,false);
+        else doRemoveMyVote($ip,$fid,false);
     }
 }
 
-function doVotePlaylist($ip,$name) {
+function doVotePlaylist($ip,$name,$vote) {
     $files = getBrowsePlaylist($name)["files"];
     foreach($files as $file) {
         $fid = $file -> id;
-        doVote($ip,$fid,false);
+        if($vote) doVote($ip,$fid,false);
+        else doRemoveMyVote($ip,$fid,false);
     }
 }
 
 //remove one of my votes
-function doRemoveMyVote($ip,$id) {
+function doRemoveMyVote($ip,$id,$showerrors=true) {
     $stmt = $GLOBALS["db"]->prepare("DELETE FROM votes WHERE votes.ip=:ip AND votes.played=0 AND votes.fileid=:fileid");
     if($stmt->execute(array(":ip" => $ip,":fileid" => $id))) {
         $num = $stmt->rowCount();
-        if($num===0) doError("doRemoveMyVote no row found");
+        if($num===0 && $showerrors) doError("doRemoveMyVote no row found");
         if($num===1) return $id;
-        if($num>=2) doError("doRemoveMyVote more than one row found");
-    } else doError("doRemoveMyVote db query failed");
+        if($num>=2 && $showerrors) doError("doRemoveMyVote more than one row found");
+    } else {
+        if($showerrors) doError("doRemoveMyVote db query failed");
+    }
 }
 
 //vote vor next song

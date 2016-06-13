@@ -28,22 +28,30 @@ switch($_GET["action"]) {
         break;
     case("voteFolder"):
         if(!isset($_GET["id"])) doError("No id specified");
-        $r = doVoteFolder($_SERVER['REMOTE_ADDR'],$_GET["id"]); //todo
+        if(!isset($_GET["vote"])) doError("No vote specified");
+        $vote = ($_GET["vote"]=="true");
+        $r = doVoteFolder($_SERVER['REMOTE_ADDR'],$_GET["id"],$vote);
         doOutput(null,"voteFolder");
         break;
     case("voteArtist"):
-        if(!isset($_GET["name"])) doError("No name specified");        
-        $r = doVoteArtist($_SERVER['REMOTE_ADDR'],$_GET["name"]); //todo
+        if(!isset($_GET["name"])) doError("No name specified");
+        if(!isset($_GET["vote"])) doError("No vote specified");
+        $vote = ($_GET["vote"]=="true");
+        $r = doVoteArtist($_SERVER['REMOTE_ADDR'],$_GET["name"],$vote);
         doOutput(null,"voteArtist");
         break;
     case("voteAlbum"):
         if(!isset($_GET["name"])) doError("No name specified");
-        $r = doVoteAlbum($_SERVER['REMOTE_ADDR'],$_GET["name"]); //todo
+        if(!isset($_GET["vote"])) doError("No vote specified");
+        $vote = ($_GET["vote"]=="true");
+        $r = doVoteAlbum($_SERVER['REMOTE_ADDR'],$_GET["name"],$vote);
         doOutput(null,"voteAlbum");
         break;
     case("votePlaylist"):
         if(!isset($_GET["name"])) doError("No name specified");
-        $r = doVotePlaylist($_SERVER['REMOTE_ADDR'],$_GET["name"]); //todo
+        if(!isset($_GET["vote"])) doError("No vote specified");
+        $vote = ($_GET["vote"]=="true");
+        $r = doVotePlaylist($_SERVER['REMOTE_ADDR'],$_GET["name"],$vote);
         doOutput(null,"votePlaylist");
         break;
     case("getmyvotes"):

@@ -341,7 +341,7 @@ function doVote(id) {
 }
 
 //vote for one Folder
-function voteForFolder(id) {
+function voteForFolder(id,vote) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -354,13 +354,13 @@ function voteForFolder(id) {
             }
         }
     }
-    var str = ajaxpath+"?action=voteFolder&id="+id;
+    var str = ajaxpath+"?action=voteFolder&vote="+vote+"&id="+id;
     xhttp.open("GET", str, true);
     xhttp.send();
 }
 
 //vote for one Artist
-function voteForArtist(name) {
+function voteForArtist(name,vote) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -373,13 +373,13 @@ function voteForArtist(name) {
             }
         }
     }
-    var str = ajaxpath+"?action=voteArtist&name="+encodeURIComponent(name);
+    var str = ajaxpath+"?action=voteArtist&vote="+vote+"&name="+encodeURIComponent(name);
     xhttp.open("GET", str, true);
     xhttp.send();
 }
 
 //vote for one Album
-function voteForAlbum(name) {
+function voteForAlbum(name,vote) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -392,13 +392,13 @@ function voteForAlbum(name) {
             }
         }
     }
-    var str = ajaxpath+"?action=voteAlbum&name="+encodeURIComponent(name);
+    var str = ajaxpath+"?action=voteAlbum&vote="+vote+"&name="+encodeURIComponent(name);
     xhttp.open("GET", str, true);
     xhttp.send();
 }
 
 //vote for one Playlist
-function voteForPlaylist(name) {
+function voteForPlaylist(name,vote) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (xhttp.readyState == 4 && xhttp.status == 200) {
@@ -411,7 +411,7 @@ function voteForPlaylist(name) {
             }
         }
     }
-    var str = ajaxpath+"?action=votePlaylist&name="+encodeURIComponent(name);
+    var str = ajaxpath+"?action=votePlaylist&vote="+vote+"&name="+encodeURIComponent(name);
     xhttp.open("GET", str, true);
     xhttp.send();
 }
@@ -596,7 +596,8 @@ function getFolders(folderid) {
                 content="<?php echo $translation["error"] ?>";
             } else {
                 content += '<span class="current">'+response.content.path+"</span>";
-                content += ' <img class="votecircle" alt="'+"<?php echo $translation["dovote"] ?>"+'" src="gfx/circle.png" onclick="javascript:voteForFolder('+folderid+');">';
+                content += ' <img class="votecircle" alt="'+"<?php echo $translation["dovote"] ?>"+'" src="gfx/vote_green.png" onclick="javascript:voteForFolder('+folderid+',true);">';
+                content += ' <img class="votecircle" alt="'+"<?php echo $translation["deletevote"] ?>"+'" src="gfx/vote_red.png" onclick="javascript:voteForFolder('+folderid+',false);">';
                 content += "<ul>";
                 
                 if(response.content.this!="ROOT") {
@@ -644,7 +645,8 @@ function getArtists(artistname) {
         
                 if(response.content.name!="ROOT") {
                     content += '<span class="current">'+response.content.name+"</span>";
-                    content += ' <img class="votecircle" alt="'+"<?php echo $translation["dovote"] ?>"+'" src="gfx/circle.png" onclick="javascript:voteForArtist(\''+artistname+'\');">';
+                    content += ' <img class="votecircle" alt="'+"<?php echo $translation["dovote"] ?>"+'" src="gfx/vote_green.png" onclick="javascript:voteForArtist(\''+artistname+'\',true);">';
+                    content += ' <img class="votecircle" alt="'+"<?php echo $translation["deletevote"] ?>"+'" src="gfx/vote_red.png" onclick="javascript:voteForArtist(\''+artistname+'\',false);">';
                 }
                 content += "<ul>";
                 
@@ -691,7 +693,8 @@ function getAlbums(albumname) {
         
                 if(response.content.name!="ROOT") {
                     content += '<span class="current">'+response.content.name+"</span>";
-                    content += ' <img class="votecircle" alt="'+"<?php echo $translation["dovote"] ?>"+'" src="gfx/circle.png" onclick="javascript:voteForAlbum(\''+albumname+'\');">';
+                    content += ' <img class="votecircle" alt="'+"<?php echo $translation["dovote"] ?>"+'" src="gfx/vote_green.png" onclick="javascript:voteForAlbum(\''+albumname+'\',true);">';
+                    content += ' <img class="votecircle" alt="'+"<?php echo $translation["deletevote"] ?>"+'" src="gfx/vote_red.png" onclick="javascript:voteForAlbum(\''+albumname+'\',false);">';
                 }
                 content += "<ul>";
                 
@@ -739,7 +742,8 @@ function getPlaylists(name) {
                 if(response.content.name!="ROOT") {
                     content += '<span class="current">'+response.content.name+"</span> ";
                     content += ' <img class="download" src="gfx/download.png" alt="'+"<?php echo $translation["download"] ?>"+'" onclick="javascript:doDownloadPlaylist(\''+response.content.name+'\');">';
-                    content += ' <img class="votecircle" alt="'+"<?php echo $translation["dovote"] ?>"+'" src="gfx/circle.png" onclick="javascript:voteForPlaylist(\''+name+'\');">';
+                    content += ' <img class="votecircle" alt="'+"<?php echo $translation["dovote"] ?>"+'" src="gfx/vote_green.png" onclick="javascript:voteForPlaylist(\''+name+'\',true);">';
+                    content += ' <img class="votecircle" alt="'+"<?php echo $translation["deletevote"] ?>"+'" src="gfx/vote_red.png" onclick="javascript:voteForPlaylist(\''+name+'\',false);">';
                 
                 }
                 content += "<ul>";
