@@ -327,15 +327,54 @@ function doVote(id) {
                 //loadTab();
                 getNext();
                 var myclass = ".votecircle-id-"+response.content;
-                $(myclass).each(function(index) {
-                    $(this).attr( "alt","<?php echo $translation["alreadyvoted"] ?>");
+                $(myclass).each(function(index) {  //change circle, alt tag and js
+                    $(this).attr("alt","<?php echo $translation["alreadyvoted"] ?>");
                     $(this).attr("src","gfx/voted.png");
+                    $(this).attr("onclick","doRemoveVote("+response.content+")");
                 });
 
             }
         }
     }
     var str = ajaxpath+"?action=vote&id="+id;
+    xhttp.open("GET", str, true);
+    xhttp.send();
+}
+
+//remove vote
+function doRemoveVote(id) {    
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var response = JSON.parse(xhttp.responseText);
+            var content = "";
+            if(response.status!="success" || response.action!="remove-my-vote") {
+                alert("<?php echo $translation["error"] ?>");
+            } else {
+
+                getNext();
+                var id = $( "#accordion" ).accordion( "option", "active" );
+                if(id===null) return;
+                
+                
+                if(id===0) { //myvotes: remove entry
+                    var myclass = ".myvote-"+response.content;
+                    
+                    $(myclass).each(function(index) {
+                        $(this).remove();
+                    }); 
+                } else { //change circle, alt tag and js
+                    var myclass = ".votecircle-id-"+response.content;
+                    $(myclass).each(function(index) {
+                        $(this).attr("alt","<?php echo $translation["dovote"] ?>");
+                        $(this).attr("src","gfx/circle.png");
+                        $(this).attr("onclick","doVote("+response.content+")");
+                    });
+                }
+            }
+        }
+    }
+    var str = ajaxpath+"?action=remove-my-vote&id="+id;
     xhttp.open("GET", str, true);
     xhttp.send();
 }
@@ -436,29 +475,6 @@ function doVoteSkip() {
     xhttp.send();
 }
 
-//remove vote
-function doRemoveVote(id) {    
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (xhttp.readyState == 4 && xhttp.status == 200) {
-            var response = JSON.parse(xhttp.responseText);
-            var content = "";
-            if(response.status!="success" || response.action!="remove-my-vote") {
-                content="<?php echo $translation["error"] ?>";
-            } else {
-                var myclass = ".myvote-"+response.content;
-                
-                $(myclass).each(function(index) {
-                    $(this).remove();
-                });
-            }
-        }
-    }
-    var str = ajaxpath+"?action=remove-my-vote&id="+id;
-    xhttp.open("GET", str, true);
-    xhttp.send();
-}
-
 //download mp3
 function doDownload(id) {
     window.open(ajaxpath+"?action=download-file-do&id="+id,'_blank');
@@ -529,7 +545,7 @@ function getHigh() {
                         if(entry.count==1) st = "<?php echo $translation["vote"] ?>";
                         content+="<li>"+getTitleToDisplay(entry)+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+" "+entry.count+" "+st+") ";
                         if(entry.alreadyVoted) {
-                            content+='<img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
+                            content+='<img class="votecircle votecircle-id-'+entry.id+'" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'" onclick="javascript:doRemoveVote('+entry.id+');"></li>';
                         } else {
                             content+='<img class="votecircle votecircle-id-'+entry.id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+entry.id+');"></li>';
                         }
@@ -570,7 +586,7 @@ function doSearch() {
                         entry = response.content[index];
                         content+="<li>"+getTitleToDisplay(entry)+" ("+formatLength(entry.length)+" "+formatBytes(entry.size)+') ';
                         if(entry.alreadyVoted) {
-                            content+='<img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
+                            content+='<img class="votecircle votecircle-id-'+entry.id+'" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'" onclick="javascript:doRemoveVote('+entry.id+');"></li>';
                         } else {
                             content+='<img class="votecircle votecircle-id-'+entry.id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+entry.id+');"></li>';
                         }
@@ -612,7 +628,7 @@ function getFolders(folderid) {
                     content += '<li class="file">'+response.content.files[i].filename;
                     
                     if(response.content.files[i].alreadyVoted) {
-                        content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
+                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'" onclick="javascript:doRemoveVote('+response.content.files[i].id+');"></li>';
                     } else {
                         content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                     }
@@ -663,7 +679,7 @@ function getArtists(artistname) {
                         content += '<li class="file">'+getTitleToDisplay(response.content.files[i]);
                         
                         if(response.content.files[i].alreadyVoted) {
-                            content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
+                            content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'" onclick="javascript:doRemoveVote('+response.content.files[i].id+');"></li>';
                         } else {
                             content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                         }
@@ -711,7 +727,7 @@ function getAlbums(albumname) {
                         content += '<li class="file">'+getTitleToDisplay(response.content.files[i]);
                         
                         if(response.content.files[i].alreadyVoted) {
-                            content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
+                            content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'" onclick="javascript:doRemoveVote('+response.content.files[i].id+');"></li>';
                         } else {
                             content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                         }
@@ -761,7 +777,7 @@ function getPlaylists(name) {
                         content += '<li class="file">'+getTitleToDisplay(response.content.files[i]);
                         
                         if(response.content.files[i].alreadyVoted) {
-                            content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
+                            content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'" onclick="javascript:doRemoveVote('+response.content.files[i].id+');"></li>';
                         } else {
                             content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                         }
@@ -791,7 +807,7 @@ function getOftenPlaylists() {
                     content += '<li class="file">'+response.content.files[i].count+": "+getTitleToDisplay(response.content.files[i]);
                     
                     if(response.content.files[i].alreadyVoted) {
-                        content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
+                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'" onclick="javascript:doRemoveVote('+response.content.files[i].id+');"></li>';
                     } else {
                         content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                     }
@@ -824,7 +840,7 @@ function getOftenVotes() {
                     content += '<li class="file">'+response.content.files[i].count+": "+getTitleToDisplay(response.content.files[i]);
                     
                     if(response.content.files[i].alreadyVoted) {
-                        content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
+                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'" onclick="javascript:doRemoveVote('+response.content.files[i].id+');"></li>';
                     } else {
                         content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                     }
@@ -857,7 +873,7 @@ function getPlaylog() {
                     content += '<li class="file">'+formatMinutes(response.content.files[i].date)+": "+getTitleToDisplay(response.content.files[i]);
                     
                     if(response.content.files[i].alreadyVoted) {
-                        content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
+                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'" onclick="javascript:doRemoveVote('+response.content.files[i].id+');"></li>';
                     } else {
                         content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                     }
@@ -993,7 +1009,7 @@ function getOftenPlayed() {
                     content += '<li class="file">'+response.content.files[i].count+": "+getTitleToDisplay(response.content.files[i]);
                     
                     if(response.content.files[i].alreadyVoted) {
-                        content+=' <img class="votecircle" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'"></li>';
+                        content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/voted.png" alt="'+"<?php echo $translation["alreadyvoted"] ?>"+'" onclick="javascript:doRemoveVote('+response.content.files[i].id+');"></li>';
                     } else {
                         content+=' <img class="votecircle votecircle-id-'+response.content.files[i].id+'" src="gfx/circle.png" alt="'+"<?php echo $translation["dovote"] ?>"+'" onclick="javascript:doVote('+response.content.files[i].id+');"></li>';
                     }
