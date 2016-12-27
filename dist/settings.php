@@ -17,7 +17,7 @@ $GLOBALS["path"]=""; // without trailing "/"
 $GLOBALS["pathplaylists"]=""; // without trailing "/"; Folder inside $GLOBALS["path"]
 $GLOBALS["pathuploads"]=""; // without trailing "/"; Folder inside $GLOBALS["path"]
 $GLOBALS["defaultplaylist"]=""; // playlist to use if highscore is empty
-$GLOBALS["voteskipcount"]=2; // if more than x user vote for skip => skip
+$GLOBALS["voteskipcount"]=4; // if more than x user vote for skip => skip
 
 /* MPD connection */
 $GLOBALS["mpdport"]=6600;
