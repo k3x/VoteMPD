@@ -76,9 +76,20 @@ In this example a valid entry in the playlist would be: "ACDC/Back in Black.mp3"
 * sudo systemctl start votempd.service
 * systemctl status votempd.service
 
-### Let apache not wait for ethernet on boot (only wifi)
+### Faster Boot without Ethernet
+
+#### a) Let apache not wait for ethernet on boot (only wifi)
 * sudo nano /lib/systemd/system/network-online.target.wants/ifup-wait-all-auto.service
 * for i in $(echo "wlp1s0"); do INTERFACES="$INTERFACES$i "; done; \
+
+#### b) change in /etc/network/interfaces
+auto eth0
+iface eth0 inet dhcp
+
+to
+
+allow-hotplug eth0
+iface eth0 inet dhcp
 
 ### create WIFI Hotspot (Accesspoint/AP/Master Mode)
 * sudo apt-get install hostapd
