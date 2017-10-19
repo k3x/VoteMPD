@@ -24,14 +24,14 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 ### Base
 * mpd/php daemon needs reading rights to files
 * upload folder has to be writeable for php daemon
-* sudo apt-get install php5 php5-cli php5-json php5-mysql apache2 mysql-server mpd alsa-base
+* sudo apt-get install php7.0 php7.0-cli php7.0-json php7.0-mysql apache2 mysql-server mpd alsa-base
 * php shell exec has to be eneabled; php.ini: file_uploads = On,post_max_size = 100M,upload_max_filesize = 100M
 * configure /etc/mpd.conf (music library and audio autput, mixer_type "software")
 * sudo service mpd restart
 * let mpd rescan the database. For example: on a client: sudo apt-get install gmpc; run gmpc; connect to mpd; do Server -> Update MPD Database
 * Create new mysql database and configure "includes/settings.php" (copy from dist/settings.php). Enter your mpd connection infos and also enter the same "path" like you configured for mpd.
 * import dist/votempd.sql in the created mysql database.
-* run "php daemon.php -f" and run "php daemon.php -p"
+* run "php daemon.php -f" and run "php daemon.php -p" (this command does NOT delete old database enties. On rescan truncate files,folders,playlistitems,playlog,voteforskip,votes)
 * Let your Apache "/" point to the root folder (the folder with index.html)
 * in console run: php daemon.php
 

@@ -106,7 +106,6 @@ function addOneFileToMpdQueue($first=false) {
                 echo "error";
             }
             
-            
             $stmt = $GLOBALS["db"]->prepare("INSERT INTO playlog (fileid,date) VALUES (:fileid,NOW())");
             if(!$stmt->execute(array(":fileid" => $hn->id))) {
                 echo "error";
