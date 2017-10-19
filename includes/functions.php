@@ -259,10 +259,10 @@ function getFileinfosforfilepath($path) {
     $curDir = -1;
     foreach($folders as $f) {
         $stmt = $GLOBALS["db"]->prepare("SELECT id,picture FROM folders WHERE parentid=:p AND foldername=:f");
-        if($stmt->execute(array(":p" => $curDir,":f" => $f))) {
+        if($stmt->execute(array(":p" => $curDir,":f" => $f)) && $stmt->rowCount()==1) {
             if($row = $stmt->fetchObject()) $curDir=$row->id;
             else doError("getFileinfosforfilepath db query failed (1) ".print_r(array(":p" => $curDir,":f" => $f),true));
-        } else doError("getFileinfosforfilepath db query failed (2) ".print_r(array(":p" => $curDir,":f" => $f),true));
+        } else doError("getFileinfosforfilepath db query failed (2) (File not found?)".print_r(array(":p" => $curDir,":f" => $f),true));
     }
     
     $pic=false;
@@ -1377,7 +1377,6 @@ function doPlaylist($p) {
     $content = str_replace("\xef\xbb\xbf","",$content);
     
     //get filename
-    $filename = basename($p);
     $filename = basename($p, '.m3u');
     echo "Do Playlist: ".$filename."\n";
     
@@ -1387,6 +1386,12 @@ function doPlaylist($p) {
     //foreach line (song)
     foreach($array as $a) {
         if(trim($a)=="") continue;
+        @$b = iconv("utf-8", "utf-8//ignore", $a);
+        if($a!=$b) {
+            echo "WARNING: non UTF8 character detected, skipping line! (in playlist: ".$filename.")\n";
+            continue;
+        }
+        
         if(file_exists($GLOBALS["path"]."/".$a)) {
             //if file exists enter fileid in database
             $fileinfos = getFileinfosforfilepath($a);
@@ -1406,7 +1411,11 @@ function doPlaylist($p) {
         //enter into database
         $stmt = $GLOBALS["db"]->prepare("INSERT INTO playlistitems (playlistname,fileid,filepath) VALUES(:pname, :fid, :fpath)");
         if(!$stmt->execute(array(':pname' => $filename, ':fid' => $id, ':fpath' => $path))) {
-            die("insertPlaylistInDb: Error");
+            echo "WARNING: insertPlaylistEntryInDb Error\n";
+            var_dump(array(':pname' => $filename, ':fid' => $id, ':fpath' => $path));
+            print_r($GLOBALS["db"]->errorInfo());
+            print_r($stmt->errorInfo());
+            continue;
         }
     }
 }
