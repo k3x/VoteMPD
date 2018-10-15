@@ -31,9 +31,33 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * let mpd rescan the database. For example: on a client: sudo apt-get install gmpc; run gmpc; connect to mpd; do Server -> Update MPD Database
 * Create new mysql database and configure "includes/settings.php" (copy from dist/settings.php). Enter your mpd connection infos and also enter the same "path" like you configured for mpd.
 * import dist/votempd.sql in the created mysql database.
-* run "php daemon.php -f" and run "php daemon.php -p" (this command does NOT delete old database enties. On rescan truncate files,folders,playlistitems,playlog,voteforskip,votes)
+* run "php daemon.php -f" and run "php daemon.php -p" (this command does NOT delete old database enties. On rescan truncate files,folders,playlistitems,playlog,voteforskip,votes,options_date,options_int)
 * Let your Apache "/" point to the root folder (the folder with index.html)
 * in console run: php daemon.php
+
+### RESCAN
+copy files
+Server -> Update MPD Database
+
+sudo service mpd stop
+sudo killall php
+mysql -u root -p
+show database;
+use votempd;
+show tables;
+TRUNCATE files;
+TRUNCATE folders;
+TRUNCATE playlistitems;
+TRUNCATE playlog;
+TRUNCATE voteforskip;
+TRUNCATE votes;
+TRUNCATE options_date;
+TRUNCATE options_int;
+(CTRL-D)
+php daemon.php -f
+php daemon.php -p
+sudo service mpd start
+php daemon.php
 
 ### settings.php
 * $GLOBALS["path"]: absolute path to your music library. Has to be the same like you configured in your mpd.conf. Example: "/home/k3x/music"
