@@ -1,8 +1,8 @@
 # VoteMPD
 
 * Author: Felix Sterzelmaier
-* Version 0.8.6
-* Date: 19. October 2017
+* Version 0.8.7
+* Date: 15. October 2018
 * Github Page: http://k3x.github.io/VoteMPD/
 * Github Code: https://github.com/k3x/VoteMPD
 * Github Git URL: https://github.com/k3x/VoteMPD.git
@@ -36,28 +36,27 @@ Just run this Script on a server and make it availiable over wifi. See also: htt
 * in console run: php daemon.php
 
 ### RESCAN
-copy files
-Server -> Update MPD Database
-
-sudo service mpd stop
-sudo killall php
-mysql -u root -p
-show database;
-use votempd;
-show tables;
-TRUNCATE files;
-TRUNCATE folders;
-TRUNCATE playlistitems;
-TRUNCATE playlog;
-TRUNCATE voteforskip;
-TRUNCATE votes;
-TRUNCATE options_date;
-TRUNCATE options_int;
-(CTRL-D)
-php daemon.php -f
-php daemon.php -p
-sudo service mpd start
-php daemon.php
+* copy files
+* Server -> Update MPD Database
+* sudo service mpd stop
+* sudo killall php
+* mysql -u root -p
+* show database;
+* use votempd;
+* show tables;
+* TRUNCATE files;
+* TRUNCATE folders;
+* TRUNCATE playlistitems;
+* TRUNCATE playlog;
+* TRUNCATE voteforskip;
+* TRUNCATE votes;
+* TRUNCATE options_date;
+* TRUNCATE options_int;
+* (CTRL-D)
+* php daemon.php -f
+* php daemon.php -p
+* sudo service mpd start
+* php daemon.php
 
 ### settings.php
 * $GLOBALS["path"]: absolute path to your music library. Has to be the same like you configured in your mpd.conf. Example: "/home/k3x/music"
@@ -115,12 +114,12 @@ to
 allow-hotplug eth0
 iface eth0 inet dhcp
 
-### create WIFI Hotspot (Accesspoint/AP/Master Mode)
+### Create WIFI Hotspot (Accesspoint/AP/Master Mode)
 * sudo apt-get install hostapd
 * sudo nano /etc/hostapd/hostapd.conf     (see dist/etc-hostapd-hostapd.conf)
 * sudo nano /etc/default/hostapd    =>    DAEMON_CONF="/etc/hostapd/hostapd.conf"
 
-### network, DNS and DHCP
+### Network, DNS and DHCP
 * configure your wifi connection to a static ip. (see dist(etc-network-interfaces)
 * sudo apt-get install dnsmasq
 * sudo nano /etc/dnsmasq.conf   (dhcp-range,listen-address,interface,address) (see dist/dnsmasq.conf)
@@ -140,7 +139,7 @@ iface eth0 inet dhcp
 VoteMPD is free software. It is released under the terms of
 the following BSD License.
 
-Copyright © 2015 by 
+Copyright © 2018 by 
     Felix 'K3X' Sterzelmaier
 
 All rights reserved.
