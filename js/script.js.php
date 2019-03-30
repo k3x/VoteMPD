@@ -1,9 +1,11 @@
 <?php
+header('Content-Type: application/javascript');
 
 function return_bytes($val) {
     $val = trim($val);
-    $last = strtolower($val[strlen($val)-1]);
-    switch($last) {
+    $last = $val[strlen($val)-1];
+    $val = rtrim($val,$last);    
+    switch(strtolower($last)) {
         // The 'G' modifier is available since PHP 5.1.0
         case 'g':
             $val *= 1024;
