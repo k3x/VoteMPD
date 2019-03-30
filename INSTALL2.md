@@ -3,6 +3,7 @@ VoteMPD Setup Notes
 
 Installed debian-9.8.0-i386-netinst via USB on a old and small laptop i upgraded with a ssd. No desktop environment was installed, but a ssh-server. The wifi chip is able to be run in host/accesspoint mode.
 
+```
 su
 apt-get update
 apt-get upgrade
@@ -158,3 +159,4 @@ deb http://debian.charite.de/debian/ stretch main contrib non-free
 deb-src http://debian.charite.de/debian/ stretch main contrib non-free
 
 apt-get install firmware-ralink
+```
