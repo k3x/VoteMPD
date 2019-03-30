@@ -407,7 +407,7 @@ function getNextsongInHighscore($daemoncall = false) {
             }
         }
     
-    return $subFiles[$pos];
+        return $subFiles[$pos];
     }
 }
 
