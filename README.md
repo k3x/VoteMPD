@@ -10,9 +10,9 @@
 VoteMPD allows your party guests to fill the queue of your MusicPlayerDaemon.
 Just run this Script on a server and make it availiable over wifi. See also: http://getfestify.com
 
-[Install instructions (Variant A)](INSTALL1.md)
-[Install instructions (Variant B)](INSTALL2.md)
-[Rescan instructions](RESCAN.md)
+* [Install instructions (Variant A)](INSTALL1.md)
+* [Install instructions (Variant B)](INSTALL2.md)
+* [Rescan instructions](RESCAN.md)
 
 ## Features
 * Scan Filesystem and fill id3 information into database
