@@ -14,7 +14,7 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Datenbank: `votempd`
@@ -28,16 +28,16 @@ SET time_zone = "+00:00";
 
 CREATE TABLE IF NOT EXISTS `files` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `filename` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
+  `filename` varchar(256)  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `folderid` int(11) NOT NULL,
-  `artist` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
-  `title` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
-  `album` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
-  `year` varchar(4) COLLATE utf8_unicode_ci NOT NULL,
+  `artist` varchar(256)  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `title` varchar(256)  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `album` varchar(256)  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  `year` varchar(4)  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `length` int(11) NOT NULL COMMENT 'in seconds',
   `size` int(11) NOT NULL COMMENT 'Bytes',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=16033 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci AUTO_INCREMENT=1;
 
 -- --------------------------------------------------------
 
@@ -48,10 +48,10 @@ CREATE TABLE IF NOT EXISTS `files` (
 CREATE TABLE IF NOT EXISTS `folders` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `parentid` int(11) NOT NULL,
-  `foldername` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
+  `foldername` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci  NOT NULL,
   `picture` mediumblob,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2493 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci AUTO_INCREMENT=1;
 
 -- --------------------------------------------------------
 
@@ -60,10 +60,10 @@ CREATE TABLE IF NOT EXISTS `folders` (
 --
 
 CREATE TABLE IF NOT EXISTS `options_date` (
-  `id` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
+  `id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci  NOT NULL,
   `value` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- --------------------------------------------------------
 
@@ -72,11 +72,11 @@ CREATE TABLE IF NOT EXISTS `options_date` (
 --
 
 CREATE TABLE IF NOT EXISTS `options_int` (
-  `id` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
+  `id` varchar(128)  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci  NOT NULL,
   `value` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- --------------------------------------------------------
 
@@ -85,10 +85,10 @@ CREATE TABLE IF NOT EXISTS `options_int` (
 --
 
 CREATE TABLE IF NOT EXISTS `playlistitems` (
-  `playlistname` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
+  `playlistname` varchar(256)  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci  NOT NULL,
   `fileid` int(11) DEFAULT NULL,
-  `filepath` varchar(1024) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'only set if no fileid found'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `filepath` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL COMMENT 'only set if no fileid found'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- --------------------------------------------------------
 
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `playlog` (
   `fileid` int(11) NOT NULL,
   `date` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=43 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci AUTO_INCREMENT=1;
 
 -- --------------------------------------------------------
 
@@ -111,9 +111,9 @@ CREATE TABLE IF NOT EXISTS `playlog` (
 
 CREATE TABLE IF NOT EXISTS `voteforskip` (
   `fileid` int(11) NOT NULL,
-  `ip` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
+  `ip` varchar(128)  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci  NOT NULL,
   `date` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- --------------------------------------------------------
 
@@ -124,11 +124,11 @@ CREATE TABLE IF NOT EXISTS `voteforskip` (
 CREATE TABLE IF NOT EXISTS `votes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `fileid` int(11) NOT NULL,
-  `ip` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
+  `ip` varchar(128)  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci  NOT NULL,
   `date` datetime NOT NULL,
   `played` tinyint(4) NOT NULL DEFAULT '0' COMMENT '1 wenn bereits abgespielt',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=22 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci AUTO_INCREMENT=1;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

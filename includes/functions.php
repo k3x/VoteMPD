@@ -1215,6 +1215,7 @@ function doRootFiles($p) {
     $GLOBALS["Tsize"]=0; //get size
     $GLOBALS["Tdb"]=0; //insert into database
     $GLOBALS["Tpro"]=0; //calculate and print progress
+    $GLOBALS["Timg"]=0; //img scale
     
     echo "Do Root: ".$p."\n";
     
@@ -1240,6 +1241,7 @@ function doRootFiles($p) {
     echo "DABA: ".$GLOBALS["Tdb"]."s\n";
     echo "PROG: ".$GLOBALS["Tpro"]."s\n";
     echo "SIZE: ".$GLOBALS["Tsize"]."s\n";
+    echo "IMAGE SCALE: ".$GLOBALS["Timg"]."s\n";
 }
 
 //proceed one folder
@@ -1265,24 +1267,37 @@ function doOneFolder($parentid,$p) {
 
 //enters folder in database
 //returns folderid
-function insertFolderInDb($parentid,$folderpath) {
-
-    //get picture
+function insertFolderInDb($parentid,$folderpath,$scan = true) {
+    if($scan) $Tstart = microtime(true);
+    $img = null;
     $pic = null;
     if(file_exists($folderpath."/cover.jpg")) {
-        $pic = file_get_contents($folderpath."/cover.jpg");
+        $img = imagecreatefromjpeg($folderpath."/cover.jpg");
     } else if(file_exists($folderpath."/AlbumArtSmall.jpg")) {
-        $pic = file_get_contents($folderpath."/AlbumArtSmall.jpg");
+        $img = imagecreatefromjpeg($folderpath."/AlbumArtSmall.jpg");
     } else if(file_exists($folderpath."/Folder.jpg")) {
-        $pic = file_get_contents($folderpath."/Folder.jpg");
+        $img = imagecreatefromjpeg($folderpath."/Folder.jpg");
     }
     
+    if ($img !== null) {
+        $imageResized = imagescale($img, 200);
+        ob_start();
+        imagejpeg($imageResized,null,70);
+        $pic = ob_get_contents();
+        ob_end_clean();
+        imagedestroy($imageResized);
+        imagedestroy($img);
+    }
+    if($scan) $GLOBALS["Timg"]+=(microtime(true)-$Tstart);
+
+    if($scan) $Tstart = microtime(true);
     //insert in database
     $stmt = $GLOBALS["db"]->prepare("INSERT INTO folders (parentid,foldername,picture) VALUES(:pid, :fname, :pic)");
     $foldername = basename($folderpath);
     if(!$stmt->execute(array(':pid' => intval($parentid), ':fname' => $foldername, ':pic' => $pic))) {
         die("insertFolderInDb: Error");
     }
+    if($scan) $GLOBALS["Tdb"]+=(microtime(true)-$Tstart);
     
     //return id
     return intval($GLOBALS["db"]->lastInsertID());
@@ -1309,23 +1324,32 @@ function insertFileInDb($foldernum,$p,$scan = true) {
     if(strlen($year)>4) $year="";
     if($scan) $GLOBALS["Ttags"]+=(microtime(true)-$Tstart);
     
+    
+
+    #$replace_regex = "/([^a-zA-Z \-_,.;=()+!$&#öäüÖÄÜß\[\]{}])/";
+    #$artist = utf8_encode(preg_replace($replace_regex, "", utf8_decode($artist)));
+    #$title = utf8_encode(preg_replace($replace_regex, "", utf8_decode($title)));
+    #$album = utf8_encode(preg_replace($replace_regex, "", utf8_decode($album)));
+    #$year = preg_replace("/[^0-9]/", "", $year);
+    
+    
     //insert into database
     if($scan) $Tstart = microtime(true);
-    $stmt = $GLOBALS["db"]->prepare("INSERT INTO files (filename,folderid,artist,title,album,year,length,size) VALUES(:fname, :fid,:ar,:ti,:al,:ye,:le,:si)");
+    $stmt = $GLOBALS["db"]->prepare("INSERT INTO files (filename,folderid,artist,title,album,year,length,size) VALUES(:fname,:fid,:ar,:ti,:al,:ye,:le,:si)");
     $filename = basename($p);
     if(!$stmt->execute(array(
-        ':fname' => $filename, 
+        ':fname' => $filename,
         ':fid' => intval($foldernum),
         ':ar' => $artist,
         ':ti' => $title,
         ':al' => $album,
-        ':ye' => $year,
-        ':le' => $length,
+        ':ye' => intval($year),
+        ':le' => intval($length),
         ':si' => intval($size)
         
     ))) {
         print_r($stmt->queryString."\n");
-        print_r($stmt->errorInfo()."\n");
+        print_r(json_encode($stmt->errorInfo())."\n");
         print_r(array(
         ':fname' => $filename, 
         ':fid' => intval($foldernum),
