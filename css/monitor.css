@@ -5,19 +5,35 @@ div#banner {
 }
 
 div#head {
-	height: 160px;
-	font-size: 5.0vw;
+	height: 19.0vh;
+	font-size: 9.0vh;
 	background-size: 0px auto;
 	border: 0px solid black;
 }
 
 div#innerhead {
-	height: 160px;
+	height: 19.0vh;
 	font-family: arial, sans;
 }
 
 div#highMonitor {
 	font-family: arial, sans;
-	font-size: 4.0vw;
+	font-size: 4.0vh;
 	padding-left: 30px;
+}
+
+div#monitorFooter {
+    position: absolute;
+    bottom: 0px;
+    height: 20vh;
+	font-size: 4.0vh;
+	font-family: arial, sans;
+	padding: 0px;
+	margin: 0px;
+}
+
+div#monitorFooter > img {
+    height: 18vh;
+	padding: 0px;
+	margin: 0px;
 }
