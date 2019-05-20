@@ -585,7 +585,8 @@ WHERE
     t1.id=t2.fileid
 ORDER BY 
     count DESC,
-    date ASC
+    date ASC,
+    id ASC
     ");
     $tmp = array();
     if($stmt->execute()) {

@@ -2,15 +2,13 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="HandheldFriendly" content="True" />
-    <title>VoteMPD - Vote</title>
-    
+    <title>VoteMPD - Monitor</title>
     <link rel="stylesheet" href="js/jquery-ui-1.11.4.custom/jquery-ui.css">
     <script src="js/jquery-1.11.3.min.js"></script>
     <script src="js/jquery-ui-1.11.4.custom/jquery-ui.js"></script>
-    
     <link rel="stylesheet" href="css/style.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="css/monitor.css" type="text/css" media="all" />
     <link rel="icon" href="gfx/favicon.ico" type="image/vnd.microsoft.icon">
-    
 </head>
 <body>
     <div id="banner">
@@ -21,38 +19,10 @@
             Aktuelle informationen
         </div>
     </div>
-    <div id="next">
-        next
+    <div id="highMonitor">
+        nexts
     </div>
-    <div id="accordion">
-        <h3>Meine Stimmen</h3><div id="myvotes"></div>
-        <h3>Highscore anzeigen</h3><div id="high"></div>
-        <h3>Suchen</h3>
-        <div id="search">
-            <input type="text" id="search-text" name="search-text" placeholder="Eingabe..."><button onclick="javascript:doSearch();">Suchen</button>
-            <script>
-                $("#search-text").keyup(function(event){
-                    if(event.keyCode == 13){
-                        doSearch();
-                    }
-                });
-            </script>
-            <ul></ul>
-        </div>
-        <h3>Ordner</h3><div id="browse-folders"></div>
-        <h3>Interpret</h3><div id="browse-artists"></div>
-        <h3>Album</h3><div id="browse-albums"></div>
-        <h3>Wiedergabelisten</h3><div id="browse-playlists"></div>
-        <h3>Häufig in Wiedergabelisten</h3><div id="browse-often-playlists"></div>
-        <h3>Häufig abgestimmt</h3><div id="browse-often-votes"></div>
-        <h3>Als letztes wiedergegeben</h3><div id="browse-playlog"></div>
-        <h3>Derzeitiges Lied überspringen</h3><div id="vote-skip"></div>
-        <h3>Datei hochladen</h3><div id="upload-file"></div>
-        <h3>Datei herunterladen</h3><div id="download-file"></div>
-        <h3>Häufig abgespielt</h3><div id="browse-often-played"></div>
-    </div>
-    <script type="text/javascript" src="js/script.js.php"></script>
-    
+    <script type="text/javascript" src="js/script.js.php"></script>    
     <script type="text/javascript">
         var ajaxpath = window.location.origin+"/ajax.php"; //absolute url to ajax.php
         var ajaxpathrel = "ajax.php"; //relative path to ajax.php
@@ -78,11 +48,11 @@
             
             $("#search-text").val(""); //clear search input field
             getCurrent(); //update fileinfos for currently played song
-            getNext(); //update fileinfos for next played song
+            updateMonitorNextsongs();
             
-            setInterval(function(){ intervalSlow(); }, 30000); //do slow update every 30s (not really needed, but for safety)
             setInterval(function(){ intervalMid(); }, 5000); //do mid update (current song changed?, paused? current position in song?)
             setInterval(function(){ intervalFast(); }, intervalfast); //do fast update (only local, interpolate song position)
+            setInterval(function(){ updateMonitorNextsongs(); }, 5000); //do fast update (only local, interpolate song position)
         });
     </script>
 </body>

@@ -3,10 +3,11 @@ div#banner {
 	background-image: url(../gfx/logo_64.png);
 	background-position: 5px center;
 	background-repeat: no-repeat;
-	padding-left: 74px;
+	padding-left: 80px;
 	height: 64px;
 	line-height: 64px;
 	font-size: 30px;
+	font-family: arial, sans;
 }
 
 div#head {
@@ -15,6 +16,9 @@ div#head {
 	margin: 0px;
 	overflow: hidden;
 	border: 1px solid black;
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: 60px auto;
 }
 
 div#innerhead {

@@ -1,0 +1,23 @@
+/* HEAD */
+
+div#banner {
+	display: none;
+}
+
+div#head {
+	height: 160px;
+	font-size: 5.0vw;
+	background-size: 0px auto;
+	border: 0px solid black;
+}
+
+div#innerhead {
+	height: 160px;
+	font-family: arial, sans;
+}
+
+div#highMonitor {
+	font-family: arial, sans;
+	font-size: 4.0vw;
+	padding-left: 30px;
+}

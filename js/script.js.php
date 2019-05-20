@@ -99,39 +99,6 @@ if($language=="en") {
 
 ?>
 
-var ajaxpath = window.location.href+"ajax.php"; //absolute url to ajax.php
-var ajaxpathrel = "ajax.php"; //relative path to ajax.php
-var lastcurrent = null; //last fileinfos for currently played song
-var tempposition = null; //interpolated position of song
-var intervalfast = 1000; //fast update interval (interpolate song position)
-var currentFolder = -1; //first folder for "browse-folders"
-var currentArtist = "ROOT"; //first folder for "browse-artists"
-var currentAlbum = "ROOT"; //first folder for "browse-albums"
-var currentPlaylist = "ROOT"; //first folder for "browse-playlists"
-var loading = '<img src="gfx/loading.gif">'; //image html code for ajax-loader.gif
-
-//on start (called on end of html file)
-$(function() {
-    
-    //create accordion
-    $( "#accordion" ).accordion({
-            active: null,
-            heightStyle: "content",
-            collapsible: true, 
-            activate: function( event, ui ) {loadTab();},
-            animate: 0
-    });
-    
-    
-    $("#search-text").val(""); //clear search input field
-    getCurrent(); //update fileinfos for currently played song
-    getNext(); //update fileinfos for next played song
-    
-    setInterval(function(){ intervalSlow(); }, 30000); //do slow update every 30s (not really needed, but for safety)
-    setInterval(function(){ intervalMid(); }, 5000); //do mid update (current song changed?, paused? current position in song?)
-    setInterval(function(){ intervalFast(); }, intervalfast); //do fast update (only local, interpolate song position)
-});
-
 //refresh content of currently open accoredon-tab
 function loadTab() {
     var id = $( "#accordion" ).accordion( "option", "active" );
@@ -154,6 +121,11 @@ function loadTab() {
         case(13): getOftenPlayed(); break;
         default: break;
     }
+}
+
+//on monitor: update Highscore
+function updateMonitorNextsongs() {
+    getHighscoreForMonitor(); //update highscore
 }
 
 //do slow update ()
@@ -277,11 +249,7 @@ function getCurrent() {
             }
             if(picture==true) {
                 $("#head").css("background-image","url("+ajaxpathrel+"?action=getfolderpic&id="+response.content.fileinfos.folderid+")");
-                $("#head").css("background-repeat","no-repeat");
-                $("#head").css("background-position","right center");
-                $("#head").css("background-size","60px auto");
             }
-            
             
             $("#innerhead").css("background","linear-gradient(90deg, rgba(164,164,164,0.7) "+percent+"%, rgba(256,256,256,0.8) "+percent+"%)");
             $("#innerhead").html(content);
@@ -556,6 +524,38 @@ function getHigh() {
                 }
             }
             $("#high").html(content);
+        }
+    }
+    var str = ajaxpath+"?action=showhighscore";
+    xhttp.open("GET", str, true);
+    xhttp.send();
+}
+
+
+//get highscore for Monitor
+function getHighscoreForMonitor() {
+    $("#highMonitor").html(loading);
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var response = JSON.parse(xhttp.responseText);
+            var content = "";
+            if(response.status!="success" || response.action!="showhighscore") {
+                content="<?php echo $translation["error"] ?>";
+            } else {
+                if(response.content.length==0) {
+                    content="<?php echo $translation["noelements"] ?>";
+                } else {
+                    content+="<ol>";
+                    
+                    for (index = 0; index < Math.min(response.content.length,5); index++) {
+                        entry = response.content[index];
+                        content+="<li>"+getTitleToDisplay(entry);
+                    }
+                    content+="</ol>";
+                }
+            }
+            $("#highMonitor").html(content);
         }
     }
     var str = ajaxpath+"?action=showhighscore";
