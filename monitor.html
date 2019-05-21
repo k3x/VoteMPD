@@ -51,11 +51,8 @@
             });
             
             $("#search-text").val(""); //clear search input field
-            getCurrent(); //update fileinfos for currently played song
             updateMonitorNextsongs();
             
-            setInterval(function(){ intervalMid(); }, 5000); //do mid update (current song changed?, paused? current position in song?)
-            setInterval(function(){ intervalFast(); }, intervalfast); //do fast update (only local, interpolate song position)
             setInterval(function(){ updateMonitorNextsongs(); }, 5000); //do fast update (only local, interpolate song position)
         });
     </script>

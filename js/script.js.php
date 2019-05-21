@@ -126,6 +126,7 @@ function loadTab() {
 //on monitor: update Highscore
 function updateMonitorNextsongs() {
     getHighscoreForMonitor(); //update highscore
+    getCurrentForMonitor(); //update fileinfos for currently played song
 }
 
 //do slow update ()
@@ -155,6 +156,14 @@ function getTitleToDisplay(song) {
     if(song.artist!="" && song.title!="") return song.artist + " - " + song.title;
     if(song.artist!="" && song.title=="") return song.artist + " - " + song.filename;
     if(song.artist=="" && song.title!="") return song.title + "(" + song.filename + ")";
+	return song.filename;
+}
+
+function getTitleToDisplayMonitor(song) {
+    if(song === undefined || song === null) return "(<?php echo $translation["none"]; ?>)";
+    if(song.artist!="" && song.title!="") return song.artist + ":<br />" + song.title;
+    if(song.artist!="" && song.title=="") return song.artist + "<br />" + song.filename;
+    if(song.artist=="" && song.title!="") return song.title;
 	return song.filename;
 }
 
@@ -249,9 +258,48 @@ function getCurrent() {
             }
             if(picture==true) {
                 $("#head").css("background-image","url("+ajaxpathrel+"?action=getfolderpic&id="+response.content.fileinfos.folderid+")");
+            } else {
+                $("#head").css("background-image","");
             }
             
             $("#innerhead").css("background","linear-gradient(90deg, rgba(164,164,164,0.7) "+percent+"%, rgba(256,256,256,0.8) "+percent+"%)");
+            $("#innerhead").html(content);
+        }
+    }
+    var str = ajaxpath+"?action=mpdcurrent";
+    xhttp.open("GET", str, true);
+    xhttp.send();
+}
+
+
+//update fileinfos for currently played song
+function getCurrentForMonitor() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            var response = JSON.parse(xhttp.responseText);
+            var content = "";
+            if(response.status!="success" || response.action!="mpdcurrent") {
+                content="<?php echo $translation["error"] ?>";
+                lastcurrent = null;
+            } else {
+                if(response.content.state!="stop") {
+                    if(response.content.fileinfos==null) {
+                        content="<?php echo $translation["error"] ?>";
+                        lastcurrent = null;
+                    } else {
+                        content = getTitleToDisplayMonitor(response.content.fileinfos);
+                        if(lastcurrent==null || lastcurrent.fileinfos.id!=response.content.fileinfos.id) {
+                            intervalSlow();
+                        }
+                        lastcurrent = response.content;
+                    }
+                } else {
+                    content="("+"<?php echo $translation["noplay"] ?>"+")";
+                    lastcurrent = null;
+                }
+            }
+            
             $("#innerhead").html(content);
         }
     }

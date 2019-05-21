@@ -257,12 +257,18 @@ function getFolderidforFolderpath($path) {
 function getFileinfosforfilepath($path) {
     $folders = explode("/",dirname($path));
     $curDir = -1;
-    foreach($folders as $f) {
-        $stmt = $GLOBALS["db"]->prepare("SELECT id,picture FROM folders WHERE parentid=:p AND foldername=:f");
-        if($stmt->execute(array(":p" => $curDir,":f" => $f)) && $stmt->rowCount()==1) {
-            if($row = $stmt->fetchObject()) $curDir=$row->id;
-            else doError("getFileinfosforfilepath db query failed (1) ".print_r(array(":p" => $curDir,":f" => $f),true));
-        } else doError("getFileinfosforfilepath db query failed (2) (File not found?)".print_r(array(":p" => $curDir,":f" => $f),true));
+    
+    if (strpos($path, '/') !== false) {
+        foreach($folders as $f) {
+            $stmt = $GLOBALS["db"]->prepare("SELECT id,picture FROM folders WHERE parentid=:p AND foldername=:f");
+            if($stmt->execute(array(":p" => $curDir,":f" => $f)) && $stmt->rowCount()==1) {
+                if($row = $stmt->fetchObject()) {
+                    $curDir=$row->id;
+                } else doError("getFileinfosforfilepath db query failed (1) ".print_r(array(":p" => $curDir,":f" => $f),true));
+            } else doError("getFileinfosforfilepath db query failed (2) (File not found?)".print_r(array(":p" => $curDir,":f" => $f),true));
+        }
+    } else {
+        $curDir = -1;
     }
     
     $pic=false;

@@ -5,20 +5,20 @@ div#banner {
 }
 
 div#head {
-	height: 19.0vh;
-	font-size: 9.0vh;
+	height: 27.0vh;
+	font-size: 12.0vh;
 	background-size: 0px auto;
 	border: 0px solid black;
 }
 
 div#innerhead {
-	height: 19.0vh;
+	height: 25.0vh;
 	font-family: arial, sans;
 }
 
 div#highMonitor {
 	font-family: arial, sans;
-	font-size: 4.0vh;
+	font-size: 6.0vh;
 	padding-left: 30px;
 }
 
