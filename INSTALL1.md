@@ -4,7 +4,7 @@
 ### Base
 * mpd/php daemon needs reading rights to files
 * upload folder has to be writeable for php daemon
-* sudo apt-get install php7.0 php7.0-cli php7.0-json php7.0-mysql apache2 mysql-server mpd alsa-base
+* sudo apt-get install php7.0 php7.0-cli php7.0-json php7.0-gd php7.0-mysql apache2 mysql-server mpd alsa-base
 * php shell exec has to be eneabled; php.ini: file_uploads = On,post_max_size = 100M,upload_max_filesize = 100M
 * configure /etc/mpd.conf (music library and audio autput, mixer_type "software")
 * sudo service mpd restart

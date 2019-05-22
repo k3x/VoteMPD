@@ -147,8 +147,31 @@ function scanP() {
 }
 
 function scanF() {
+    $stmt = $GLOBALS["db"]->prepare("SELECT * FROM files;");
+    $stmt->execute();
+    if($stmt->rowCount()>0) {
+        die("Error: Table files is not empty!\n");
+    }
+    
+    $stmt = $GLOBALS["db"]->prepare("SELECT * FROM folders;");
+    $stmt->execute();
+    if($stmt->rowCount()>0) {
+        die("Error: Table folders is not empty!\n");
+    }
+    
     $GLOBALS["getid3"] = new getID3;
     doRootFiles($GLOBALS["path"]);
+}
+
+function truncateDatabase() {
+    $tables = ["files","folders","options_date","options_int","playlistitems","playlog","voteforskip","votes"];
+    foreach($tables as $table) {
+        $stmt = $GLOBALS["db"]->prepare("TRUNCATE TABLE ".$table.";");
+        if(!$stmt->execute()) {
+            echo "error: ".$stmt->errorInfo()[2]."\n";
+        }
+    }
+    echo "Truncated Database!\n";
 }
 
 /*

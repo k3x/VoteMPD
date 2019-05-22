@@ -8,7 +8,7 @@ su
 apt-get update
 apt-get upgrade
 apt-get dist-upgrade
-apt-get install -y net-tools ufw nano bash-completion tmux alsa-tools alsa-utils php7.0 php7.0-cli php7.0-json php7.0-mysql apache2 mysql-server mpd ncmpc git alsamixergui libapache2-mod-php7.0 hostapd dnsmasq
+apt-get install -y net-tools ufw nano bash-completion tmux alsa-tools alsa-utils php7.0 php7.0-gd php7.0-cli php7.0-json php7.0-mysql apache2 mysql-server mpd ncmpc git alsamixergui libapache2-mod-php7.0 hostapd dnsmasq
 echo "source /etc/profile.d/bash_completion.sh" >> ~/.bashrc
 ufw disable
 
