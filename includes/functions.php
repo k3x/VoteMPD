@@ -174,6 +174,29 @@ function truncateDatabase() {
     echo "Truncated Database!\n";
 }
 
+function returnm3u() {
+    $stmt = $GLOBALS["db"]->prepare("
+        SELECT 
+            playlog.date,
+            playlog.fileid
+        FROM
+            playlog
+        order by date ASC;");
+    if(!$stmt->execute()) {
+        echo "error: ".$stmt->errorInfo()[2]."\n";
+    } else {
+        $tmp = [];
+        while ($row = $stmt->fetchObject()) {
+            $path = getFilepathForFileid($row->fileid);
+            if(!in_array($path,$tmp)) {
+                $tmp[] = $path;
+                echo $path."\n";
+            }
+        }
+        echo count($tmp);
+    }
+}
+
 /*
 ---------------------------------------------------------------------------
 ------------------------------MPD STUFF------------------------------------

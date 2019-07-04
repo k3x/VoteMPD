@@ -20,6 +20,7 @@ function printHelp() {
     echo "-p Scan playlists\n";
     echo "-d Run daemon\n";
     echo "-t truncate Database (use with caution!)\n";
+    echo "-m return m3u of playlog\n";
     echo "(no parameters) Run daemon\n";
 }
 
@@ -45,6 +46,11 @@ if(count(getopt("d::"))>0) {
 
 if(count(getopt("t::"))>0) {
     truncateDatabase();
+    die();
+}
+
+if(count(getopt("m::"))>0) {
+    returnm3u();
     die();
 }
 
