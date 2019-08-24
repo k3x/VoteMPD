@@ -582,7 +582,7 @@ function getHigh() {
 
 //get highscore for Monitor
 function getHighscoreForMonitor() {
-    $("#highMonitor").html(loading);
+    //$("#highMonitor").html(loading);
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (xhttp.readyState == 4 && xhttp.status == 200) {

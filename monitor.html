@@ -24,7 +24,7 @@
     </div>
     
     <div id="monitorFooter">
-        musik.de <img src="gfx/qr_wifi.png"> <img src="gfx/qr_browser.png">
+        <img src="gfx/qr_wifi.png"> <img src="gfx/qr_browser.png"> musik.de
     </div>
     <script type="text/javascript" src="js/script.js.php"></script>    
     <script type="text/javascript">
@@ -41,18 +41,7 @@
 
         //on start (called on end of html file)
         $(function() {
-            //create accordion
-            $( "#accordion" ).accordion({
-                    active: null,
-                    heightStyle: "content",
-                    collapsible: true, 
-                    activate: function( event, ui ) {loadTab();},
-                    animate: 0
-            });
-            
-            $("#search-text").val(""); //clear search input field
             updateMonitorNextsongs();
-            
             setInterval(function(){ updateMonitorNextsongs(); }, 5000); //do fast update (only local, interpolate song position)
         });
     </script>
